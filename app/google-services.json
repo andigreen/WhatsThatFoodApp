@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1059716098332",
+    "firebase_url": "https://whatsthatfoodapp-d3847.firebaseio.com",
+    "project_id": "whatsthatfoodapp-d3847",
+    "storage_bucket": "whatsthatfoodapp-d3847.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059716098332:android:1e8945739bab0bae",
+        "android_client_info": {
+          "package_name": "com.wtf.whatsthatfoodapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059716098332-5lg5gtfeq3iphpken4g253be5q3cnbtj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wtf.whatsthatfoodapp",
+            "certificate_hash": "101C93128AE0E856E4CE9BF354CAA366D002BEE8"
+          }
+        },
+        {
+          "client_id": "1059716098332-69leej6t77oi3g9p4r40ri8tene0sc29.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfPhVWxsF77W0G-CaBTVEyDLAXTIjzFSI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059716098332-69leej6t77oi3g9p4r40ri8tene0sc29.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
