@@ -141,6 +141,23 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         // [END create_user_with_email]
     }
 
+    // [START on_start_add_listener]
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+    // [END on_start_add_listener]
+
+    // [START on_stop_remove_listener]
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+    // [END on_stop_remove_listener]
     @Override
     public void onClick(View v) {
         int i = v.getId();
