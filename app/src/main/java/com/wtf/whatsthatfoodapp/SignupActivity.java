@@ -122,10 +122,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                             String username = usernameField.getText().toString();
                             mDatabase.child("users").child(user.getUid())
                                     .child("username").setValue(username);
-                            mDatabase.child("users").child(user.getUid())
-                                    .child("email").setValue(email);
-                            mDatabase.child("users").child(user.getUid())
-                                    .child("password").setValue(password);
                             startActivity(displayHomePage);
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds
