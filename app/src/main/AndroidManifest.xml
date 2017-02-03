@@ -27,7 +27,6 @@
         </activity>
         <activity android:name=".EmailLoginActivity" />
         <activity android:name=".WelcomeActivity" />
-        <activity android:name=".EmailSignupActivity" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -40,7 +39,8 @@
         <activity
             android:name=".BasicActivity"
             android:label="@string/title_activity_basic"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".FacebookLoginActivity"></activity>
     </application>
 
 </manifest>
