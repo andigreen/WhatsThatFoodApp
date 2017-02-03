@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         start_btn = (Button)findViewById(R.id.get_started_button);
 
-        final Intent LoginSignupPage = new Intent(this, LoginActivity.class);
+        final Intent LoginSignupPage = new Intent(this, EmailLoginActivity.class);
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

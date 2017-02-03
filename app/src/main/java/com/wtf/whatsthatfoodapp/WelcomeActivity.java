@@ -62,7 +62,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onBackPressed() {
         signOut();
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(new Intent(this, EmailLoginActivity.class));
     }
 
     private void signOut() {
@@ -74,7 +74,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         int i = v.getId();
         if(i == R.id.signout) {
             signOut();
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, EmailLoginActivity.class));
         }
     }
 

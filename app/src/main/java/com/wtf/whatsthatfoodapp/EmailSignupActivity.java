@@ -1,7 +1,6 @@
 package com.wtf.whatsthatfoodapp;
 
 import android.content.Intent;
-import android.preference.EditTextPreference;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,13 +20,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static com.wtf.whatsthatfoodapp.R.id.passwordField;
-import static com.wtf.whatsthatfoodapp.R.id.start;
-import static com.wtf.whatsthatfoodapp.R.id.username;
+public class EmailSignupActivity extends AppCompatActivity implements View.OnClickListener{
 
-public class SignupActivity extends AppCompatActivity implements View.OnClickListener{
-
-    private final String TAG = "SignupActivity";
+    private final String TAG = "EmailSignupActivity";
     private Button next_btn;
     private Button back_btn;
     private TextView emailText;
@@ -128,7 +123,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(SignupActivity.this, R.string.auth_failed,
+                            Toast.makeText(EmailSignupActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
                         }
 
@@ -160,13 +155,13 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         if (i == R.id.signup) {
             createAccount(emailField.getText().toString(),passwordField.getText().toString());
         } else if (i == R.id.back) {
-            final Intent displayLoginPage = new Intent(this, LoginActivity.class);
+            final Intent displayLoginPage = new Intent(this, EmailLoginActivity.class);
             startActivity(displayLoginPage);
         }
     }
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(new Intent(this, EmailLoginActivity.class));
     }
 }

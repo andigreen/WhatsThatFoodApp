@@ -22,9 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".EmailLoginActivity" />
         <activity android:name=".WelcomeActivity" />
-        <activity android:name=".SignupActivity"></activity>
+        <activity android:name=".EmailSignupActivity"></activity>
     </application>
 
 </manifest>

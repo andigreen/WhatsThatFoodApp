@@ -18,9 +18,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class EmailLoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private final String TAG = "LoginActivity";
+    private final String TAG = "EmailLoginActivity";
     private TextView emailText;
     private TextView passwordText;
     private EditText emailField;
@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(LoginActivity.this, R.string.auth_failed,
+                            Toast.makeText(EmailLoginActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
                         }
 
@@ -144,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.Register_btn) {
-            final Intent displaySignupPage = new Intent(this, SignupActivity.class);
+            final Intent displaySignupPage = new Intent(this, EmailSignupActivity.class);
             startActivity(displaySignupPage);
         } else if (i == R.id.Login_btn) {
             signIn(emailField.getText().toString(), passwordField.getText().toString());
