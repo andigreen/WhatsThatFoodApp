@@ -29,6 +29,7 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
     private Button register_btn;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser user;
 
 
     @Override
@@ -53,7 +54,7 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
@@ -77,6 +78,7 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
         }
 
         final Intent displayHomePage = new Intent(this, WelcomeActivity.class);
+        final Intent displayStartPage = new Intent(this, MainActivity.class);
         // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -84,8 +86,14 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
-                        if(task.isSuccessful())
-                            startActivity(displayHomePage);
+                        if(task.isSuccessful()) {
+                            if(user.isEmailVerified())
+                                startActivity(displayHomePage);
+                            else {
+                                Toast.makeText(EmailLoginActivity.this, "Please verify your email",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
