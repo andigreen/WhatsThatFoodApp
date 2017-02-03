@@ -3,7 +3,6 @@ package com.wtf.whatsthatfoodapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,7 +36,6 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
     private Button signup_btn;
     private EditText usernameField;
     private TextView usernameText;
-    private Button email_recover;
     private Button password_recover;
     private DatabaseReference mDatabase;
     private FirebaseDatabase database;
@@ -45,7 +43,7 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_email_login);
         emailText = (TextView) findViewById(R.id.email);
         passwordText = (TextView) findViewById(R.id.password);
         emailField = (EditText) findViewById(R.id.EmailField);
@@ -56,7 +54,6 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
         back_btn.setVisibility(View.INVISIBLE);
         signup_btn = (Button)findViewById(R.id.signup_btn);
         signup_btn.setVisibility(View.INVISIBLE);
-        email_recover = (Button)findViewById(R.id.email_recover);
         password_recover = (Button)findViewById(R.id.password_recover);
         usernameField = (EditText)findViewById(R.id.usernamefield);
         usernameText = (TextView)findViewById(R.id.usenametxt);
@@ -287,7 +284,6 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
         if(choice == 0){
             login_btn.setVisibility(View.VISIBLE);
             register_btn.setVisibility(View.VISIBLE);
-            email_recover.setVisibility(View.VISIBLE);
             password_recover.setVisibility(View.VISIBLE);
             usernameText.setVisibility(View.INVISIBLE);
             usernameField.setVisibility(View.INVISIBLE);
@@ -298,7 +294,6 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
         else if(choice == 1){
             login_btn.setVisibility(View.INVISIBLE);
             register_btn.setVisibility(View.INVISIBLE);
-            email_recover.setVisibility(View.INVISIBLE);
             password_recover.setVisibility(View.INVISIBLE);
             usernameText.setVisibility(View.VISIBLE);
             usernameField.setVisibility(View.VISIBLE);
