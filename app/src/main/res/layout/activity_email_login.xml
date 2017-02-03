@@ -84,26 +84,6 @@
         android:layout_alignEnd="@+id/password"
         android:textSize="18sp" />
 
-    <Button
-        android:text="back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/Register_btn"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="29dp"
-        android:layout_marginStart="29dp"
-        android:id="@+id/back_btn" />
-
-    <Button
-        android:text="SIGNUP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/Register_btn"
-        android:layout_alignRight="@+id/usernamefield"
-        android:layout_alignEnd="@+id/usernamefield"
-        android:id="@+id/signup_btn" />
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -131,5 +111,36 @@
         android:layout_marginTop="19dp"
         android:layout_below="@+id/Register_btn"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="SIGNUP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/signup_btn"
+        android:layout_alignBaseline="@+id/back_btn"
+        android:layout_alignBottom="@+id/back_btn"
+        android:layout_alignRight="@+id/usernamefield"
+        android:layout_alignEnd="@+id/usernamefield" />
+
+    <Button
+        android:text="back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/back_btn"
+        android:layout_marginTop="21dp"
+        android:layout_alignTop="@+id/Register_btn"
+        android:layout_toLeftOf="@+id/Register_btn"
+        android:layout_toStartOf="@+id/Register_btn"
+        android:textSize="18sp" />
+
+    <Button
+        android:text="RESET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/reset_btn"
+        android:textSize="18sp"
+        android:layout_alignTop="@+id/signup_btn"
+        android:layout_alignLeft="@+id/signup_btn"
+        android:layout_alignStart="@+id/signup_btn" />
 
 </RelativeLayout>

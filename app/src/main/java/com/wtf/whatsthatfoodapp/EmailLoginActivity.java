@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
     private EditText usernameField;
     private TextView usernameText;
     private Button password_recover;
+    private Button reset_btn;
     private DatabaseReference mDatabase;
     private FirebaseDatabase database;
 
@@ -59,14 +61,16 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
         usernameText = (TextView)findViewById(R.id.usenametxt);
         usernameField.setVisibility(View.INVISIBLE);
         usernameText.setVisibility(View.INVISIBLE);
-
+        reset_btn = (Button)findViewById(R.id.reset_btn);
+        reset_btn.setVisibility(View.INVISIBLE);
         sharedPrefs = getSharedPreferences(PREFS_NAME,0);
         // Buttons
         login_btn.setOnClickListener(this);
         register_btn.setOnClickListener(this);
         back_btn.setOnClickListener(this);
         signup_btn.setOnClickListener(this);
-
+        password_recover.setOnClickListener(this);
+        reset_btn.setOnClickListener(this);
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference();
         // [START initialize_auth]
@@ -217,6 +221,10 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
             updateUI(0);
         }else if(i == R.id.signup_btn){
             createAccount(emailField.getText().toString(), passwordField.getText().toString());
+        }else if(i == R.id.password_recover){
+            updateUI(2);
+        }else if(i == R.id.reset_btn){
+            recoverPassword(emailField.getText().toString());
         }
     }
 
@@ -289,6 +297,9 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
             usernameField.setVisibility(View.INVISIBLE);
             back_btn.setVisibility(View.INVISIBLE);
             signup_btn.setVisibility(View.INVISIBLE);
+            passwordField.setVisibility(View.VISIBLE);
+            passwordText.setVisibility(View.VISIBLE);
+            reset_btn.setVisibility(View.INVISIBLE);
         }
         //update to signup
         else if(choice == 1){
@@ -301,10 +312,44 @@ public class EmailLoginActivity extends BasicActivity implements View.OnClickLis
             signup_btn.setVisibility(View.VISIBLE);
             emailField.setText("");
             passwordField.setText("");
+            //update to password recover
+        }else if(choice == 2){
+            login_btn.setVisibility(View.INVISIBLE);
+            register_btn.setVisibility(View.INVISIBLE);
+            password_recover.setVisibility(View.INVISIBLE);
+            usernameText.setVisibility(View.VISIBLE);
+            usernameField.setVisibility(View.VISIBLE);
+            emailField.setText("");
+            passwordField.setText("");
+            passwordField.setVisibility(View.INVISIBLE);
+            passwordText.setVisibility(View.INVISIBLE);
+            reset_btn.setVisibility(View.VISIBLE);
+            back_btn.setVisibility(View.VISIBLE);
+            usernameField.setVisibility(View.INVISIBLE);
+            usernameText.setVisibility(View.INVISIBLE);
         }
 
     }
 
+
+    private void recoverPassword(String email){
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(EmailLoginActivity.this,
+                            "Password recover email sent", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG,"PasswordEmailSent: " + task.isSuccessful());
+                    updateUI(0);
+                }else{
+                    Log.d(TAG,"PasswordEmailSent: " + task.isSuccessful());
+                    Toast.makeText(EmailLoginActivity.this,
+                            "Email does not exist", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
     @Override
     public void onBackPressed() {
         startActivity(new Intent(this, MainActivity.class));
