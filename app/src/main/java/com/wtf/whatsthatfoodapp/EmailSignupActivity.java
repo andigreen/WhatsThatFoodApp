@@ -26,7 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-public class EmailSignupActivity extends AppCompatActivity implements View.OnClickListener {
+public class EmailSignupActivity extends BasicActivity implements View.OnClickListener {
 
     private final String TAG = "EmailSignupActivity";
     private Button next_btn;
@@ -102,9 +102,10 @@ public class EmailSignupActivity extends AppCompatActivity implements View.OnCli
         if (!validateForm()) {
             return;
         }
+        showProgressDialog();
 
         final Intent displayLoginPage = new Intent(this, EmailLoginActivity.class);
-
+        //displayLoginPage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -127,6 +128,9 @@ public class EmailSignupActivity extends AppCompatActivity implements View.OnCli
                         if (!task.isSuccessful()) {
                             Toast.makeText(EmailSignupActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
+                            // [START_EXCLUDE]
+                            hideProgressDialog();
+                            // [END_EXCLUDE]
                         }
 
                     }
@@ -143,6 +147,7 @@ public class EmailSignupActivity extends AppCompatActivity implements View.OnCli
             createAccount(emailField.getText().toString(), passwordField.getText().toString());
         } else if (i == R.id.back) {
             final Intent displayLoginPage = new Intent(this, EmailLoginActivity.class);
+            //displayLoginPage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(displayLoginPage);
         }
     }
@@ -173,19 +178,5 @@ public class EmailSignupActivity extends AppCompatActivity implements View.OnCli
         startActivity(new Intent(this, EmailLoginActivity.class));
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("EmailSignup Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
+
 }

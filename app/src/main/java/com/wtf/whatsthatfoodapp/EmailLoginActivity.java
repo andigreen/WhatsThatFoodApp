@@ -1,6 +1,7 @@
 package com.wtf.whatsthatfoodapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class EmailLoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class EmailLoginActivity extends BasicActivity implements View.OnClickListener {
 
     private final String TAG = "EmailLoginActivity";
     private TextView emailText;
@@ -42,7 +43,7 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
         passwordField = (EditText) findViewById(R.id.passwordField);
         login_btn = (Button) findViewById(R.id.Login_btn);
         register_btn = (Button) findViewById(R.id.Register_btn);
-
+        sharedPrefs = getSharedPreferences(PREFS_NAME,0);
         // Buttons
         login_btn.setOnClickListener(this);
         register_btn.setOnClickListener(this);
@@ -76,10 +77,14 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
         if (!validateForm()) {
             return;
         }
+        showProgressDialog();
 
         final Intent displayHomePage = new Intent(this, WelcomeActivity.class);
         final Intent displayStartPage = new Intent(this, MainActivity.class);
         // [START sign_in_with_email]
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString("signInMethod","Email");
+        editor.commit();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -87,8 +92,9 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
                         if(task.isSuccessful()) {
-                            if(user.isEmailVerified())
+                            if(user.isEmailVerified()) {
                                 startActivity(displayHomePage);
+                            }
                             else {
                                 Toast.makeText(EmailLoginActivity.this, "Please verify your email",
                                         Toast.LENGTH_SHORT).show();
@@ -101,6 +107,9 @@ public class EmailLoginActivity extends AppCompatActivity implements View.OnClic
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
                             Toast.makeText(EmailLoginActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
+                            // [START_EXCLUDE]
+                            hideProgressDialog();
+                            // [END_EXCLUDE]
                         }
 
 
