@@ -69,6 +69,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         sharedPrefs = getSharedPreferences(PREFS_NAME,0);
         email_btn = (Button)findViewById(R.id.email_button);
         google_btn = (SignInButton)findViewById(R.id.google_button);
+        google_btn.setSize(SignInButton.SIZE_WIDE);
         fb_btn = (LoginButton)findViewById(R.id.fb_btn);
         emailText = (TextView)findViewById(R.id.emailtext);
         passwordText = (TextView)findViewById(R.id.passwordtext);
