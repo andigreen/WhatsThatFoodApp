@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WhatsThatFoodApp</string>
+    <string name="app_name">WhatsThatFood</string>
     <string name="title_activity_login_signup">Login/Signup</string>
     <string name="auth_failed">Authentication Failed!</string>
     <!--string name="facebook_app_id">214491149022181</string-->

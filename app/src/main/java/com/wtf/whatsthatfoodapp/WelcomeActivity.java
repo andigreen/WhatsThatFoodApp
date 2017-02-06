@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -22,12 +25,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class WelcomeActivity extends BasicActivity implements View.OnClickListener {
+public class WelcomeActivity extends BasicActivity {
 
     private final String TAG = "WelcomeActivity";
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private Button logout_btn;
 
     private String signInMethod;
     private GoogleApiClient mGoogleApiClient;
@@ -38,8 +40,6 @@ public class WelcomeActivity extends BasicActivity implements View.OnClickListen
         sharedPrefs = getSharedPreferences(PREFS_NAME,0);
         signInMethod = sharedPrefs.getString("signInMethod","default");
         Log.d(TAG, signInMethod);
-        logout_btn = (Button)findViewById(R.id.signout);
-        logout_btn.setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -58,6 +58,34 @@ public class WelcomeActivity extends BasicActivity implements View.OnClickListen
         };
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.profile:
+                //newGame();
+                return true;
+            case R.id.settings:
+                //showHelp();
+                return true;
+            case R.id.logout:
+                signOut();
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     // [START on_start_add_listener]
     @Override
     public void onStart() {
@@ -88,16 +116,6 @@ public class WelcomeActivity extends BasicActivity implements View.OnClickListen
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if(i == R.id.signout) {
-            signOut();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
-    }
 
 
 
