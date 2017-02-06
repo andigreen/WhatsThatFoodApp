@@ -71,10 +71,10 @@ public class WelcomeActivity extends BasicActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.profile:
-                //newGame();
+                //viewProfile();
                 return true;
             case R.id.settings:
-                //showHelp();
+                //viewSettings();
                 return true;
             case R.id.logout:
                 signOut();
