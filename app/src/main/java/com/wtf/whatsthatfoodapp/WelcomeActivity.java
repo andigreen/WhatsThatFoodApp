@@ -71,6 +71,16 @@ public class WelcomeActivity extends BasicActivity {
             logger.logEvent("User logged in with Facebook");
 
         }
+
+        if(getProvider() == "Google"){
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build();
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+            mGoogleApiClient.connect();
+        }
     }
 
     private void hideDefaultKeyboard() {
@@ -145,13 +155,23 @@ public class WelcomeActivity extends BasicActivity {
 
     private void signOut() {
 
-        if(getPrivider() == "Facebook") {
+        if(getProvider() == "Facebook") {
             LoginManager.getInstance().logOut();
+        }
+        if(getProvider() == "Google"){
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            // ...
+                            Toast.makeText(getApplicationContext(),"Logged Out",Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
         FirebaseAuth.getInstance().signOut();
     }
 
-    private String getPrivider() {
+    private String getProvider() {
         for (UserInfo user : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
             if (user.getProviderId().equals("facebook.com")) {
                 System.out.println("User is signed in with Facebook");
