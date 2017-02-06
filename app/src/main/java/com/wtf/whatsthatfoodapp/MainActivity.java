@@ -246,7 +246,10 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         if (TextUtils.isEmpty(email)) {
             this.emailField.setError("Required.");
             valid = false;
-        } else {
+        }else if (mAuth.fetchProvidersForEmail(email) != null){
+            this.emailField.setError("Email is already taken");
+        }
+        else {
             this.emailField.setError(null);
         }
 
@@ -374,6 +377,10 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
             recovery.setVisibility(View.INVISIBLE);
             google_btn.setVisibility(View.VISIBLE);
             fb_btn.setVisibility(View.VISIBLE);
+            emailField.setText("");
+            passwordField.setText("");
+            emailField.setError(null);
+            passwordField.setError(null);
         }
         //update to signup
         else if(choice == 1){
@@ -386,6 +393,10 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
             signup_btn.setVisibility(View.VISIBLE);
             emailField.setText("");
             passwordField.setText("");
+            emailField.setError(null);
+            passwordField.setError(null);
+            google_btn.setVisibility(View.INVISIBLE);
+            fb_btn.setVisibility(View.INVISIBLE);
             //update to password recover
         }else if(choice == 2){
             email_btn.setVisibility(View.INVISIBLE);
@@ -402,6 +413,10 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
             usernameField.setVisibility(View.INVISIBLE);
             usernameText.setVisibility(View.INVISIBLE);
             recovery.setVisibility(View.VISIBLE);
+            google_btn.setVisibility(View.INVISIBLE);
+            fb_btn.setVisibility(View.INVISIBLE);
+            emailField.setError(null);
+            passwordField.setError(null);
         }
 
     }
