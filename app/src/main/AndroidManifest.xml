@@ -25,7 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EmailLoginActivity" />
         <activity android:name=".WelcomeActivity" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -35,12 +34,10 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".GoogleLoginActivity" />
         <activity
             android:name=".BasicActivity"
             android:label="@string/title_activity_basic"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".FacebookLoginActivity"></activity>
     </application>
 
 </manifest>

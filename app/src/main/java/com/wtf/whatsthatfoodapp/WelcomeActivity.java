@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -21,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class WelcomeActivity extends BasicActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class WelcomeActivity extends BasicActivity implements View.OnClickListener {
 
     private final String TAG = "WelcomeActivity";
     private FirebaseAuth mAuth;
@@ -81,7 +82,8 @@ public class WelcomeActivity extends BasicActivity implements View.OnClickListen
     }
 
     private void signOut() {
-        mAuth.signOut();
+        FirebaseAuth.getInstance().signOut();
+        LoginManager.getInstance().logOut();
     }
 
     @Override
@@ -96,9 +98,5 @@ public class WelcomeActivity extends BasicActivity implements View.OnClickListen
     }
 
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
-    }
+
 }

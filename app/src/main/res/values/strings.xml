@@ -2,7 +2,8 @@
     <string name="app_name">WhatsThatFoodApp</string>
     <string name="title_activity_login_signup">Login/Signup</string>
     <string name="auth_failed">Authentication Failed!</string>
-    <string name="facebook_app_id">214491149022181</string>
+    <!--string name="facebook_app_id">214491149022181</string-->
+    <string name="facebook_app_id">243602372758041</string>
     <string name="loading">Loading..</string>
     <string name="title_activity_basic">BasicActivity</string>
 
