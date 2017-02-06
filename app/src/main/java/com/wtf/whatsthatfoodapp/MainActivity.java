@@ -105,12 +105,14 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         // [END initialize_auth]
         user = mAuth.getCurrentUser();
         // [START auth_state_listener]
+        final Intent displayHomePage = new Intent(this,WelcomeActivity.class);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    startActivity(displayHomePage);
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
