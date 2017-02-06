@@ -83,7 +83,9 @@ public class WelcomeActivity extends BasicActivity implements View.OnClickListen
 
     private void signOut() {
         FirebaseAuth.getInstance().signOut();
-        LoginManager.getInstance().logOut();
+        if(signInMethod == "Facebook") {
+            LoginManager.getInstance().logOut();
+        }
     }
 
     @Override

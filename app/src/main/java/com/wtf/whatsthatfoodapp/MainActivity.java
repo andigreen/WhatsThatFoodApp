@@ -172,6 +172,9 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                         if(task.isSuccessful()) {
                             mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("username").setValue(token.getUserId());
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+                            SharedPreferences.Editor editor = sharedPrefs.edit();
+                            editor.putString("signInMethod","Facebook");
+                            editor.commit();
                             startActivity(displayHomePage);
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds
