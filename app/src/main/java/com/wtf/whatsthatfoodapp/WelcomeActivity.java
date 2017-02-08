@@ -66,13 +66,13 @@ public class WelcomeActivity extends BasicActivity {
             }
         };
 
-        if(signInMethod == "Facebook"){
+        if(signInMethod.equals("Facebook")){
             logger = AppEventsLogger.newLogger(this);
             logger.logEvent("User logged in with Facebook");
 
         }
 
-        if(getProvider() == "Google"){
+        if(getProvider().equals("Google")){
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestEmail()
                     .build();
@@ -121,7 +121,7 @@ public class WelcomeActivity extends BasicActivity {
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        if(signInMethod == "Facebook")
+        if(signInMethod.equals("Facebook"))
             AppEventsLogger.activateApp(this);
     }
     // [END on_start_add_listener]
@@ -133,7 +133,7 @@ public class WelcomeActivity extends BasicActivity {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-        if(signInMethod == "Facebook")
+        if(signInMethod.equals("Facebook"))
             AppEventsLogger.deactivateApp(this);
     }
     // [END on_stop_remove_listener]
@@ -155,10 +155,10 @@ public class WelcomeActivity extends BasicActivity {
 
     private void signOut() {
 
-        if(getProvider() == "Facebook") {
+        if(getProvider().equals("Facebook")) {
             LoginManager.getInstance().logOut();
         }
-        if(getProvider() == "Google"){
+        if(getProvider().equals("Google")){
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                     new ResultCallback<Status>() {
                         @Override

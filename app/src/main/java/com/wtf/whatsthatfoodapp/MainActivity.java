@@ -207,7 +207,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         // [START sign_in_with_email]
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString("signInMethod","Email");
-        editor.commit();
+        editor.apply();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -457,7 +457,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString("signInMethod","Google");
-        editor.commit();
+        editor.apply();
         startActivityForResult(signInIntent, RC_SIGN_IN);
 
     }
