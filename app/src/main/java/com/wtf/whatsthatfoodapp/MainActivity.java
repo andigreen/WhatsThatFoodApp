@@ -111,7 +111,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                if (user != null && user.isEmailVerified()) {
                     // User is signed in
                     startActivity(displayHomePage);
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
@@ -252,10 +252,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         if (TextUtils.isEmpty(email)) {
             this.emailField.setError("Required.");
             valid = false;
-        }else if (mAuth.fetchProvidersForEmail(email) != null){
-            this.emailField.setError("Email is already taken");
-        }
-        else {
+        } else {
             this.emailField.setError(null);
         }
 
@@ -337,7 +334,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, R.string.auth_failed,
+                            Toast.makeText(MainActivity.this, "Email is already taken",
                                     Toast.LENGTH_SHORT).show();
                             // [START_EXCLUDE]
                             hideProgressDialog();
