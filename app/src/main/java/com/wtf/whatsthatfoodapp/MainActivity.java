@@ -106,7 +106,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         // [END initialize_auth]
         user = mAuth.getCurrentUser();
         // [START auth_state_listener]
-        final Intent displayHomePage = new Intent(this,WelcomeActivity.class);
+        final Intent displayHomePage = new Intent(this,CollageActivity.class);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
