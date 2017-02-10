@@ -16,7 +16,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:title="@string/create_memory"
+        app:title="@string/create_memory"
         />
 
     <ScrollView
