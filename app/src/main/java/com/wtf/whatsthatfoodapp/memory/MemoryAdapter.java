@@ -40,9 +40,11 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
         viewTitle.setText(model.getTitle());
         viewLoc.setText(model.getLoc());
 
+        // Load photo into view
         Glide.with(mActivity)
                 .using(new FirebaseImageLoader())
                 .load(dao.getPhotoRef(model))
+                // Hide progress bar when image is loaded, or error occurs
                 .listener(new RequestListener<StorageReference,
                         GlideDrawable>() {
                     @Override

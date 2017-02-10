@@ -38,12 +38,14 @@ public class CreateMemoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_memory);
 
+        // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.create_memory_toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        // Initiate photo loading
         Intent getPhoto = new Intent(Intent.ACTION_GET_CONTENT);
         getPhoto.setType("image/*");
         startActivityForResult(getPhoto, REQUEST_PHOTO_GET);
@@ -52,6 +54,8 @@ public class CreateMemoryActivity extends AppCompatActivity {
     /**
      * Returns true if all of the form contents are valid, and also updates
      * the error status of form contents.
+     *
+     * Currently, the form only requires that title and loc are both nonempty.
      */
     private boolean validateForm() {
         String title = ((TextInputEditText) findViewById(
@@ -156,6 +160,7 @@ public class CreateMemoryActivity extends AppCompatActivity {
                 return;
             }
 
+            // Load photo view with the result's URI
             photoUri = data.getData();
             ImageView imageView = (ImageView) findViewById(R.id
                     .create_memory_photo);

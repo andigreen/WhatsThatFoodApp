@@ -19,7 +19,6 @@ import com.wtf.whatsthatfoodapp.memory.MemoryDao;
 public class CollageActivity extends BasicActivity {
 
     private static final String TAG = CollageActivity.class.getSimpleName();
-    private static final int REQUEST_CREATE_MEMORY = 1858;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +31,7 @@ public class CollageActivity extends BasicActivity {
             return;
         }
 
+        // Set up list and adapter
         MemoryDao dao = new MemoryDao(user.getUid());
         ListAdapter collageListAdapter = new MemoryAdapter(this, Memory.class,
                 R.layout.memory_list_item, dao);
@@ -39,6 +39,7 @@ public class CollageActivity extends BasicActivity {
         ListView collageList = (ListView) findViewById(R.id.collage_list);
         collageList.setAdapter(collageListAdapter);
 
+        // Set up Create Memory button
         FloatingActionButton btnCreateMemory = (FloatingActionButton)
                 this.findViewById(R.id.create_memory_button);
         btnCreateMemory.setOnClickListener(new View.OnClickListener() {
