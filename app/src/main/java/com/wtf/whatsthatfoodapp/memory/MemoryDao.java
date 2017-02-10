@@ -1,7 +1,6 @@
 package com.wtf.whatsthatfoodapp.memory;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -32,9 +31,15 @@ public class MemoryDao {
      */
     public void writeMemory(Memory memory) {
         DatabaseReference db = getMemoriesRef();
+
+        // If key is null, then we need to create a new key and mark as created
         if (memory.getKey() == null) {
+            memory.markCreated();
             memory.setKey(db.push().getKey());
         }
+
+        // Always mark as modified, and set the value
+        memory.markModified();
         db.child(memory.getKey()).setValue(memory);
     }
 

@@ -34,7 +34,9 @@ public class CollageActivity extends BasicActivity {
         // Set up list and adapter
         MemoryDao dao = new MemoryDao(user.getUid());
         ListAdapter collageListAdapter = new MemoryAdapter(this, Memory.class,
-                R.layout.memory_list_item, dao);
+                R.layout.memory_list_item,
+                dao.getMemoriesRef().orderByChild(Memory.TS_CREATED),
+                dao);
 
         ListView collageList = (ListView) findViewById(R.id.collage_list);
         collageList.setAdapter(collageListAdapter);
