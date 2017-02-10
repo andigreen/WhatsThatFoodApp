@@ -64,6 +64,7 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
                         return false;
                     }
                 })
+                .centerCrop()
                 .into(viewImage);
     }
 
