@@ -2,7 +2,6 @@ package com.wtf.whatsthatfoodapp;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryAdapter;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
@@ -35,7 +33,7 @@ public class CollageActivity extends BasicActivity {
         MemoryDao dao = new MemoryDao(user.getUid());
         ListAdapter collageListAdapter = new MemoryAdapter(this, Memory.class,
                 R.layout.memory_list_item,
-                dao.getMemoriesRef().orderByChild(Memory.TS_CREATED),
+                dao.getMemoriesRef().orderByChild(Memory.TS_KEY_NEWEST),
                 dao);
 
         ListView collageList = (ListView) findViewById(R.id.collage_list);

@@ -5,78 +5,44 @@ import android.util.Log;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.google.firebase.database.ServerValue;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @IgnoreExtraProperties
 public class Memory {
 
     private static final String TAG = Memory.class.getSimpleName();
-    private static final String TS_KEY = "ts";
 
-    public static final String TS_CREATED = "tsCreated";
-    public static final String TS_MODIFIED = "tsModified";
-    public static final long TS_INVALID = -1L;
+    public static final String TS_KEY_NEWEST = "tsCreatedNeg";
 
     private String key;
     @NonNull private String title;
     @NonNull private String loc;
-    private Map<String, Object> tsCreated;
-    private Map<String, Object> tsModified;
+    // UNIX timestamps
+    private long tsCreated;
+    private long tsCreatedNeg; // Negative timestamp, so we can sort descending
+    private long tsModified;
 
     public Memory() {
         title = loc = "";
-        tsCreated = new HashMap<>();
-        tsModified = new HashMap<>();
+        tsCreated = tsModified = 0L;
     }
 
     /**
-     * Returns the creation timestamp, in UNIX time. If this memory has not
-     * been written to the database before, or if this memory is marked as
-     * just-created (using {@link #markCreated()}, then the timestamp will
-     * not be available and this method will return TS_INVALID.
-     */
-    @Exclude
-    public long getTimeCreated() {
-        Object ts = tsCreated.get(TS_KEY);
-        if (ts instanceof Long) return (long) ts;
-
-        Log.e(TAG, "getTimeCreated: timeCreated in an invalid state");
-        return TS_INVALID;
-    }
-
-    /**
-     * Returns the modification timestamp, in UNIX time. If this memory has not
-     * been written to the database before, or if this memory is marked as
-     * just-modified (using {@link #markModified()}, then the timestamp will
-     * not be available and this method will return TS_INVALID.
-     */
-    @Exclude
-    public long getTimeModified() {
-        Object ts = tsModified.get(TS_KEY);
-        if (ts instanceof Long) return (long) ts;
-
-        Log.e(TAG, "getTimeModified: timeModified in an invalid state");
-        return TS_INVALID;
-    }
-
-    /**
-     * Marks this memory as just-created when written to the database.
+     * Marks this memory as just-created.
      */
     @Exclude
     void markCreated() {
-        tsCreated.put(TS_KEY, ServerValue.TIMESTAMP);
+        tsCreated = unixTime();
+        tsCreatedNeg = -1 * tsCreated;
     }
 
     /**
-     * Marks this memory as just-modified when written to the database.
+     * Marks this memory as just-modified.
      */
     @Exclude
     void markModified() {
-        tsModified.put(TS_KEY, ServerValue.TIMESTAMP);
+        tsModified = unixTime();
     }
+
 
 
     // Getters setters required for Firebase POJOs, and setters (not required)
@@ -108,20 +74,24 @@ public class Memory {
         this.loc = loc;
     }
 
-    /**
-     * @deprecated This getter is only for use by the DAO. Please use
-     * {@link #getTimeCreated()} instead.
-     */
-    public Map<String, Object> getTsCreated() {
+    public long getTsCreated() {
         return tsCreated;
     }
 
-    /**
-     * @deprecated This getter is only for use by the DAO. Please use
-     * {@link #getTimeModified()} instead.
-     */
-    public Map<String, Object> getTsModified() {
+    public long getTsCreatedNeg() {
+        return tsCreatedNeg;
+    }
+
+    public long getTsModified() {
         return tsModified;
+    }
+
+
+
+    // Helper methods
+
+    private static long unixTime() {
+        return System.currentTimeMillis() / 1000;
     }
 
 }
