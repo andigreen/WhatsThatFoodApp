@@ -5,7 +5,7 @@
               android:id="@+id/activity_collage"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              tools:context="com.wtf.whatsthatfoodapp.CollageActivity"
+              tools:context="com.wtf.whatsthatfoodapp.memory.CollageActivity"
               android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar

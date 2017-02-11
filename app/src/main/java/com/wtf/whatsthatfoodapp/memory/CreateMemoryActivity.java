@@ -1,4 +1,4 @@
-package com.wtf.whatsthatfoodapp;
+package com.wtf.whatsthatfoodapp.memory;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,8 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.wtf.whatsthatfoodapp.memory.Memory;
-import com.wtf.whatsthatfoodapp.memory.MemoryDao;
+import com.wtf.whatsthatfoodapp.R;
 
 public class CreateMemoryActivity extends AppCompatActivity {
 

@@ -1,7 +1,6 @@
-package com.wtf.whatsthatfoodapp;
+package com.wtf.whatsthatfoodapp.memory;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,9 +13,9 @@ import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.wtf.whatsthatfoodapp.memory.Memory;
-import com.wtf.whatsthatfoodapp.memory.MemoryAdapter;
-import com.wtf.whatsthatfoodapp.memory.MemoryDao;
+import com.wtf.whatsthatfoodapp.auth.BasicActivity;
+import com.wtf.whatsthatfoodapp.auth.MainActivity;
+import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.search.SearchTable;
 
 public class CollageActivity extends BasicActivity {

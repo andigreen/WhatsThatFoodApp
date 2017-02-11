@@ -21,14 +21,14 @@
             android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
             android:value="true"/>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".auth.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".WelcomeActivity"/>
+        <activity android:name=".auth.WelcomeActivity"/>
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -38,14 +38,14 @@
             android:value="@integer/google_play_services_version"/>
 
         <activity
-            android:name=".BasicActivity"
+            android:name=".auth.BasicActivity"
             android:label="@string/title_activity_basic"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".CollageActivity"
+            android:name=".memory.CollageActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".CreateMemoryActivity"
+            android:name=".memory.CreateMemoryActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

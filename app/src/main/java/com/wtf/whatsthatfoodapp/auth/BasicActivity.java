@@ -1,4 +1,4 @@
-package com.wtf.whatsthatfoodapp;
+package com.wtf.whatsthatfoodapp.auth;
 
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import com.wtf.whatsthatfoodapp.R;
 
 public class BasicActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.wtf.whatsthatfoodapp;
+package com.wtf.whatsthatfoodapp.auth;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,6 +35,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.memory.CollageActivity;
 
 public class MainActivity extends BasicActivity implements View.OnClickListener,  GoogleApiClient.OnConnectionFailedListener{
     private final String TAG = "MainActivity";
