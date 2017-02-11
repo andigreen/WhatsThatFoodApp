@@ -1,6 +1,7 @@
 package com.wtf.whatsthatfoodapp;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,10 +17,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryAdapter;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
+import com.wtf.whatsthatfoodapp.search.SearchTable;
 
 public class CollageActivity extends BasicActivity {
 
     private static final String TAG = CollageActivity.class.getSimpleName();
+
+    private SearchTable searchTable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,9 @@ public class CollageActivity extends BasicActivity {
                         CreateMemoryActivity.class));
             }
         });
+
+        // Initialize search table (pre-populate index)
+        searchTable = new SearchTable(this);
     }
 
     @Override
