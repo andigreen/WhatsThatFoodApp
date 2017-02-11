@@ -13,5 +13,7 @@
     <string name="create_memory_loc">Location</string>
     <string name="collage_logout">logout</string>
     <string name="collage_title">What\'s That Food?</string>
+    <string name="collage_search">Search</string>
+    <string name="search">Search</string>
 
 </resources>

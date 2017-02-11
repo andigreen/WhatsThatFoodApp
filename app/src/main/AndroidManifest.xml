@@ -47,6 +47,8 @@
         <activity
             android:name=".memory.CreateMemoryActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".search.SearchActivity">
+        </activity>
     </application>
 
 </manifest>

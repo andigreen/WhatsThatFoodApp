@@ -16,13 +16,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.wtf.whatsthatfoodapp.auth.BasicActivity;
 import com.wtf.whatsthatfoodapp.auth.MainActivity;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.search.SearchActivity;
 import com.wtf.whatsthatfoodapp.search.SearchTable;
 
 public class CollageActivity extends BasicActivity {
 
     private static final String TAG = CollageActivity.class.getSimpleName();
-
-    private SearchTable searchTable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +58,6 @@ public class CollageActivity extends BasicActivity {
                         CreateMemoryActivity.class));
             }
         });
-
-        // Initialize search table (pre-populate index)
-        searchTable = new SearchTable(this);
     }
 
     @Override
@@ -77,6 +73,10 @@ public class CollageActivity extends BasicActivity {
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                return true;
+            case R.id.collage_search:
+                Intent searchIntent = new Intent(this, SearchActivity.class);
+                startActivity(searchIntent);
                 return true;
         }
 
