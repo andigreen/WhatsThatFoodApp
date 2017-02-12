@@ -12,7 +12,6 @@ import android.util.Log;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
@@ -56,7 +55,8 @@ public class SearchTable {
     public Cursor query(String queryStr) {
         String[] tokens = SearchUtils.getTokens(queryStr);
         if (tokens.length == 0) return null;
-        String selArgs = TextUtils.join(" AND ", tokens);
+        for (int i = 0; i < tokens.length; i++) tokens[i] += "*";
+        String selArgs = TextUtils.join(" ", tokens);
 
         Log.i(TAG, "querying for " + selArgs);
 
@@ -78,6 +78,7 @@ public class SearchTable {
 
     private static class MemoriesListener implements ChildEventListener {
         private DatabaseHelper mHelper;
+
         MemoriesListener(DatabaseHelper helper) {
             mHelper = helper;
         }
@@ -90,19 +91,20 @@ public class SearchTable {
             }
         }
 
+        // We don't bother with the rest of the events, since none of the
+        // data should change while the user is searching
+
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            // TODO
         }
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-            // TODO
         }
 
-        // We don't care if the order changes
         @Override
-        public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+        }
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
