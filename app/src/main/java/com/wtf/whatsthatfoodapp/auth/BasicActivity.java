@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
 import com.wtf.whatsthatfoodapp.R;
 
 public class BasicActivity extends AppCompatActivity {
@@ -43,4 +45,18 @@ public class BasicActivity extends AppCompatActivity {
         hideProgressDialog();
     }
 
+
+    public static String getProvider() {
+        for (UserInfo user : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
+            if (user.getProviderId().equals("facebook.com")) {
+                System.out.println("User is signed in with Facebook");
+                return "Facebook";
+            }
+            if (user.getProviderId().equals("google.com")) {
+                System.out.println("User is signed in with Google");
+                return "Google";
+            }
+        }
+        return "Firebase";
+    }
 }

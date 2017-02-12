@@ -35,6 +35,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.memory.CollageActivity;
 
@@ -108,7 +109,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         // [END initialize_auth]
         user = mAuth.getCurrentUser();
         // [START auth_state_listener]
-        final Intent displayHomePage = new Intent(this,CollageActivity.class);
+        final Intent displayHomePage = new Intent(this,WelcomeActivity.class);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -124,19 +125,13 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
             }
         };
         // [END auth_state_listener]
-        // [START config_signin]
-        // Configure Google Sign In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        // [END config_signin]
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, App.getGso())
                 .build();
 
+        App.getInstance().setClient(mGoogleApiClient);
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
 

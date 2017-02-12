@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.R;
 
 public class WelcomeActivity extends BasicActivity {
@@ -67,12 +68,7 @@ public class WelcomeActivity extends BasicActivity {
         }
 
         if(getProvider().equals("Google")){
-            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestEmail()
-                    .build();
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                    .build();
+            mGoogleApiClient = App.getInstance().getClient();
             mGoogleApiClient.connect();
         }
     }
@@ -101,8 +97,7 @@ public class WelcomeActivity extends BasicActivity {
                 //viewSettings();
                 return true;
             case R.id.logout:
-                signOut();
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, LogoutActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 return true;
@@ -143,41 +138,12 @@ public class WelcomeActivity extends BasicActivity {
 
     @Override
     public void onBackPressed() {
-        signOut();
-        startActivity(new Intent(this, MainActivity.class));
+        Intent intent = new Intent(this, LogoutActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
-    private void signOut() {
 
-        if(getProvider().equals("Facebook")) {
-            LoginManager.getInstance().logOut();
-        }
-        if(getProvider().equals("Google")){
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            // ...
-                            Toast.makeText(getApplicationContext(),"Logged Out",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-        FirebaseAuth.getInstance().signOut();
-    }
-
-    private String getProvider() {
-        for (UserInfo user : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
-            if (user.getProviderId().equals("facebook.com")) {
-                System.out.println("User is signed in with Facebook");
-                return "Facebook";
-            }
-            if (user.getProviderId().equals("google.com")) {
-                System.out.println("User is signed in with Google");
-                return "Google";
-            }
-        }
-        return "Firebase";
-    }
 
 
 }
