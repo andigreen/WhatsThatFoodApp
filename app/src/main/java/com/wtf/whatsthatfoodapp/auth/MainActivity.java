@@ -64,6 +64,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
     private TextView usernameText;
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager mCallbackManager;
+    Intent displayHomePage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,25 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         back_btn.setOnClickListener(this);
         signup_btn.setOnClickListener(this);
 
+        App app = (App)getApplicationContext();
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        // [END config_signin]
+        app.setGso(gso);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, app.getGso())
+                .build();
+
+        app.setClient(mGoogleApiClient);
+        Log.d(TAG, "GoogleApiClient Connected: "+ app.getClient().isConnected());
+
+        displayHomePage = new Intent(this,WelcomeActivity.class);
+
+
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference();
         // [START initialize_auth]
@@ -109,7 +129,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         // [END initialize_auth]
         user = mAuth.getCurrentUser();
         // [START auth_state_listener]
-        final Intent displayHomePage = new Intent(this,WelcomeActivity.class);
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -126,12 +146,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         };
         // [END auth_state_listener]
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, App.getGso())
-                .build();
 
-        App.getInstance().setClient(mGoogleApiClient);
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
 
@@ -162,7 +177,6 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
     private void handleFacebookAccessToken(final AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
-        final Intent displayHomePage = new Intent(this,WelcomeActivity.class);
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -199,8 +213,6 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         }
         showProgressDialog();
 
-        final Intent displayHomePage = new Intent(this, WelcomeActivity.class);
-        final Intent displayStartPage = new Intent(this, MainActivity.class);
         // [START sign_in_with_email]
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString("signInMethod","Email");
@@ -468,7 +480,6 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         showProgressDialog();
         // [END_EXCLUDE]
 
-        final Intent displayHomePage = new Intent(this,WelcomeActivity.class);
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

@@ -15,6 +15,38 @@
       },
       "oauth_client": [
         {
+          "client_id": "1059716098332-r7b07eir95mo6qmego9fs74io7bpdqui.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wtf.whatsthatfoodapp",
+            "certificate_hash": "33636D9A8B7512F1E62724EDF3449699CD5B0A5F"
+          }
+        },
+        {
+          "client_id": "1059716098332-v1536b74c0kdf1vkqpa51nkpfhjko2uf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wtf.whatsthatfoodapp",
+            "certificate_hash": "3ED9DF7D11C1DC58BD2D7ABFEBEAB13633293E95"
+          }
+        },
+        {
+          "client_id": "1059716098332-9qgoks1n42fir08ss8b9b5obdshebh9l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wtf.whatsthatfoodapp",
+            "certificate_hash": "25BC05843E0612A277EFE4CB157D5E51508A7D45"
+          }
+        },
+        {
+          "client_id": "1059716098332-5lg5gtfeq3iphpken4g253be5q3cnbtj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wtf.whatsthatfoodapp",
+            "certificate_hash": "101C93128AE0E856E4CE9BF354CAA366D002BEE8"
+          }
+        },
+        {
           "client_id": "1059716098332-69leej6t77oi3g9p4r40ri8tene0sc29.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -3,6 +3,7 @@ package com.wtf.whatsthatfoodapp.auth;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -17,15 +18,23 @@ import com.wtf.whatsthatfoodapp.R;
 
 public class LogoutActivity extends AppCompatActivity {
 
+    private static final String TAG = "LogoutActivity";
+
     private GoogleApiClient mGoogleApiClient;
+
+    private App app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        app = (App)getApplicationContext();
+
         //setContentView(R.layout.activity_logout);
         if(BasicActivity.getProvider().equals("Google")){
-            mGoogleApiClient = App.getInstance().getClient();
+            mGoogleApiClient = app.getClient();
+            Log.e(TAG, "Get Google API Client");
         }
+        Log.d(TAG, "GoogleApiClient Connected: "+ mGoogleApiClient.isConnected());
         signOut();
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -39,7 +48,7 @@ public class LogoutActivity extends AppCompatActivity {
             LoginManager.getInstance().logOut();
         }
         if(BasicActivity.getProvider().equals("Google")){
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+            Auth.GoogleSignInApi.signOut(app.getClient()).setResultCallback(
                     new ResultCallback<Status>() {
                         @Override
                         public void onResult(Status status) {

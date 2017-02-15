@@ -15,6 +15,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -24,7 +25,7 @@ import com.google.firebase.auth.UserInfo;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.R;
 
-public class WelcomeActivity extends BasicActivity {
+public class WelcomeActivity extends BasicActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private final String TAG = "WelcomeActivity";
     private FirebaseAuth mAuth;
@@ -44,6 +45,23 @@ public class WelcomeActivity extends BasicActivity {
         searchField = (EditText)findViewById(R.id.searchfield);
         searchField.clearFocus();
         hideDefaultKeyboard();
+
+        App app = (App)getApplicationContext();
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        // [END config_signin]
+        app.setGso(gso);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, app.getGso())
+                .build();
+
+        app.setClient(mGoogleApiClient);
+        app.getClient().connect();
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -61,15 +79,14 @@ public class WelcomeActivity extends BasicActivity {
             }
         };
 
-        if(signInMethod.equals("Facebook")){
+        if(BasicActivity.getProvider().equals("Facebook")){
             logger = AppEventsLogger.newLogger(this);
             logger.logEvent("User logged in with Facebook");
 
         }
 
-        if(getProvider().equals("Google")){
-            mGoogleApiClient = App.getInstance().getClient();
-            mGoogleApiClient.connect();
+        if(BasicActivity.getProvider().equals("Google")){
+            mGoogleApiClient = app.getClient();
         }
     }
 
@@ -98,7 +115,6 @@ public class WelcomeActivity extends BasicActivity {
                 return true;
             case R.id.logout:
                 Intent intent = new Intent(this, LogoutActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 return true;
             default:
@@ -139,11 +155,13 @@ public class WelcomeActivity extends BasicActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, LogoutActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-
+    }
 }
