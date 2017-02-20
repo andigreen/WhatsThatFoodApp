@@ -16,7 +16,7 @@ import com.google.firebase.auth.UserInfo;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.R;
 
-public class LogoutActivity extends AppCompatActivity {
+public class LogoutActivity extends BasicActivity {
 
     private static final String TAG = "LogoutActivity";
 
@@ -32,6 +32,7 @@ public class LogoutActivity extends AppCompatActivity {
         //setContentView(R.layout.activity_logout);
         if(BasicActivity.getProvider().equals("Google")){
             mGoogleApiClient = app.getClient();
+            mGoogleApiClient.connect();
             Log.e(TAG, "Get Google API Client");
         }
         Log.d(TAG, "GoogleApiClient Connected: "+ mGoogleApiClient.isConnected());

@@ -7,44 +7,50 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.WindowManager;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.R;
 
-public class WelcomeActivity extends BasicActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class ProfileActivity extends BasicActivity implements GoogleApiClient.OnConnectionFailedListener{
 
-    private final String TAG = "WelcomeActivity";
+    private final String TAG = "ProfileActivity";
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    private String signInMethod;
+    private DatabaseReference mDatabase;
+    private FirebaseDatabase database;
+    private FirebaseUser user;
+
+    private String username;
+
+    private TextView usernameField;
     private GoogleApiClient mGoogleApiClient;
-    private AppEventsLogger logger;
-    private EditText searchField;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
-        sharedPrefs = getSharedPreferences(PREFS_NAME,0);
-        signInMethod = sharedPrefs.getString("signInMethod","default");
-        Log.d(TAG, signInMethod);
-        searchField = (EditText)findViewById(R.id.searchfield);
-        searchField.clearFocus();
-        hideDefaultKeyboard();
+        setContentView(R.layout.activity_profile);
+
+        usernameField = (TextView)findViewById(R.id.name_content);
+
+        database = FirebaseDatabase.getInstance();
+        mDatabase = database.getReference();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
         App app = (App)getApplicationContext();
 
@@ -56,11 +62,10 @@ public class WelcomeActivity extends BasicActivity implements GoogleApiClient.On
         app.setClient(mGoogleApiClient);
         app.getClient().connect();
 
-        mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
@@ -73,25 +78,54 @@ public class WelcomeActivity extends BasicActivity implements GoogleApiClient.On
             }
         };
 
-        if(BasicActivity.getProvider().equals("Facebook")){
-            logger = AppEventsLogger.newLogger(this);
-            logger.logEvent("User logged in with Facebook");
 
-        }
-
-        if(BasicActivity.getProvider().equals("Google")){
-            mGoogleApiClient = app.getClient();
-        }
     }
 
-    private void hideDefaultKeyboard() {
-        WelcomeActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        //you have got lot of methods here
+    // [START on_start_add_listener]
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+        // Add value event listener to the post
+        // [START post_value_event_listener]
+        ValueEventListener usernameListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String username = dataSnapshot.getValue().toString();
+                // [START_EXCLUDE]
+                usernameField.setText(username);
+                // [END_EXCLUDE]
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadData:onCancelled", databaseError.toException());
+                // [START_EXCLUDE]
+                Toast.makeText(ProfileActivity.this, "Failed to load data.",
+                        Toast.LENGTH_SHORT).show();
+                // [END_EXCLUDE]
+            }
+        };
+        mDatabase.child("users").child(user.getUid()).child("username").addListenerForSingleValueEvent(usernameListener);
+        // [END post_value_event_listener]
     }
+    // [END on_start_add_listener]
+
+    // [START on_stop_remove_listener]
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+    // [END on_stop_remove_listener]
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
@@ -115,50 +149,20 @@ public class WelcomeActivity extends BasicActivity implements GoogleApiClient.On
                 return super.onOptionsItemSelected(item);
         }
     }
-    // [START on_start_add_listener]
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-
-    }
-    // [END on_start_add_listener]
-
-    // [START on_stop_remove_listener]
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-
-    }
-    // [END on_stop_remove_listener]
-
-
-
-    // for Android, you should also log app deactivation
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, LogoutActivity.class);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);
-    }
-
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 
     private void viewProfile(){
         Intent intent = new Intent(this, ProfileActivity.class);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

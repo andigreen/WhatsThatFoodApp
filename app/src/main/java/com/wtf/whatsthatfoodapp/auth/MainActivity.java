@@ -117,6 +117,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                 .build();
 
         app.setClient(mGoogleApiClient);
+        app.getClient().connect();
         Log.d(TAG, "GoogleApiClient Connected: "+ app.getClient().isConnected());
 
         displayHomePage = new Intent(this,WelcomeActivity.class);
