@@ -130,6 +130,11 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         // [END initialize_auth]
         user = mAuth.getCurrentUser();
         // [START auth_state_listener]
+        if(user != null &&
+                (BasicActivity.getProvider().equals("Facebook")
+                        || BasicActivity.getProvider().equals("Google"))){
+            startActivity(displayHomePage);
+        }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override

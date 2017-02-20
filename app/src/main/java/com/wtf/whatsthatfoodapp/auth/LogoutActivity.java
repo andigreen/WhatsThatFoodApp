@@ -34,8 +34,9 @@ public class LogoutActivity extends BasicActivity {
             mGoogleApiClient = app.getClient();
             mGoogleApiClient.connect();
             Log.e(TAG, "Get Google API Client");
+            Log.d(TAG, "GoogleApiClient Connected: "+ mGoogleApiClient.isConnected());
         }
-        Log.d(TAG, "GoogleApiClient Connected: "+ mGoogleApiClient.isConnected());
+
         signOut();
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
