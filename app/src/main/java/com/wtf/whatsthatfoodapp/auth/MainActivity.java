@@ -185,7 +185,10 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()) {
-                            mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("username").setValue(token.getUserId());
+                            UserSettings user = new UserSettings(mAuth.getCurrentUser().getEmail()
+                                    ,token.getUserId(),mAuth.getCurrentUser().getUid());
+                            UserSettingsDAO dao = new UserSettingsDAO(mAuth.getCurrentUser().getUid());
+                            dao.writeUser(user);
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                             SharedPreferences.Editor editor = sharedPrefs.edit();
                             editor.putString("signInMethod","Facebook");
@@ -332,11 +335,11 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
                             verificationEmail();
-                            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
                             String username = usernameField.getText().toString();
-                            mDatabase.child("users").child(user.getUid())
-                                    .child("username").setValue(username);
+                            UserSettings user = new UserSettings(mAuth.getCurrentUser().getEmail()
+                                    ,username,mAuth.getCurrentUser().getUid());
+                            UserSettingsDAO dao = new UserSettingsDAO(mAuth.getCurrentUser().getUid());
+                            dao.writeUser(user);
                             updateUI(0);
 
                         }
@@ -488,7 +491,10 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                            mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("username").setValue(acct.getDisplayName());
+                            UserSettings user = new UserSettings(mAuth.getCurrentUser().getEmail()
+                                    ,acct.getDisplayName(),mAuth.getCurrentUser().getUid());
+                            UserSettingsDAO dao = new UserSettingsDAO(mAuth.getCurrentUser().getUid());
+                            dao.writeUser(user);
                             startActivity(displayHomePage);
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds

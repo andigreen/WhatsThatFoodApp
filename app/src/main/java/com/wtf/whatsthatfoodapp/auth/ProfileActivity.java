@@ -88,11 +88,12 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         mAuth.addAuthStateListener(mAuthListener);
         // Add value event listener to the post
         // [START post_value_event_listener]
-        ValueEventListener usernameListener = new ValueEventListener() {
+        ValueEventListener userInfoListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                String username = dataSnapshot.getValue().toString();
+                UserSettings userInfo = dataSnapshot.getValue(UserSettings.class);
+                String username = userInfo.getUsername();
                 // [START_EXCLUDE]
                 usernameField.setText(username);
                 // [END_EXCLUDE]
@@ -108,7 +109,8 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
                 // [END_EXCLUDE]
             }
         };
-        mDatabase.child("users").child(user.getUid()).child("username").addListenerForSingleValueEvent(usernameListener);
+        UserSettingsDAO dao = new UserSettingsDAO(user.getUid());
+        dao.getUserInfoRef().addListenerForSingleValueEvent(userInfoListener);
         // [END post_value_event_listener]
     }
     // [END on_start_add_listener]
@@ -163,6 +165,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 }

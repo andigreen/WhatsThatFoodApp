@@ -153,7 +153,8 @@ public class WelcomeActivity extends BasicActivity implements GoogleApiClient.On
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
     private void viewProfile(){
