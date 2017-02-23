@@ -6,6 +6,8 @@ import android.util.Log;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.ArrayList;
+
 @IgnoreExtraProperties
 public class Memory {
 
@@ -16,6 +18,10 @@ public class Memory {
     private String key;
     @NonNull private String title;
     @NonNull private String loc;
+    private ArrayList<String> tags;
+    private int freq;
+    private boolean savedForNextTime;
+    private boolean reminder;
     // UNIX timestamps
     private long tsCreated;
     private long tsCreatedNeg; // Negative timestamp, so we can sort descending
@@ -24,6 +30,7 @@ public class Memory {
     public Memory() {
         title = loc = "";
         tsCreated = tsModified = 0L;
+        freq = 0;
     }
 
     /**
@@ -86,8 +93,40 @@ public class Memory {
         return tsModified;
     }
 
+    public ArrayList<String> getTags(){
+        return tags;
+    }
 
+    public void setTag(String tags){
+        String[] tagsArr = tags.split("#");
+        for(int i=0; i < tagsArr.length; i++){
+            this.tags.add(tagsArr[i]);
+        }
+    }
 
+    public int getFreq(){
+        return freq;
+    }
+
+    public void addFreq(){
+        freq++;
+    }
+
+    public boolean getSavedForNextTime(){
+        return savedForNextTime;
+    }
+
+    public void setSavedForNextTime(boolean save){
+        savedForNextTime = save;
+    }
+
+    public boolean getReminder(){
+        return reminder;
+    }
+
+    public void setReminder(boolean remind){
+        reminder = remind;
+    }
     // Helper methods
 
     private static long unixTime() {
