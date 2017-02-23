@@ -190,10 +190,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()) {
-                            UserSettings user = new UserSettings(mAuth.getCurrentUser().getEmail()
-                                    ,token.getUserId(),mAuth.getCurrentUser().getUid());
-                            UserSettingsDAO dao = new UserSettingsDAO(mAuth.getCurrentUser().getUid());
-                            dao.writeUser(user);
+                            createUserInDB(mAuth.getCurrentUser().getEmail(),token.getUserId()
+                                ,mAuth.getCurrentUser().getUid());
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                             SharedPreferences.Editor editor = sharedPrefs.edit();
                             editor.putString("signInMethod","Facebook");
@@ -341,10 +339,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                         if (task.isSuccessful()) {
                             verificationEmail();
                             String username = usernameField.getText().toString();
-                            UserSettings user = new UserSettings(mAuth.getCurrentUser().getEmail()
-                                    ,username,mAuth.getCurrentUser().getUid());
-                            UserSettingsDAO dao = new UserSettingsDAO(mAuth.getCurrentUser().getUid());
-                            dao.writeUser(user);
+                            createUserInDB(mAuth.getCurrentUser().getEmail(),username,
+                                    mAuth.getCurrentUser().getUid());
                             updateUI(0);
 
                         }
@@ -496,10 +492,8 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                            UserSettings user = new UserSettings(mAuth.getCurrentUser().getEmail()
-                                    ,acct.getDisplayName(),mAuth.getCurrentUser().getUid());
-                            UserSettingsDAO dao = new UserSettingsDAO(mAuth.getCurrentUser().getUid());
-                            dao.writeUser(user);
+                            createUserInDB(mAuth.getCurrentUser().getEmail(),acct.getDisplayName(),
+                                    mAuth.getCurrentUser().getUid());
                             startActivity(displayHomePage);
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -548,5 +542,12 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
+
+    public void createUserInDB(String email, String username, String Uid){
+        UserSettings user = new UserSettings(email
+                ,username,Uid);
+        UserSettingsDAO dao = new UserSettingsDAO(Uid);
+        dao.writeUser(user);
+    }
 
 }

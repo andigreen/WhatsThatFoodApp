@@ -15,5 +15,6 @@
     <string name="collage_title">What\'s That Food?</string>
     <string name="collage_search">Search</string>
     <string name="search">Search</string>
+    <string name="Logout">Logged Out</string>
 
 </resources>

@@ -55,7 +55,7 @@ public class LogoutActivity extends BasicActivity {
                         @Override
                         public void onResult(Status status) {
                             // ...
-                            Toast.makeText(getApplicationContext(),"Logged Out",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),R.string.Logout,Toast.LENGTH_SHORT).show();
                         }
                     });
         }
