@@ -120,7 +120,7 @@ public class MainActivity extends BasicActivity implements View.OnClickListener,
         app.getClient().connect();
         Log.d(TAG, "GoogleApiClient Connected: "+ app.getClient().isConnected());
 
-        displayHomePage = new Intent(this,WelcomeActivity.class);
+        displayHomePage = new Intent(this,CollageActivity.class);
 
 
         database = FirebaseDatabase.getInstance();
