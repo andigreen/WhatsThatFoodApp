@@ -73,6 +73,32 @@
                         android:inputType="text"/>
                 </android.support.design.widget.TextInputLayout>
 
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/create_memory_tags_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/create_memory_tags"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/create_memory_tags"
+                        android:inputType="text"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <CheckedTextView
+                    android:text="Save For later"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/create_memory_saved" />
+
+                <CheckedTextView
+                    android:text="Remind me later"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/create_memory_reminder" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

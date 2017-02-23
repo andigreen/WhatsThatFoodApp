@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -101,7 +102,13 @@ public class CreateMemoryActivity extends AppCompatActivity {
             String loc = ((TextInputEditText) findViewById(
                     R.id.create_memory_loc))
                     .getText().toString();
-
+            String tags = ((TextInputEditText) findViewById(
+                    R.id.create_memory_tags))
+                    .getText().toString();
+            boolean savedForNextTime = ((CheckedTextView) findViewById(
+                    R.id.create_memory_saved)).isChecked();
+            boolean reminder = ((CheckedTextView) findViewById(
+                    R.id.create_memory_reminder)).isChecked();
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 Log.e(TAG, "onOptionsItemSelected: current user is null!");
@@ -113,6 +120,9 @@ public class CreateMemoryActivity extends AppCompatActivity {
             final Memory memory = new Memory();
             memory.setTitle(title);
             memory.setLoc(loc);
+            memory.setTag(tags);
+            memory.setSavedForNextTime(savedForNextTime);
+            memory.setReminder(reminder);
             dao.writeMemory(memory);
 
             // Upload photo
