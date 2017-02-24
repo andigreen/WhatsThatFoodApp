@@ -85,19 +85,48 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/create_memory_tags"
                         android:inputType="text"/>
+
                 </android.support.design.widget.TextInputLayout>
 
-                <CheckedTextView
-                    android:text="Save For later"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/create_memory_saved" />
 
-                <CheckedTextView
-                    android:text="Remind me later"
+                <TableLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/create_memory_reminder" />
+                    android:layout_height="match_parent">
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+
+                        <TextView
+                            android:text="Save For later"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/create_memory_saved" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/saveFNTcheck"
+                            android:layout_weight="1" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+
+                        <TextView
+                            android:text="Remind me later"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/create_memory_reminder" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/remindCheck" />
+                    </TableRow>
+
+                </TableLayout>
 
             </LinearLayout>
         </LinearLayout>

@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -41,6 +42,13 @@ public class CreateMemoryActivity extends BasicActivity {
 
     private Uri photoUri;
 
+    private boolean savedForNextTime;
+
+    private boolean reminder;
+
+    private CheckBox saveFNTCheck;
+
+    private CheckBox remindCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +62,11 @@ public class CreateMemoryActivity extends BasicActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        saveFNTCheck = (CheckBox) findViewById(R.id.saveFNTcheck);
+        remindCheck = (CheckBox) findViewById(R.id.remindCheck);
+
+        saveFNTCheck.setOnClickListener(this);
+        remindCheck.setOnClickListener(this);
         // Initiate photo loading
         if (Build.VERSION.SDK_INT >= 21 ){
             // We need to ask for permission in runtime for android 6.0
@@ -141,6 +154,24 @@ public class CreateMemoryActivity extends BasicActivity {
             finish();
         }
 
+        if (item.getItemId() == R.id.saveFNTcheck){
+            if (saveFNTCheck.isChecked()) {
+                saveFNTCheck.setChecked(false);
+            } else {
+                saveFNTCheck.setChecked(true);
+            }
+
+        }
+
+        if (item.getItemId() == R.id.remindCheck){
+            if (remindCheck.isChecked()) {
+                remindCheck.setChecked(false);
+            } else {
+                remindCheck.setChecked(true);
+            }
+
+        }
+
         // Save new memory
         if (item.getItemId() == R.id.create_memory_save && validateForm()) {
             String title = ((TextInputEditText) findViewById(
@@ -152,10 +183,8 @@ public class CreateMemoryActivity extends BasicActivity {
             String tags = ((TextInputEditText) findViewById(
                     R.id.create_memory_tags))
                     .getText().toString();
-            boolean savedForNextTime = ((CheckedTextView) findViewById(
-                    R.id.create_memory_saved)).isChecked();
-            boolean reminder = ((CheckedTextView) findViewById(
-                    R.id.create_memory_reminder)).isChecked();
+            boolean savedForNextTime = saveFNTCheck.isChecked();
+            boolean reminder = this.remindCheck.isChecked();
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 Log.e(TAG, "onOptionsItemSelected: current user is null!");
