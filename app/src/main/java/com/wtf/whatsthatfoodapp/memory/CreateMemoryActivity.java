@@ -23,8 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.auth.BasicActivity;
 
-public class CreateMemoryActivity extends AppCompatActivity {
+public class CreateMemoryActivity extends BasicActivity {
 
     private static final String TAG = CreateMemoryActivity.class
             .getSimpleName();

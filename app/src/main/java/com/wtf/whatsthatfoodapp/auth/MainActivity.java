@@ -39,7 +39,7 @@ import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.memory.CollageActivity;
 
-public class MainActivity extends BasicActivity implements View.OnClickListener,  GoogleApiClient.OnConnectionFailedListener{
+public class MainActivity extends BasicActivity{
     private final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
     private Button email_btn;

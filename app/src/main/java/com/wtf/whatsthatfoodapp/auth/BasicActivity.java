@@ -3,25 +3,31 @@ package com.wtf.whatsthatfoodapp.auth;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
 import com.wtf.whatsthatfoodapp.R;
 
-public class BasicActivity extends AppCompatActivity {
+public class BasicActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
+    public final String TAG = "BasicActivity";
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
 
 
     public static final String PREFS_NAME = "WTF";
-    SharedPreferences sharedPrefs;
+    public SharedPreferences sharedPrefs;
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -39,12 +45,6 @@ public class BasicActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        hideProgressDialog();
-    }
-
 
     public static String getProvider() {
         for (UserInfo user : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
@@ -58,5 +58,31 @@ public class BasicActivity extends AppCompatActivity {
             }
         }
         return "Firebase";
+    }
+
+    // [START on_start_add_listener]
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+    // [END on_start_add_listener]
+
+    // [START on_stop_remove_listener]
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressDialog();
+
+    }
+    // [END on_stop_remove_listener]
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }

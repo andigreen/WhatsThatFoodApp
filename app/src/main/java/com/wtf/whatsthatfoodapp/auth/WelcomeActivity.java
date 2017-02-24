@@ -26,7 +26,7 @@ import com.google.firebase.auth.UserInfo;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.R;
 
-public class WelcomeActivity extends BasicActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class WelcomeActivity extends BasicActivity{
 
     private final String TAG = "WelcomeActivity";
     private FirebaseAuth mAuth;
