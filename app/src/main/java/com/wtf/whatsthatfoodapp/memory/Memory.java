@@ -31,6 +31,7 @@ public class Memory {
         title = loc = "";
         tsCreated = tsModified = 0L;
         freq = 0;
+        tags = new ArrayList<String>();
     }
 
     /**
@@ -99,6 +100,8 @@ public class Memory {
 
     public void setTag(String tags){
         String[] tagsArr = tags.split("#");
+        if(tagsArr == null)
+            return;
         for(int i=0; i < tagsArr.length; i++){
             this.tags.add(tagsArr[i]);
         }
