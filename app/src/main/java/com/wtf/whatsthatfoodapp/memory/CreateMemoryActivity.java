@@ -1,11 +1,16 @@
 package com.wtf.whatsthatfoodapp.memory;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,7 +29,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.BasicActivity;
+import com.wtf.whatsthatfoodapp.camera.IOImage;
+import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
 
+import java.io.File;
 public class CreateMemoryActivity extends BasicActivity {
 
     private static final String TAG = CreateMemoryActivity.class
@@ -32,6 +40,7 @@ public class CreateMemoryActivity extends BasicActivity {
     private static final int REQUEST_PHOTO_GET = 144;
 
     private Uri photoUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +55,46 @@ public class CreateMemoryActivity extends BasicActivity {
         }
 
         // Initiate photo loading
-        Intent getPhoto = new Intent(Intent.ACTION_GET_CONTENT);
-        getPhoto.setType("image/*");
-        startActivityForResult(getPhoto, REQUEST_PHOTO_GET);
+        if (Build.VERSION.SDK_INT >= 21 ){
+            // We need to ask for permission in runtime for android 6.0
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}
+                    ,1);
+        } else {
+            dispatchTakePictureIntent();
+        }
+    }
+
+    private void dispatchTakePictureIntent() {
+        final int REQUEST_IMAGE_CAPTURE = 1;
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_PHOTO_GET);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 1
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, take picture
+                    Intent getPhoto = new Intent(this, TakePhotoAPI21Activity.class);
+                    startActivityForResult(getPhoto,REQUEST_PHOTO_GET);
+                } else {
+
+                    // permission denied, return to WelcomeActivity
+                    Toast.makeText(this, "Cannot Access Camera", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                return;
+            }
+        }
     }
 
     /**
@@ -168,11 +214,22 @@ public class CreateMemoryActivity extends BasicActivity {
                 Log.d(TAG, "onActivityResult (PHOTO_GET): Failed to get photo");
                 return;
             }
-
             // Load photo view with the result's URI
-            photoUri = data.getData();
+            Log.e("Photo Received","True");
+            Bundle extras = data.getExtras();
+            String path;
+            if (Build.VERSION.SDK_INT >= 21){
+                path = (String) extras.get("data");
+            } else {
+                Bitmap bitmapImage = (Bitmap) extras.get("data");
+                path = IOImage.saveImage(this, bitmapImage, true);
+            }
+
+            photoUri = Uri.fromFile(new File(path));
+
             ImageView imageView = (ImageView) findViewById(R.id
                     .create_memory_photo);
+
             Glide.with(this)
                     .load(photoUri)
                     .centerCrop()

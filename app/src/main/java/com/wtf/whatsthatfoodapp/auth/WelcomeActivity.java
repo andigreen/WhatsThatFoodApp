@@ -2,12 +2,16 @@ package com.wtf.whatsthatfoodapp.auth;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,6 +29,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
+import com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity;
 
 public class WelcomeActivity extends BasicActivity{
 
@@ -164,5 +170,9 @@ public class WelcomeActivity extends BasicActivity{
         startActivity(intent);
     }
 
+    public void addMemory(View v){
+        Intent createMemory = new Intent(this, CreateMemoryActivity.class);
+        startActivity(createMemory);
+    }
 
 }
