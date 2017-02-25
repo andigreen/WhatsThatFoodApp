@@ -4,6 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -12,13 +17,26 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
+
+import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
+import static android.os.Process.setThreadPriority;
 
 /**
  * Created by Aitor on 23/02/2017.
  */
 
-public class IOImage {
-    public static String saveImage(Context context, Bitmap bitmapImage, boolean saveToGallery){
+public class IOImage implements Runnable{
+    private Bitmap bitmapImage;
+    private Context context;
+    private boolean saveToGallery;
+
+    public IOImage(Context context, Bitmap bitmapImage, boolean saveToGallery){
+        this.context = context;
+        this.bitmapImage = bitmapImage;
+        this.saveToGallery = saveToGallery;
+    }
+    public String saveImage(){
         long timestamp = System.currentTimeMillis();
         File directory = context.getExternalCacheDir();
         String imageName = "pic"+timestamp+".jpg";
@@ -40,15 +58,15 @@ public class IOImage {
 
             }
         }
-        Log.e("PIC saved path",""+directory.getAbsolutePath());
 
         if (saveToGallery){
-            galleryAddPic(context,bitmapImage);
+            Thread thread = new Thread(this);
+            thread.start();
         }
         //cachedImageFile.delete();
         return directory.getAbsolutePath()+"/"+imageName;
     }
-    private static void galleryAddPic(Context context, Bitmap bitmapImage) {
+    private void galleryAddPic() {
         ContentValues values = new ContentValues();
 
         values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
@@ -62,6 +80,8 @@ public class IOImage {
                 imageOutput.close();
             } catch (IOException e){}
         } catch(FileNotFoundException e){}
-        Log.e("Pic Gallery ADDED", "True");
+    }
+    public void run(){
+        galleryAddPic();
     }
 }

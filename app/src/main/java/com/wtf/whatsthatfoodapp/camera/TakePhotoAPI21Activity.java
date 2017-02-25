@@ -76,7 +76,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
     CameraCaptureSession mSession;
     String cameraId;
     Handler handler;
-    HandlerThread thread;
+    HandlerThread cameraThread;
     TotalCaptureResult captureResult;
     Button takePhotoBtn;
     Button acceptPhotoBtn;
@@ -201,6 +201,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                     takePhotoBtn.setTag(1);
                 } else {
                     // User cancelled the picture taken
+                    openCamera();
                     orientListener.enable();
                     takePhotoBtn.setTag(0);
                     acceptPhotoBtn.clearAnimation();
@@ -330,10 +331,8 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
 
 
                     capturedImageSize = chooseOptimalSize(jpegSizes,width,height);
-                    Log.e("imageSize",capturedImageSize.getWidth()+"-"+capturedImageSize.getHeight());
 
                     previewSize = chooseOptimalSize(streamConfigs.getOutputSizes(SurfaceTexture.class),width,height);
-                    Log.e("previewSize",previewSize.getWidth()+"-"+previewSize.getHeight());
 
 
                     // Rotation needed in the captured image in order to be upright;
@@ -350,12 +349,10 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                     float imageRatio = (float)(capturedImageSize.getWidth())/capturedImageSize.getHeight();
                     int previewViewWIDTH;
                     int previewViewHEIGHT;
-                    Log.e("ImageRatio",""+imageRatio);
 
                     previewViewWIDTH = previewView.getWidth();
                     previewViewHEIGHT = (int) (previewViewWIDTH*imageRatio);
 
-                    Log.e("NEW PREVIEW",previewViewWIDTH+"-"+previewViewHEIGHT);
                     previewView.setLayoutParams(new FrameLayout.LayoutParams(previewViewWIDTH, previewViewHEIGHT));
 
                     setButtonsSize(width,height,previewViewWIDTH,previewViewHEIGHT);
@@ -366,7 +363,6 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                     ImageReader.OnImageAvailableListener imageReaderListener = new ImageReader.OnImageAvailableListener() {
                         @Override
                         public void onImageAvailable(ImageReader reader) {
-                            Log.e("Image Captured","True");
                             capturedImage  = reader.acquireLatestImage();
 
                             // Sent a message using the handler from the Camera Thread to Main Thread
@@ -387,7 +383,6 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
 
 
                 }catch(CameraAccessException e){
-                    Log.e("Here","here");
                     handleCameraAccessNotAccepted();
                 }
 
@@ -433,7 +428,6 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                 @Override
                 public void onOpened(CameraDevice camera) {
                     cameraDevice = camera;
-                    Log.e("Camera Open", "True");
                     setButtonsSize(frameLayout.getWidth(),frameLayout.getHeight(),previewView.getWidth(),previewView.getHeight());
 
                     final Surface previewSurface = new Surface(previewTexture);
@@ -490,12 +484,12 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
             // Trigger needed for flash
             request.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
             request.set(CaptureRequest.CONTROL_AE_MODE, flash);
-            Log.e("flash",flash+"");
 
             mSession.capture(request.build(), new CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     captureResult = result;
+                    cameraDevice.close();
                 }
             }, handler);
         } catch (CameraAccessException e){
@@ -508,7 +502,8 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
         takePhotoBtn.setVisibility(View.INVISIBLE);
         acceptPhotoBtn.setVisibility(View.INVISIBLE);
 
-        String path = IOImage.saveImage(this, bitmapImage, true);
+        IOImage ioImage = new IOImage(this, bitmapImage, true);
+        String path = ioImage.saveImage();
         Intent resultIntent = new Intent();
         resultIntent.putExtra("data", path);
         setResult(Activity.RESULT_OK, resultIntent);
@@ -638,17 +633,17 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
     }
 
     private void startThread(){
-        thread = new HandlerThread("Camera Thread",THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-        handler = new MyHandler(thread.getLooper(),this);
+        cameraThread = new HandlerThread("Camera Thread",THREAD_PRIORITY_BACKGROUND);
+        cameraThread.start();
+        handler = new MyHandler(cameraThread.getLooper(),this);
 
         }
 
     private void stopThread() {
-        thread.quitSafely();
+        cameraThread.quitSafely();
         try {
-            thread.join();
-            thread = null;
+            cameraThread.join();
+            cameraThread = null;
             handler = null;
         } catch (InterruptedException e) {
             e.printStackTrace();
