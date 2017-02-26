@@ -35,7 +35,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".auth.WelcomeActivity" />
         <activity android:name=".camera.TakePhotoAPI21Activity" android:theme="@style/Theme.AppCompat.NoActionBar" android:screenOrientation="portrait"/>
 
         <!--

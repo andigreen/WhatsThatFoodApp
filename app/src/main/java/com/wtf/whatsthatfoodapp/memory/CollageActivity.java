@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
@@ -24,6 +25,7 @@ import com.wtf.whatsthatfoodapp.auth.BasicActivity;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.auth.MainActivity;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.auth.ProfileActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
 import com.wtf.whatsthatfoodapp.search.SearchTable;
 
@@ -110,30 +112,38 @@ public class CollageActivity extends BasicActivity {
         });
     }
 
+
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.collage_toolbar, menu);
+    public boolean onCreateOptionsMenu(Menu menu){
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
         switch (item.getItemId()) {
-            case R.id.collage_logout:
+            case R.id.profile:
+                viewProfile();
+                return true;
+            case R.id.settings:
+                //viewSettings();
+                return true;
+            case R.id.logout:
                 Intent intent = new Intent(this, LogoutActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 return true;
             case R.id.collage_search:
                 Intent searchIntent = new Intent(this, SearchActivity.class);
                 startActivity(searchIntent);
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        // Other options not handled
-        return super.onOptionsItemSelected(item);
     }
-
     // [START on_start_add_listener]
     @Override
     public void onStart() {
@@ -154,9 +164,19 @@ public class CollageActivity extends BasicActivity {
     }
     // [END on_stop_remove_listener]
 
+    private void viewProfile(){
+        Intent intent = new Intent(this, ProfileActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+
+    public void addMemory(View v){
+        Intent createMemory = new Intent(this, CreateMemoryActivity.class);
+        startActivity(createMemory);
     }
 }

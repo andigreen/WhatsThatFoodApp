@@ -97,6 +97,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
                 // [START_EXCLUDE]
                 usernameField.setText(username);
                 // [END_EXCLUDE]
+
             }
 
             @Override
@@ -151,13 +152,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, WelcomeActivity.class);
-        startActivity(intent);
-    }
-
+    
     private void viewProfile(){
         Intent intent = new Intent(this, ProfileActivity.class);
         startActivity(intent);
