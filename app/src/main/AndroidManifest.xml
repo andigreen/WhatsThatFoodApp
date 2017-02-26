@@ -58,6 +58,9 @@
         <activity android:name=".search.SearchActivity" />
         <activity android:name=".auth.LogoutActivity" />
         <activity android:name=".auth.ProfileActivity"></activity>
+        <activity android:name=".auth.SettingsActivity"
+            android:label="Preferences"></activity>
+
     </application>
 
 </manifest>

@@ -26,6 +26,7 @@ import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.auth.MainActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.ProfileActivity;
+import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
 import com.wtf.whatsthatfoodapp.search.SearchTable;
 
@@ -130,7 +131,7 @@ public class CollageActivity extends BasicActivity {
                 viewProfile();
                 return true;
             case R.id.settings:
-                //viewSettings();
+                viewSettings();
                 return true;
             case R.id.logout:
                 Intent intent = new Intent(this, LogoutActivity.class);
@@ -169,6 +170,12 @@ public class CollageActivity extends BasicActivity {
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
+    private void viewSettings(){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
