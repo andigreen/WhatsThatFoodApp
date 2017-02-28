@@ -190,7 +190,8 @@ public class MainActivity extends BasicActivity{
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()) {
-                            createUserInDB(mAuth.getCurrentUser().getEmail(),token.getUserId()
+                            createUserInDB(mAuth.getCurrentUser().getEmail()
+                                    ,mAuth.getCurrentUser().getDisplayName()
                                 ,mAuth.getCurrentUser().getUid());
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                             SharedPreferences.Editor editor = sharedPrefs.edit();
