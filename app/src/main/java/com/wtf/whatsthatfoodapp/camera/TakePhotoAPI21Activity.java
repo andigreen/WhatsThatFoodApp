@@ -502,7 +502,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
         takePhotoBtn.setVisibility(View.INVISIBLE);
         acceptPhotoBtn.setVisibility(View.INVISIBLE);
 
-        IOImage ioImage = new IOImage(this, bitmapImage, true);
+        IOImage ioImage = new IOImage(this, bitmapImage);
         String path = ioImage.saveImage();
         Intent resultIntent = new Intent();
         resultIntent.putExtra("data", path);

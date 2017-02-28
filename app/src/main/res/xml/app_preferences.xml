@@ -21,4 +21,9 @@
         android:defaultValue="false"
         android:title="Check box preference"
         android:key="check_box_preference_1" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:title="Save Images To Gallery"
+        android:key="save_to_gallery"/>
+
 </PreferenceScreen>

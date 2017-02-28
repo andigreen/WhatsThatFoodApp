@@ -2,6 +2,7 @@ package com.wtf.whatsthatfoodapp.camera;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -31,10 +33,11 @@ public class IOImage implements Runnable{
     private Context context;
     private boolean saveToGallery;
 
-    public IOImage(Context context, Bitmap bitmapImage, boolean saveToGallery){
+    public IOImage(Context context, Bitmap bitmapImage){
         this.context = context;
         this.bitmapImage = bitmapImage;
-        this.saveToGallery = saveToGallery;
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(context);
+        this.saveToGallery = SP.getBoolean("save_to_gallery",true);
     }
     public String saveImage(){
         long timestamp = System.currentTimeMillis();

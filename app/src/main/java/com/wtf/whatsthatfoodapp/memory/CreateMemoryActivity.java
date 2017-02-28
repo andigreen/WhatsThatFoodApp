@@ -251,7 +251,7 @@ public class CreateMemoryActivity extends BasicActivity {
                 path = (String) extras.get("data");
             } else {
                 Bitmap bitmapImage = (Bitmap) extras.get("data");
-                IOImage ioImage = new IOImage(this, bitmapImage, true);
+                IOImage ioImage = new IOImage(this, bitmapImage);
                 path = ioImage.saveImage();
             }
             photoUri = Uri.fromFile(new File(path));
