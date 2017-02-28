@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,8 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -60,6 +63,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
     private MenuItem save;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +80,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         user = mAuth.getCurrentUser();
 
         emailField.setText(user.getEmail());
+
         upload_photo = (Button) findViewById(R.id.upload_photo);
         upload_photo.setOnClickListener(this);
 
@@ -132,6 +137,35 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
                 Log.e(TAG, "onOptionsItemSelected: current user is null!");
                 return false;
             }
+
+            user.updateEmail(emailField.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "User email address updated.");
+                            }
+                            if (!task.isSuccessful()){
+                                Toast.makeText(ProfileActivity.this, "Email already taken",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+            user.sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Email sent. Please verify and login again");
+                                Intent intent = new Intent(ProfileActivity.this, LogoutActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    });
+
+            createUserInDB(emailField.getText().toString(),usernameField.getText().toString(),
+                    user.getUid());
             save.setVisible(false);
             emailField.setEnabled(false);
             usernameField.setEnabled(false);
@@ -140,6 +174,20 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
     }
 
     private boolean validateForm(){
+        if(emailField.getText().toString().length() == 0) {
+            emailField.setError("Cannot be empty");
+            return false;
+        }
+        if(!emailField.getText().toString().contains("@")){
+            emailField.setError("bad format");
+            return false;
+        }
+        if(!getProvider().equals("Firebase")){
+            Toast.makeText(ProfileActivity.this, "Cannot change email",
+                    Toast.LENGTH_SHORT).show();
+            emailField.setText(user.getEmail());
+            return false;
+        }
         return true;
     }
 
@@ -236,5 +284,14 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
             usernameField.setEnabled(true);
             save.setVisible(true);
         }
+    }
+
+
+
+    public void createUserInDB(String email, String username, String Uid){
+        UserSettings user = new UserSettings(email
+                ,username,Uid);
+        UserSettingsDAO dao = new UserSettingsDAO(Uid);
+        dao.writeUser(user);
     }
 }
