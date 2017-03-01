@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -29,7 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.R;
-import com.wtf.whatsthatfoodapp.auth.BasicActivity;
+import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.camera.IOImage;
 import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
 

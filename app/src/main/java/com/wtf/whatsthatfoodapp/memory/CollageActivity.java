@@ -21,14 +21,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.wtf.whatsthatfoodapp.App;
-import com.wtf.whatsthatfoodapp.auth.BasicActivity;
+import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
-import com.wtf.whatsthatfoodapp.auth.MainActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.ProfileActivity;
 import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
-import com.wtf.whatsthatfoodapp.search.SearchTable;
 
 public class CollageActivity extends BasicActivity {
 

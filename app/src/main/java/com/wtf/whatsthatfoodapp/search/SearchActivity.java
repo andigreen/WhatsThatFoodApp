@@ -3,7 +3,6 @@ package com.wtf.whatsthatfoodapp.search;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,7 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.storage.StorageReference;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
-import com.wtf.whatsthatfoodapp.auth.BasicActivity;
+import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
 

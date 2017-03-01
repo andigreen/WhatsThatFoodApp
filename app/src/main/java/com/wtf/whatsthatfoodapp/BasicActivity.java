@@ -1,4 +1,4 @@
-package com.wtf.whatsthatfoodapp.auth;
+package com.wtf.whatsthatfoodapp;
 
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
@@ -24,7 +24,6 @@ public class BasicActivity extends AppCompatActivity implements GoogleApiClient.
     public final String TAG = "BasicActivity";
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
-
 
     public static final String PREFS_NAME = "WTF";
     public SharedPreferences sharedPrefs;

@@ -36,10 +36,11 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.wtf.whatsthatfoodapp.App;
+import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.memory.CollageActivity;
 
-public class MainActivity extends BasicActivity{
+public class MainActivity extends BasicActivity {
     private final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
     private Button email_btn;
@@ -190,9 +191,9 @@ public class MainActivity extends BasicActivity{
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()) {
-                            createUserInDB(mAuth.getCurrentUser().getEmail()
-                                    ,mAuth.getCurrentUser().getDisplayName()
-                                ,mAuth.getCurrentUser().getUid());
+                            createUserInDB(AuthUtils.getUserEmail()
+                                    ,AuthUtils.getUserDisplayName()
+                                ,AuthUtils.getUserUid());
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                             SharedPreferences.Editor editor = sharedPrefs.edit();
                             editor.putString("signInMethod","Facebook");
@@ -340,8 +341,9 @@ public class MainActivity extends BasicActivity{
                         if (task.isSuccessful()) {
                             verificationEmail();
                             String username = usernameField.getText().toString();
-                            createUserInDB(mAuth.getCurrentUser().getEmail(),username,
-                                    mAuth.getCurrentUser().getUid());
+                            createUserInDB(AuthUtils.getUserEmail()
+                                    ,username
+                                    ,AuthUtils.getUserUid());
                             updateUI(0);
 
                         }
@@ -493,8 +495,9 @@ public class MainActivity extends BasicActivity{
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                            createUserInDB(mAuth.getCurrentUser().getEmail(),acct.getDisplayName(),
-                                    mAuth.getCurrentUser().getUid());
+                            createUserInDB(AuthUtils.getUserEmail()
+                                    ,AuthUtils.getUserDisplayName()
+                                    ,AuthUtils.getUserUid());
                             startActivity(displayHomePage);
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds

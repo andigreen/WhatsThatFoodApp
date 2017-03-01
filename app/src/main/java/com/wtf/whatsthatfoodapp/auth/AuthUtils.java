@@ -19,4 +19,20 @@ public class AuthUtils {
         return user.getUid();
     }
 
+    public static String getUserDisplayName() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) throw new RuntimeException("Tried to get current " +
+                "user while not authenticated!");
+        return user.getDisplayName();
+    }
+
+    public static String getUserEmail() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) throw new RuntimeException("Tried to get current " +
+                "user while not authenticated!");
+        return user.getEmail();
+    }
+
+
+
 }
