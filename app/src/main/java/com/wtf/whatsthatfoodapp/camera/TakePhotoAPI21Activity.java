@@ -16,6 +16,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
@@ -39,7 +40,6 @@ import android.view.WindowManager;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.wtf.whatsthatfoodapp.R;
@@ -81,11 +81,9 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
     Button takePhotoBtn;
     Button acceptPhotoBtn;
     Image capturedImage; // Need to pass the capturedImage from camera thread to main
-    ImageView imageView;
     Size previewSize;
     Size capturedImageSize;
     Bitmap bitmapImage;
-    long timestamp;
     double initialDistance;
     double lengthScreen;
     int pointer1;
@@ -93,6 +91,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
     Rect zoom;
     int flash = CaptureRequest.CONTROL_AE_MODE_ON; // Flash set to OFF
     OrientationEventListener orientListener;
+    IOImage ioImage;
 
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -184,8 +183,6 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
         };
         orientListener.enable();
 
-        imageView = (ImageView) findViewById(R.id.imageview);
-        imageView.setVisibility(View.INVISIBLE);
         acceptPhotoBtn = (Button) findViewById(R.id.acceptBtn);
         takePhotoBtn = (Button)findViewById(R.id.takePhotoBtn);
         takePhotoBtn.setTag(0);
@@ -206,7 +203,6 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                     takePhotoBtn.setTag(0);
                     acceptPhotoBtn.clearAnimation();
                     acceptPhotoBtn.setVisibility(View.INVISIBLE);
-                    imageView.setVisibility(View.INVISIBLE);
                     previewView.setVisibility(View.VISIBLE);
                 }
             }
@@ -294,6 +290,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                             zoom = new Rect(cropW, cropH, m.width() - cropW, m.height() - cropH);
 
                             try {
+
                                 previewRequest.set(CaptureRequest.SCALER_CROP_REGION, zoom);
                                 mSession.setRepeatingRequest(previewRequest.build(), new CameraCaptureSession.CaptureCallback() {
                                     @Override
@@ -368,7 +365,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                             // Sent a message using the handler from the Camera Thread to Main Thread
                             // to Display the Preview Image
                             Bundle bundle = new Bundle();
-                            bundle.putString("function","displayPreview");
+                            bundle.putString("function","photoTaken");
                             Message msg = new Message();
                             msg.setData(bundle);
                             handler.sendMessage(msg);
@@ -477,11 +474,19 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
     }
     public void takePhoto(){
         try{
+            mSession.setRepeatingRequest(previewRequest.build(), new CameraCaptureSession.CaptureCallback() {
+                @Override
+                public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+                }
+            }, handler);
+        } catch(CameraAccessException e){
+            handleCameraAccessNotAccepted();
+        }
+        try{
             CaptureRequest.Builder request = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
 
             request.addTarget(jpegCaptureSurface);
             request.set(CaptureRequest.SCALER_CROP_REGION, zoom);
-            // Trigger needed for flash
             request.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
             request.set(CaptureRequest.CONTROL_AE_MODE, flash);
 
@@ -498,24 +503,21 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
     }
     public void acceptPhoto(View v){
         // Set correct orientation, not preview orientation
-        bitmapImage = correctImageRotation(bitmapImage, correctOrientation);
+        bitmapImage = ioImage.getBitmapImage();
+        bitmapImage = ioImage.correctImageRotation(bitmapImage, correctOrientation);
         takePhotoBtn.setVisibility(View.INVISIBLE);
         acceptPhotoBtn.setVisibility(View.INVISIBLE);
 
-        IOImage ioImage = new IOImage(this, bitmapImage);
         String path = ioImage.saveImage();
+
         Intent resultIntent = new Intent();
         resultIntent.putExtra("data", path);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
 
-    public void displayPreview(){
-        convertImageToBitmap();
-        imageView.setImageBitmap(bitmapImage);
-
-        imageView.setVisibility(View.VISIBLE);
-        previewView.setVisibility(View.INVISIBLE);
+    public void handlePhotoTaken(){
+        ioImage = new IOImage(this,capturedImage,previewOrientation);
 
         takePhotoBtn.setEnabled(true);
         acceptPhotoBtn.setVisibility(View.VISIBLE); //bring to front
@@ -527,27 +529,6 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
         animation.setFillAfter(true);
         acceptPhotoBtn.startAnimation(animation);
     }
-    public void convertImageToBitmap(){
-        // Using capturedImage passed from camera thread, create a bitmapImage and get the timestamp
-        // Store it in bitmapImage and timestamp respectively
-        long timestamp = capturedImage.getTimestamp();
-        ByteBuffer buffer = capturedImage.getPlanes()[0].getBuffer();
-        byte[] imageBytes = new byte[buffer.capacity()];
-        buffer.get(imageBytes);
-        Bitmap bitmapImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, null);
-        bitmapImage = correctImageRotation(bitmapImage, previewOrientation);
-        capturedImage.close();
-        this.bitmapImage = bitmapImage;
-        this.timestamp = timestamp;
-    }
-    public Bitmap correctImageRotation(Bitmap bitmapImage, int rotation){
-        // Correct the captured image rotation
-            Matrix matrix = new Matrix();
-            matrix.postRotate(rotation);
-            bitmapImage = Bitmap.createBitmap(bitmapImage, 0, 0, bitmapImage.getWidth(), bitmapImage.getHeight(),
-                    matrix, true);
-        return bitmapImage;
-    }
 
     public void toggleFlash(View v){
         if (flash == CaptureRequest.CONTROL_AE_MODE_ON){
@@ -558,15 +539,9 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
             flash = CaptureRequest.CONTROL_AE_MODE_ON;
         }
         previewRequest.set(CaptureRequest.CONTROL_AE_MODE, flash);
-        try{
-            mSession.setRepeatingRequest(previewRequest.build(), new CameraCaptureSession.CaptureCallback() {
-                @Override
-                public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-                }
-            }, handler);
-        } catch(CameraAccessException e){
-            handleCameraAccessNotAccepted();
-        }
+        // Trigger needed for flash
+        previewRequest.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+
     }
     private static Size chooseOptimalSize(Size[] choices, int width, int height) {
         List<Size> bigEnough = new ArrayList<Size>();
@@ -623,8 +598,8 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg){
             try{
-                if (msg.getData().getString("function").equals("displayPreview")){
-                    weakReference.get().displayPreview();
+                if (msg.getData().getString("function").equals("photoTaken")){
+                    weakReference.get().handlePhotoTaken();
                 }
             } catch (NullPointerException e){
 
