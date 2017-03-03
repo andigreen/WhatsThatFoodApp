@@ -60,14 +60,6 @@ public class BasicActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
 
-    public static boolean IsEmailOccupied(String email){
-        for (UserInfo profile : FirebaseAuth.getInstance().getCurrentUser().getProviderData()) {
-            String userEmail = profile.getEmail();
-            if(email.equals(userEmail))
-                return true;
-        }
-        return false;
-    }
     // [START on_start_add_listener]
     @Override
     public void onStart() {
