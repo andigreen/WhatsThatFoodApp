@@ -26,6 +26,8 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,10 +36,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
+import com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -332,6 +337,35 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY);
+        UserSettings user = new UserSettings(this.user.getEmail(),usernameField.getText().toString(),
+                this.user.getUid());
+        UserSettingsDAO dao = new UserSettingsDAO(this.user.getUid());
+        StorageReference photoref = dao.getPhotoRef(user);
+        UploadTask uploadTask = photoref.putFile(photoUri);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Failed to upload profile photo"
+                        + ProfileActivity.this.user.getUid());
+                Toast error = Toast.makeText(getApplicationContext(),
+                        "Photo upload failed. We'll try again later.",
+                        Toast.LENGTH_SHORT);
+                error.show();
+            }
+        }).addOnSuccessListener(
+                new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot
+                                                  taskSnapshot) {
+                        Toast success = Toast.makeText(
+                                getApplicationContext(),
+                                "Photo upload succeeded!",
+                                Toast.LENGTH_SHORT
+                        );
+                        success.show();
+                    }
+                });
+
     }
 
 
@@ -348,12 +382,12 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == GALLERY && resultCode != 0) {
-            Uri mImageUri = data.getData();
+            photoUri = data.getData();
             try {
-                Image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageUri);
-                if (getOrientation(getApplicationContext(), mImageUri) != 0) {
+                Image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+                if (getOrientation(getApplicationContext(), photoUri) != 0) {
                     Matrix matrix = new Matrix();
-                    matrix.postRotate(getOrientation(getApplicationContext(), mImageUri));
+                    matrix.postRotate(getOrientation(getApplicationContext(), photoUri));
                     if (rotateImage != null)
                         rotateImage.recycle();
                     rotateImage = Bitmap.createBitmap(Image, 0, 0, Image.getWidth(), Image.getHeight(), matrix,true);
