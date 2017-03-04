@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,6 +60,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
     private MenuItem save;
 
 
+    boolean email_changed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +115,24 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
 
 
 
+        emailField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() != 0){
+                    email_changed = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
@@ -133,37 +154,41 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
                 return false;
             }
 
-            user.updateEmail(emailField.getText().toString())
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "User email address updated.");
+            if(email_changed) {
+                user.updateEmail(emailField.getText().toString())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User email address updated.");
+                                }
+                                if (!task.isSuccessful()) {
+                                    Toast.makeText(ProfileActivity.this, "Email already taken",
+                                            Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            if (!task.isSuccessful()){
-                                Toast.makeText(ProfileActivity.this, "Email already taken",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                        });
 
-            user.sendEmailVerification()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "Email sent. Please verify and login again");
-                                Intent intent = new Intent(ProfileActivity.this, LogoutActivity.class);
-                                startActivity(intent);
+                user.sendEmailVerification()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Email sent. Please verify and login again");
+                                    Intent intent = new Intent(ProfileActivity.this, LogoutActivity.class);
+                                    startActivity(intent);
+                                }
                             }
-                        }
-                    });
+                        });
 
-            createUserInDB(emailField.getText().toString(),usernameField.getText().toString(),
+
+            }
+            createUserInDB(emailField.getText().toString(), usernameField.getText().toString(),
                     user.getUid());
             save.setVisible(false);
             emailField.setEnabled(false);
             usernameField.setEnabled(false);
+            email_changed = false;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -177,12 +202,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
             emailField.setError("bad format");
             return false;
         }
-        if(!getProvider().equals("Firebase")){
-            Toast.makeText(ProfileActivity.this, "Cannot change email",
-                    Toast.LENGTH_SHORT).show();
-            emailField.setText(user.getEmail());
-            return false;
-        }
+
         return true;
     }
 
@@ -275,7 +295,8 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         if(id == R.id.upload_photo){
             //uploadPhoto();
         }else if(id == R.id.edit_btn){
-            emailField.setEnabled(true);
+            if(getProvider().equals("Firebase"))
+                emailField.setEnabled(true);
             usernameField.setEnabled(true);
             save.setVisible(true);
         }
