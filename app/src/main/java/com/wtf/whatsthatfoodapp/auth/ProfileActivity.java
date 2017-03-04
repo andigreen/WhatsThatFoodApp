@@ -1,7 +1,11 @@
 package com.wtf.whatsthatfoodapp.auth;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -35,6 +39,9 @@ import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public class ProfileActivity extends BasicActivity implements GoogleApiClient.OnConnectionFailedListener{
 
     private final String TAG = "ProfileActivity";
@@ -61,6 +68,11 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
 
 
     boolean email_changed;
+
+    private static Bitmap Image = null;
+    private static Bitmap rotateImage = null;
+
+    private static final int GALLERY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -293,7 +305,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
     public void onClick(View v){
         int id = v.getId();
         if(id == R.id.upload_photo){
-            //uploadPhoto();
+            uploadPhoto();
         }else if(id == R.id.edit_btn){
             if(getProvider().equals("Firebase"))
                 emailField.setEnabled(true);
@@ -310,4 +322,50 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         UserSettingsDAO dao = new UserSettingsDAO(Uid);
         dao.writeUser(user);
     }
+
+
+    public void uploadPhoto(){
+        profile_photo.setImageBitmap(null);
+        if (Image != null)
+            Image.recycle();
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY);
+    }
+
+
+    public static int getOrientation(Context context, Uri photoUri) {
+        Cursor cursor = context.getContentResolver().query(photoUri,
+                new String[] { MediaStore.Images.ImageColumns.ORIENTATION },null, null, null);
+
+        if (cursor.getCount() != 1) {
+            return -1;
+        }
+        cursor.moveToFirst();
+        return cursor.getInt(0);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == GALLERY && resultCode != 0) {
+            Uri mImageUri = data.getData();
+            try {
+                Image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mImageUri);
+                if (getOrientation(getApplicationContext(), mImageUri) != 0) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(getOrientation(getApplicationContext(), mImageUri));
+                    if (rotateImage != null)
+                        rotateImage.recycle();
+                    rotateImage = Bitmap.createBitmap(Image, 0, 0, Image.getWidth(), Image.getHeight(), matrix,true);
+                    profile_photo.setImageBitmap(rotateImage);
+                } else
+                    profile_photo.setImageBitmap(Image);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
