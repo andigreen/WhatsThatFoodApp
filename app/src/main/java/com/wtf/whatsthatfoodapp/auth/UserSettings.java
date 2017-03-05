@@ -40,6 +40,7 @@ public class UserSettings {
     public String getKey(){
         return this.key;
     }
+
     public String getEmail(){
         return this.email;
     }

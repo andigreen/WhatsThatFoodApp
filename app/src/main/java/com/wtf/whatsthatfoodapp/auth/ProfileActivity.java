@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,6 +32,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,6 +75,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
 
 
     boolean email_changed;
+    boolean change_photo;
 
     private static Bitmap Image = null;
     private static Bitmap rotateImage = null;
@@ -102,8 +105,16 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         edit_btn = (Button) findViewById(R.id.edit_btn);
         edit_btn.setOnClickListener(this);
         photoUri = user.getPhotoUrl();
+        UserSettings userSettings = new UserSettings(this.user.getEmail(),
+                usernameField.getText().toString(),this.user.getUid());
+        StorageReference photoref = new UserSettingsDAO(this.user.getUid()).getPhotoRef(userSettings);
         profile_photo = (ImageView) findViewById(R.id.user_profile_photo);
-        Glide.with(this).load(photoUri).centerCrop().into(profile_photo);
+
+        Glide.with(this).using(new FirebaseImageLoader()).load(photoref).centerCrop().into(profile_photo);
+
+
+
+
         App app = (App)getApplicationContext();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -202,6 +213,10 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
             }
             createUserInDB(emailField.getText().toString(), usernameField.getText().toString(),
                     user.getUid());
+
+            if(change_photo){
+                savePhoto();
+            }
             save.setVisible(false);
             emailField.setEnabled(false);
             usernameField.setEnabled(false);
@@ -311,6 +326,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         int id = v.getId();
         if(id == R.id.upload_photo){
             uploadPhoto();
+            save.setVisible(true);
         }else if(id == R.id.edit_btn){
             if(getProvider().equals("Firebase"))
                 emailField.setEnabled(true);
@@ -337,6 +353,11 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY);
+        change_photo = true;
+
+    }
+
+    public void savePhoto(){
         UserSettings user = new UserSettings(this.user.getEmail(),usernameField.getText().toString(),
                 this.user.getUid());
         UserSettingsDAO dao = new UserSettingsDAO(this.user.getUid());
@@ -365,9 +386,20 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
                         success.show();
                     }
                 });
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(Uri.parse("gs://whatsthatfoodapp-d3847.appspot.com/" + photoref.toString()))
+                .build();
 
+        this.user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User profile updated.");
+                        }
+                    }
+                });
     }
-
 
     public static int getOrientation(Context context, Uri photoUri) {
         Cursor cursor = context.getContentResolver().query(photoUri,
