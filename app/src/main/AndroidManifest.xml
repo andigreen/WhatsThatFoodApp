@@ -56,6 +56,8 @@
             android:name=".memory.CreateMemoryActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".search.SearchActivity" />
+        <activity android:name=".search.FilterActivity"
+            android:theme="@style/AppTheme.FilterPopup"/>
         <activity android:name=".auth.LogoutActivity" />
         <activity android:name=".auth.ProfileActivity"></activity>
         <activity android:name=".auth.SettingsActivity"

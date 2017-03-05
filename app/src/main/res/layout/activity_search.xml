@@ -12,14 +12,33 @@
     android:orientation="vertical"
     tools:context="com.wtf.whatsthatfoodapp.search.SearchActivity">
 
-    <EditText
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:id="@+id/search_query"
-        android:inputType="text"
-        android:hint="@string/search"/>
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <EditText
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/search_query"
+            android:inputType="text"
+            android:hint="@string/search"
+            android:layout_weight="0.96" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter"
+            android:id="@+id/filter"
+            android:onClick="popup_window" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="to_be_filled"
+        android:id="@+id/filter_detail"
+        />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

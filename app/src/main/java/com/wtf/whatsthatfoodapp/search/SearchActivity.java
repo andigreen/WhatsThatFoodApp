@@ -1,7 +1,9 @@
 package com.wtf.whatsthatfoodapp.search;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -21,6 +24,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +48,11 @@ public class SearchActivity extends BasicActivity {
     private Map<String, Memory> memories;
     private SearchTable searchTable;
     private MemoryDao dao;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +96,17 @@ public class SearchActivity extends BasicActivity {
         // Initialize search table (pre-populate index)
         searchTable = new SearchTable(this);
 
+        Button filter = (Button) findViewById(R.id.filter);
+
+        filter.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SearchActivity.this, FilterActivity.class));
+            }
+        });
+
+
         final EditText searchQuery = (EditText) findViewById(R.id.search_query);
         searchQuery.addTextChangedListener(new TextWatcher() {
             @Override
@@ -93,7 +116,7 @@ public class SearchActivity extends BasicActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
-                    int count) {
+                                      int count) {
             }
 
             @Override
@@ -116,6 +139,45 @@ public class SearchActivity extends BasicActivity {
                 resultsAdapter.notifyDataSetChanged();
             }
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Search Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 
     class ResultAdapter extends ArrayAdapter<Memory> {
@@ -154,17 +216,17 @@ public class SearchActivity extends BasicActivity {
                             GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e,
-                                StorageReference model, Target<GlideDrawable>
-                                target, boolean isFirstResource) {
+                                                   StorageReference model, Target<GlideDrawable>
+                                                           target, boolean isFirstResource) {
                             progress.setVisibility(View.GONE);
                             return false;
                         }
 
                         @Override
                         public boolean onResourceReady(GlideDrawable
-                                resource, StorageReference model,
-                                Target<GlideDrawable> target, boolean
-                                isFromMemoryCache, boolean isFirstResource) {
+                                                               resource, StorageReference model,
+                                                       Target<GlideDrawable> target, boolean
+                                                               isFromMemoryCache, boolean isFirstResource) {
                             progress.setVisibility(View.GONE);
                             return false;
                         }
