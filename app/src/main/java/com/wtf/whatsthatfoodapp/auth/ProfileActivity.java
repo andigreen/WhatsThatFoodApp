@@ -81,6 +81,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
     private static Bitmap rotateImage = null;
 
     private static final int GALLERY = 1;
+    private StorageReference photoref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +108,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         photoUri = user.getPhotoUrl();
         UserSettings userSettings = new UserSettings(this.user.getEmail(),
                 usernameField.getText().toString(),this.user.getUid());
-        StorageReference photoref = new UserSettingsDAO(this.user.getUid()).getPhotoRef(userSettings);
+        photoref = new UserSettingsDAO(this.user.getUid()).getPhotoRef(userSettings);
         profile_photo = (ImageView) findViewById(R.id.user_profile_photo);
 
         Glide.with(this).using(new FirebaseImageLoader()).load(photoref).centerCrop().into(profile_photo);
@@ -346,14 +347,14 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
 
 
     public void uploadPhoto(){
-        profile_photo.setImageBitmap(null);
-        if (Image != null)
-            Image.recycle();
+        //profile_photo.setImageBitmap(null);
+        //if (Image != null)
+          //  Image.recycle();
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY);
-        change_photo = true;
+
 
     }
 
@@ -426,6 +427,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
                     profile_photo.setImageBitmap(rotateImage);
                 } else
                     profile_photo.setImageBitmap(Image);
+                change_photo = true;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
