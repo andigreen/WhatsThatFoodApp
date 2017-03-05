@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="filter_rating">
+        <item>Select it!</item>
+        <item>At least</item>
+        <item>At most</item>
+    </string-array>
+
+    <string-array name="filter_pricing">
+        <item>Select it!</item>
+        <item>At least</item>
+        <item>At most</item>
+    </string-array>
+
+    <string-array name="filter_time">
+        <item>Select it!</item>
+        <item>Anytime</item>
+        <item>Last 10 days</item>
+        <item>Last 30 days</item>
+        <item>Last year</item>
+    </string-array>
+
+    <string-array name="filter_sort_by">
+        <item>Select it!</item>
+        <item>Relevance</item>
+        <item>High to low</item>
+        <item>Low to high</item>
+    </string-array>
+
+</resources>
