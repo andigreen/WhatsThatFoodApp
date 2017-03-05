@@ -5,6 +5,153 @@
     android:background="@color/com_facebook_button_background_color_selected">
 
 
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rating_rating_bar"
+        android:layout_below="@+id/rating_liner"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginTop="310dp"
+        android:layout_below="@+id/linearLayout6"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:text="Sort by"
+            android:textSize="24sp"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginStart="60dp"
+            android:id="@+id/sort_by"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+
+            />
+
+        <Spinner
+            android:id="@+id/sort_by_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.42" />
+
+    </LinearLayout>
+
+    <Button
+        android:text="cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="45dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginBottom="37dp"
+        android:id="@+id/filter_cancel"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="48dp"
+        android:layout_marginEnd="48dp"
+        android:id="@+id/filter_apply"
+        android:layout_alignBaseline="@+id/filter_cancel"
+        android:layout_alignBottom="@+id/filter_cancel"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/price_rating_bar"
+        android:layout_marginTop="65dp"
+        android:layout_below="@+id/rating_rating_bar"
+        android:layout_alignLeft="@+id/rating_rating_bar"
+        android:layout_alignStart="@+id/rating_rating_bar" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_below="@+id/rating_rating_bar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:text="Price  "
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginStart="60dp"
+            android:id="@+id/Price"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+
+            android:layout_weight="0.19" />
+
+        <Spinner
+            android:id="@+id/price_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.42" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_below="@+id/price_rating_bar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:text="Time"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginStart="60dp"
+            android:id="@+id/time"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+
+            android:layout_weight="0.16" />
+
+        <Spinner
+            android:id="@+id/time_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.30" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/rating_liner"
         android:orientation="horizontal"
@@ -32,130 +179,6 @@
 
         <Spinner
             android:id="@+id/rating_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginLeft="35dp"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="20dp"
-            android:layout_weight="0.42" />
-
-    </LinearLayout>
-
-
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ratingBar"
-        android:layout_below="@+id/rating_liner"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp" />
-
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/pirce_bar"
-        android:layout_below="@+id/linearLayout5"
-        android:layout_alignLeft="@+id/ratingBar"
-        android:layout_alignStart="@+id/ratingBar"
-        android:layout_marginTop="180dp" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_below="@+id/pirce_bar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <TextView
-            android:text="Time"
-            android:textSize="24sp"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginStart="60dp"
-            android:id="@+id/time"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-
-            android:layout_weight="0.23" />
-
-        <Spinner
-            android:id="@+id/time_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginLeft="35dp"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="20dp"
-            android:layout_weight="0.30" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_marginTop="310dp"
-        android:layout_below="@+id/linearLayout6"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <TextView
-            android:text="Sort by"
-            android:textSize="24sp"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginStart="60dp"
-            android:id="@+id/sort_by"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-
-            android:layout_weight="0.10" />
-
-        <Spinner
-            android:id="@+id/sort_by_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginLeft="35dp"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="20dp"
-            android:layout_weight="0.42" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_below="@+id/ratingBar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <TextView
-            android:text="Price"
-            android:textSize="24sp"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginStart="60dp"
-            android:id="@+id/Price"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-
-            android:layout_weight="0.16" />
-
-        <Spinner
-            android:id="@+id/price_spinner"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_marginLeft="35dp"
