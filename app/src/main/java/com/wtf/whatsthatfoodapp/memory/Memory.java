@@ -27,6 +27,9 @@ public class Memory {
     private long tsCreatedNeg; // Negative timestamp, so we can sort descending
     private long tsModified;
 
+    private int rate;
+    private int price;
+
     public Memory() {
         title = loc = "";
         tsCreated = tsModified = 0L;
@@ -131,6 +134,22 @@ public class Memory {
         reminder = remind;
     }
     // Helper methods
+
+    public void setRate(int rate){
+        this.rate = rate;
+    }
+
+    public int getRate(){
+        return this.rate;
+    }
+
+    public void setPrice(int price){
+        this.price = price;
+    }
+
+    public int getPrice(){
+        return this.price;
+    }
 
     private static long unixTime() {
         return System.currentTimeMillis() / 1000;

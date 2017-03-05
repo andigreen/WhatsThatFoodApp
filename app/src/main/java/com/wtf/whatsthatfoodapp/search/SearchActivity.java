@@ -39,6 +39,8 @@ import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,7 @@ public class SearchActivity extends BasicActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private List<Memory> results;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +89,7 @@ public class SearchActivity extends BasicActivity {
             }
         });
 
-        final List<Memory> results = new ArrayList<>();
+        results = new ArrayList<>();
         final ArrayAdapter<Memory> resultsAdapter = new ResultAdapter(this,
                 results);
 
@@ -116,7 +119,7 @@ public class SearchActivity extends BasicActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
+                    int count) {
             }
 
             @Override
@@ -179,6 +182,48 @@ public class SearchActivity extends BasicActivity {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+
+    public void sort_by_rating(final boolean at_least){
+        Collections.sort(results, new Comparator<Memory>() {
+            @Override
+            public int compare(Memory lhs, Memory rhs) {
+                // -1 - less than, 1 - greater than, 0 - equal
+                if(at_least)
+                    return lhs.getRate() > rhs.getRate() ? -1 : (lhs.getRate() < rhs.getRate()) ? 1 : 0;
+
+                else
+                    return lhs.getRate() > rhs.getRate() ? 1 : (lhs.getRate() < rhs.getRate() ) ? -1 : 0;
+            }
+        });
+    }
+
+    public void sort_by_price(final boolean at_least){
+        Collections.sort(results, new Comparator<Memory>() {
+            @Override
+            public int compare(Memory lhs, Memory rhs) {
+                // -1 - less than, 1 - greater than, 0 - equal
+                if(at_least) {
+                    return lhs.getRate() > rhs.getRate() ? -1 : (lhs.getRate() < rhs.getRate()) ? 1 : 0;
+                }else
+                    return lhs.getRate() > rhs.getRate() ? 1 : (lhs.getRate() < rhs.getRate()) ? -1 : 0;
+            }
+        });
+    }
+
+    public void sort_by_time(final boolean recent){
+        Collections.sort(results, new Comparator<Memory>() {
+            @Override
+            public int compare(Memory lhs, Memory rhs) {
+                // -1 - less than, 1 - greater than, 0 - equal
+                if(recent) {
+                    return lhs.getTsModified() > rhs.getTsModified() ? 1 : (lhs.getTsModified() > rhs.getTsModified()) ? -1 : 0;
+                }else
+                    return lhs.getTsModified() > rhs.getTsModified() ? -1 : (lhs.getTsModified() > rhs.getTsModified()) ? 1 : 0;
+            }
+        });
+    }
+
 
     class ResultAdapter extends ArrayAdapter<Memory> {
         ResultAdapter(Context context, List<Memory> memories) {
