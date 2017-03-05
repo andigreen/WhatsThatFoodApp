@@ -216,17 +216,17 @@ public class SearchActivity extends BasicActivity {
                             GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e,
-                                                   StorageReference model, Target<GlideDrawable>
-                                                           target, boolean isFirstResource) {
+                                    StorageReference model, Target<GlideDrawable>
+                                    target, boolean isFirstResource) {
                             progress.setVisibility(View.GONE);
                             return false;
                         }
 
                         @Override
                         public boolean onResourceReady(GlideDrawable
-                                                               resource, StorageReference model,
-                                                       Target<GlideDrawable> target, boolean
-                                                               isFromMemoryCache, boolean isFirstResource) {
+                                    resource, StorageReference model,
+                                    Target<GlideDrawable> target,
+                                    boolean isFromMemoryCache, boolean isFirstResource) {
                             progress.setVisibility(View.GONE);
                             return false;
                         }
