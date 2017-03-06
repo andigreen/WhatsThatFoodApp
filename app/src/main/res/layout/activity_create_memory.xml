@@ -34,7 +34,8 @@
                 android:layout_height="200dp"
                 android:adjustViewBounds="false"
                 android:contentDescription="@string/create_memory_photo_desc"
-                app:srcCompat="@android:color/transparent"/>
+                app:srcCompat="@android:color/transparent"
+                android:onClick="expandImage"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -12,12 +12,21 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -39,6 +48,8 @@ public class CreateMemoryActivity extends BasicActivity {
             .getSimpleName();
     private static final int REQUEST_PHOTO_GET = 144;
 
+    private boolean fromCamera;
+
     private Uri photoUri;
 
     private boolean savedForNextTime;
@@ -49,31 +60,28 @@ public class CreateMemoryActivity extends BasicActivity {
 
     private CheckBox remindCheck;
 
+    private int imageViewHeight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_memory);
-
-        // Set up toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.create_memory_toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        saveFNTCheck = (CheckBox) findViewById(R.id.saveFNTcheck);
-        remindCheck = (CheckBox) findViewById(R.id.remindCheck);
-
-        saveFNTCheck.setOnClickListener(this);
-        remindCheck.setOnClickListener(this);
         // Initiate photo loading
-        if (Build.VERSION.SDK_INT >= 21 ){
-            // We need to ask for permission in runtime for android 6.0
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}
-                    ,1);
+        fromCamera = getIntent().getBooleanExtra("camera",true);
+        if (fromCamera){
+            if (Build.VERSION.SDK_INT >= 21 ){
+                // We need to ask for permission in runtime for android 6.0
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}
+                        ,1);
+            } else {
+                dispatchTakePictureIntent();
+            }
         } else {
-            dispatchTakePictureIntent();
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,
+                    "Select Picture"), REQUEST_PHOTO_GET);
         }
     }
 
@@ -240,20 +248,42 @@ public class CreateMemoryActivity extends BasicActivity {
         if (requestCode == REQUEST_PHOTO_GET) {
             if (resultCode != RESULT_OK) {
                 Log.d(TAG, "onActivityResult (PHOTO_GET): Failed to get photo");
+                finish();
                 return;
             }
-            // Load photo view with the result's URI
-            Log.e("Photo Received","True");
-            Bundle extras = data.getExtras();
-            String path;
-            if (Build.VERSION.SDK_INT >= 21){
-                path = (String) extras.get("data");
-            } else {
-                Bitmap bitmapImage = (Bitmap) extras.get("data");
-                IOImage ioImage = new IOImage(this, bitmapImage);
-                path = ioImage.saveImage();
+            // Setup CreateMemoryActivity UI once the image is taken
+            setContentView(R.layout.activity_create_memory);
+
+            // Set up toolbar
+            Toolbar toolbar = (Toolbar) findViewById(R.id.create_memory_toolbar);
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
-            photoUri = Uri.fromFile(new File(path));
+
+            saveFNTCheck = (CheckBox) findViewById(R.id.saveFNTcheck);
+            remindCheck = (CheckBox) findViewById(R.id.remindCheck);
+
+            saveFNTCheck.setOnClickListener(this);
+            remindCheck.setOnClickListener(this);
+
+
+            // Load photo view with the result's URI
+            if (fromCamera){
+                Log.e("Photo Received","True");
+                Bundle extras = data.getExtras();
+                String path;
+                if (Build.VERSION.SDK_INT >= 21){
+                    path = (String) extras.get("data");
+                } else {
+                    Bitmap bitmapImage = (Bitmap) extras.get("data");
+                    IOImage ioImage = new IOImage(this, bitmapImage);
+                    path = ioImage.saveImage();
+                }
+                photoUri = Uri.fromFile(new File(path));
+            } else {
+                photoUri = data.getData();
+            }
 
             ImageView imageView = (ImageView) findViewById(R.id
                     .create_memory_photo);
@@ -263,5 +293,32 @@ public class CreateMemoryActivity extends BasicActivity {
                     .centerCrop()
                     .into(imageView);
         }
+    }
+    public void expandImage(View v){
+        ImageView imageView = (ImageView) v;
+        LinearLayout ll = (LinearLayout) imageView.getParent();
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageView.getLayoutParams();
+
+        if (imageViewHeight == 0){
+            imageViewHeight = params.height;
+            int translateX = (int) (((ll.getX() + ll.getWidth()) / 2) - imageView.getWidth()/2);
+            int translateY = (int) (((ll.getY() + ll.getHeight()) / 2) - imageView.getHeight()/2);
+            ScaleAnimation animation =  new ScaleAnimation(1,1,1,(float)2);
+            animation.setDuration(100);
+            //imageView.startAnimation(animation);
+            params.height = ll.getHeight();
+            imageView.setLayoutParams(params);
+
+            Glide.with(this).load(photoUri).fitCenter().into(imageView);
+        } else {
+            ScaleAnimation animation =  new ScaleAnimation(1,2,1,1);
+            animation.setDuration(100);
+            //imageView.startAnimation(animation);
+            params.height = imageViewHeight;
+            imageView.setLayoutParams(params);
+            imageViewHeight = 0;
+            Glide.with(this).load(photoUri).centerCrop().into(imageView);
+        }
+
     }
 }

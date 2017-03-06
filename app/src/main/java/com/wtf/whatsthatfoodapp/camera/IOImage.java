@@ -142,9 +142,8 @@ public class IOImage {
            convertImageToBitmap();
         }
         private void convertImageToBitmap(){
-            // Using capturedImage passed from camera thread, create a bitmapImage and get the timestamp
-            // Store it in bitmapImage and timestamp respectively
-            long timestamp = capturedImage.getTimestamp();
+            // Using capturedImage passed from camera thread, create a bitmapImage
+            // Store it in bitmapImage
             ByteBuffer buffer = capturedImage.getPlanes()[0].getBuffer();
             byte[] imageBytes = new byte[buffer.capacity()];
             buffer.get(imageBytes);

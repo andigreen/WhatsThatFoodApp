@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -98,17 +100,6 @@ public class CollageActivity extends BasicActivity {
 
         ListView collageList = (ListView) findViewById(R.id.collage_list);
         collageList.setAdapter(collageListAdapter);
-
-        // Set up Create Memory button
-        FloatingActionButton btnCreateMemory = (FloatingActionButton)
-                this.findViewById(R.id.create_memory_button);
-        btnCreateMemory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(CollageActivity.this,
-                        CreateMemoryActivity.class));
-            }
-        });
     }
 
 
@@ -180,8 +171,33 @@ public class CollageActivity extends BasicActivity {
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
+    public void viewMemory(View v){
+        //Intent intent = new Intent(this, ViewMemoryActivity.class);
+        //startActivity(intent);
+    }
+
     public void addMemory(View v){
-        Intent createMemory = new Intent(this, CreateMemoryActivity.class);
-        startActivity(createMemory);
+        PopupMenu popupMenu = new PopupMenu(this,v);
+
+        popupMenu.getMenuInflater().inflate(R.menu.collage_create_memory_button_menu,popupMenu.getMenu());
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick(MenuItem item){
+                Intent intent = new Intent(getApplicationContext(), CreateMemoryActivity.class);
+
+                if (item.getItemId() == R.id.camera){
+                    intent.putExtra("camera",true);
+                    startActivity(intent);
+                    return true;
+                } else if (item.getItemId() == R.id.gallery){
+                    intent.putExtra("camera",false);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
     }
 }
