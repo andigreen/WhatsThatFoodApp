@@ -1,4 +1,4 @@
-package com.wtf.whatsthatfoodapp.auth;
+package com.wtf.whatsthatfoodapp.user;
 
 import android.support.annotation.NonNull;
 
@@ -6,6 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.wtf.whatsthatfoodapp.user.UserSettings;
 
 /**
  * Created by peiranli on 2/20/17.

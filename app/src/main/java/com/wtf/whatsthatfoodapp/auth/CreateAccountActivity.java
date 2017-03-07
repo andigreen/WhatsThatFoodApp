@@ -2,7 +2,6 @@ package com.wtf.whatsthatfoodapp.auth;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +17,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.user.UserSettings;
+import com.wtf.whatsthatfoodapp.user.UserSettingsDAO;
 
 public class CreateAccountActivity extends BasicActivity {
 
