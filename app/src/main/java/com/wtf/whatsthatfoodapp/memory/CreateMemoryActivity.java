@@ -1,9 +1,11 @@
 package com.wtf.whatsthatfoodapp.memory;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -19,11 +21,14 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +47,8 @@ import com.wtf.whatsthatfoodapp.camera.IOImage;
 import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
 
 import java.io.File;
+import java.io.IOException;
+
 public class CreateMemoryActivity extends BasicActivity {
 
     private static final String TAG = CreateMemoryActivity.class
@@ -60,7 +67,7 @@ public class CreateMemoryActivity extends BasicActivity {
 
     private CheckBox remindCheck;
 
-    private int imageViewHeight;
+    private Dialog imageDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -294,31 +301,24 @@ public class CreateMemoryActivity extends BasicActivity {
                     .into(imageView);
         }
     }
+
     public void expandImage(View v){
-        ImageView imageView = (ImageView) v;
-        LinearLayout ll = (LinearLayout) imageView.getParent();
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) imageView.getLayoutParams();
+        imageDialog = new Dialog(this);
 
-        if (imageViewHeight == 0){
-            imageViewHeight = params.height;
-            int translateX = (int) (((ll.getX() + ll.getWidth()) / 2) - imageView.getWidth()/2);
-            int translateY = (int) (((ll.getY() + ll.getHeight()) / 2) - imageView.getHeight()/2);
-            ScaleAnimation animation =  new ScaleAnimation(1,1,1,(float)2);
-            animation.setDuration(100);
-            //imageView.startAnimation(animation);
-            params.height = ll.getHeight();
-            imageView.setLayoutParams(params);
+        imageDialog.setContentView(getLayoutInflater().inflate(R.layout.image_popup,null));
 
-            Glide.with(this).load(photoUri).fitCenter().into(imageView);
-        } else {
-            ScaleAnimation animation =  new ScaleAnimation(1,2,1,1);
-            animation.setDuration(100);
-            //imageView.startAnimation(animation);
-            params.height = imageViewHeight;
-            imageView.setLayoutParams(params);
-            imageViewHeight = 0;
-            Glide.with(this).load(photoUri).centerCrop().into(imageView);
+        ImageView imageView = (ImageView) imageDialog.findViewById(R.id.image_popup);
+        try{
+            Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+            imageView.setImageBitmap(bitmapImage);
+            imageDialog.show();
+        } catch (IOException e){
+            Log.d(TAG,"IOEXCEPTION : photoUri");
         }
-
+    }
+    public void closeImage(View v){
+        if(imageDialog != null){
+            imageDialog.dismiss();
+        }
     }
 }
