@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +41,7 @@ public class CollageActivity extends BasicActivity {
     private String signInMethod;
     private GoogleApiClient mGoogleApiClient;
     private AppEventsLogger logger;
+    private App app;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,15 +55,7 @@ public class CollageActivity extends BasicActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.collage_toolbar);
         setSupportActionBar(toolbar);
 
-        App app = (App)getApplicationContext();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, app.getGso())
-                .build();
-
-        app.setClient(mGoogleApiClient);
-        app.getClient().connect();
+        app = (App)getApplicationContext();
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -88,7 +82,21 @@ public class CollageActivity extends BasicActivity {
         }
 
         if(BasicActivity.getProvider().equals("Google")){
-            mGoogleApiClient = app.getClient();
+            App app = (App)getApplicationContext();
+            // Configure Google Sign In
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+            // [END config_signin]
+            app.setGso(gso);
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, app.getGso())
+                    .build();
+
+            app.setClient(mGoogleApiClient);
+            app.getClient().connect();
         }
 
         // Set up list and adapter
@@ -102,7 +110,10 @@ public class CollageActivity extends BasicActivity {
         collageList.setAdapter(collageListAdapter);
     }
 
-
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){

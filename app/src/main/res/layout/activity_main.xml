@@ -10,106 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.wtf.whatsthatfoodapp.auth.MainActivity">
 
-    <Button
-        android:text="back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/back_btn"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/password_recover"
-        android:layout_toStartOf="@+id/password_recover"
-        android:layout_marginRight="12dp"
-        android:layout_marginEnd="12dp" />
-
-    <TextView
-        android:text="Please enter your Email address and a recovery email will be sent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/Recovery"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/emailfield"
-        android:layout_below="@+id/Recovery"
-        android:layout_alignLeft="@+id/usernamefield"
-        android:layout_alignStart="@+id/usernamefield"
-        android:layout_marginTop="27dp" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/usernamefield"
-        android:layout_below="@+id/passwordfield"
-        android:layout_alignLeft="@+id/fb_btn"
-        android:layout_alignStart="@+id/fb_btn" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/passwordfield"
-        android:layout_below="@+id/emailfield"
-        android:layout_alignLeft="@+id/usernamefield"
-        android:layout_alignStart="@+id/usernamefield" />
-
-    <Button
-        android:text="SIGNUP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/signup_btn"
-        android:layout_alignBaseline="@+id/recover_btn"
-        android:layout_alignBottom="@+id/recover_btn"
-        android:layout_toRightOf="@+id/password_recover"
-        android:layout_toEndOf="@+id/password_recover" />
-
-    <Button
-        android:text="Reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/recover_btn"
-        android:layout_alignBaseline="@+id/back_btn"
-        android:layout_alignBottom="@+id/back_btn"
-        android:layout_alignLeft="@+id/signup_btn"
-        android:layout_alignStart="@+id/signup_btn" />
-
-    <Button
-        android:text="Login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/email_button"
-        android:layout_below="@+id/usernametxt"
-        android:layout_alignLeft="@+id/Register_btn"
-        android:layout_alignStart="@+id/Register_btn" />
-
-    <TextView
-        android:text="Username(Optional)"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/usernametxt"
-        android:layout_alignBottom="@+id/usernamefield"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/passwordtext"
-        android:layout_alignEnd="@+id/passwordtext" />
-
-    <TextView
-        android:text="Email:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/emailtext"
-        android:layout_alignBaseline="@+id/emailfield"
-        android:layout_alignBottom="@+id/emailfield"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <TextView
         android:text="Password:"
@@ -120,16 +20,6 @@
         android:layout_alignBottom="@+id/passwordfield"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
-    <com.google.android.gms.common.SignInButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/google_button"
-        android:layout_below="@+id/email_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp">
-
-    </com.google.android.gms.common.SignInButton>
 
     <Button
         android:text="Not Registered?"
@@ -155,8 +45,59 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/fb_btn"
-        android:layout_below="@+id/google_button"
+        android:layout_above="@+id/Register_btn"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginBottom="29dp" />
+
+    <com.google.android.gms.common.SignInButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/google_button"
+        android:layout_above="@+id/fb_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="17dp">
+
+    </com.google.android.gms.common.SignInButton>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/emailfield"
+        android:layout_marginTop="19dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/passwordfield"
+        android:layout_alignStart="@+id/passwordfield" />
+
+    <Button
+        android:text="Login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/email_button"
+        android:layout_marginBottom="18dp"
+        android:layout_above="@+id/google_button"
+        android:layout_alignLeft="@+id/Register_btn"
+        android:layout_alignStart="@+id/Register_btn" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/passwordfield"
+        android:layout_below="@+id/emailfield"
+        android:layout_alignLeft="@+id/fb_btn"
+        android:layout_alignStart="@+id/fb_btn"
+        android:layout_marginTop="14dp" />
+
+    <TextView
+        android:text="Email:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/emailtext"
+        android:layout_alignBottom="@+id/emailfield"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

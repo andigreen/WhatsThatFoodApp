@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -114,18 +115,6 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
         Glide.with(this).using(new FirebaseImageLoader()).load(photoref).centerCrop().into(profile_photo);
 
 
-
-
-        App app = (App)getApplicationContext();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, app.getGso())
-                .build();
-
-        app.setClient(mGoogleApiClient);
-        app.getClient().connect();
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -163,6 +152,7 @@ public class ProfileActivity extends BasicActivity implements GoogleApiClient.On
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

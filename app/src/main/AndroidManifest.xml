@@ -9,10 +9,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Camera Permissions -->
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-feature android:name="android.hardware.camera"/>
-    <uses-feature android:name="android.hardware.camera2" android:required="true"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
 
     <application
         android:name=".App"
@@ -35,8 +38,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".camera.TakePhotoAPI21Activity" android:theme=
-            "@style/Theme.AppCompat.NoActionBar" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".camera.TakePhotoAPI21Activity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -57,13 +62,16 @@
             android:name=".memory.CreateMemoryActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".search.SearchActivity" />
-        <activity android:name=".search.FilterActivity"
-            android:theme="@style/AppTheme.FilterPopup"/>
+        <activity
+            android:name=".search.FilterActivity"
+            android:theme="@style/AppTheme.FilterPopup" />
         <activity android:name=".auth.LogoutActivity" />
-        <activity android:name=".auth.ProfileActivity"></activity>
-        <activity android:name=".auth.SettingsActivity"
-            android:label="Preferences"></activity>
-
+        <activity android:name=".auth.ProfileActivity" />
+        <activity
+            android:name=".auth.SettingsActivity"
+            android:label="Preferences" />
+        <activity android:name=".auth.CreateAccountActivity" />
+        <activity android:name=".auth.PasswordRecoveryActivity"></activity>
     </application>
 
 </manifest>

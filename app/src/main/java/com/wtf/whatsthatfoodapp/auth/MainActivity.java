@@ -46,23 +46,13 @@ public class MainActivity extends BasicActivity {
     private Button email_btn;
     private SignInButton google_btn;
     private LoginButton fb_btn;
-    private TextView emailText;
-    private TextView passwordText;
     private EditText emailField;
     private EditText passwordField;
     private Button register_btn;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser user;
-    private Button back_btn;
-    private Button signup_btn;
-    private EditText usernameField;
     private Button password_recover;
-    private Button reset_btn;
-    private DatabaseReference mDatabase;
-    private FirebaseDatabase database;
-    private TextView recovery;
-    private TextView usernameText;
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager mCallbackManager;
     Intent displayHomePage;
@@ -76,33 +66,16 @@ public class MainActivity extends BasicActivity {
         google_btn = (SignInButton)findViewById(R.id.google_button);
         google_btn.setSize(SignInButton.SIZE_WIDE);
         fb_btn = (LoginButton)findViewById(R.id.fb_btn);
-        emailText = (TextView)findViewById(R.id.emailtext);
-        passwordText = (TextView)findViewById(R.id.passwordtext);
-        usernameText = (TextView)findViewById(R.id.usernametxt);
-        usernameText.setVisibility(View.INVISIBLE);
         emailField = (EditText)findViewById(R.id.emailfield);
         passwordField = (EditText)findViewById(R.id.passwordfield);
-        usernameField = (EditText)findViewById(R.id.usernamefield);
-        usernameField.setVisibility(View.INVISIBLE);
         register_btn = (Button)findViewById(R.id.Register_btn);
         password_recover = (Button)findViewById(R.id.password_recover);
-        recovery = (TextView)findViewById(R.id.Recovery);
-        recovery.setVisibility(View.INVISIBLE);
-        reset_btn = (Button)findViewById(R.id.recover_btn);
-        reset_btn.setVisibility(View.INVISIBLE);
-        back_btn = (Button)findViewById(R.id.back_btn);
-        back_btn.setVisibility(View.INVISIBLE);
-        signup_btn = (Button)findViewById(R.id.signup_btn);
-        signup_btn.setVisibility(View.INVISIBLE);
 
         email_btn.setOnClickListener(this);
         google_btn.setOnClickListener(this);
         fb_btn.setOnClickListener(this);
         register_btn.setOnClickListener(this);
         password_recover.setOnClickListener(this);
-        reset_btn.setOnClickListener(this);
-        back_btn.setOnClickListener(this);
-        signup_btn.setOnClickListener(this);
 
         App app = (App)getApplicationContext();
         // Configure Google Sign In
@@ -123,9 +96,6 @@ public class MainActivity extends BasicActivity {
 
         displayHomePage = new Intent(this,CollageActivity.class);
 
-
-        database = FirebaseDatabase.getInstance();
-        mDatabase = database.getReference();
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
@@ -308,158 +278,20 @@ public class MainActivity extends BasicActivity {
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.Register_btn) {
-            updateUI(1);
-        } else if (i == R.id.email_button) {
+            Intent toSignupPage = new Intent(MainActivity.this, CreateAccountActivity.class);
+            startActivity(toSignupPage);
+        }else if (i == R.id.email_button) {
             EmailSignIn(emailField.getText().toString(), passwordField.getText().toString());
-        }else if(i == R.id.back_btn){
-            updateUI(0);
-        }else if(i == R.id.signup_btn){
-            createAccount(emailField.getText().toString(), passwordField.getText().toString());
         }else if(i == R.id.password_recover){
-            updateUI(2);
-        }else if(i == R.id.recover_btn){
-            recoverPassword(emailField.getText().toString());
+            Intent toRecoveryPage = new Intent(MainActivity.this, PasswordRecoveryActivity.class);
+            startActivity(toRecoveryPage);
         }else if(i == R.id.google_button){
             GoogleSignIn();
         }
     }
 
 
-    private void createAccount(final String email, final String password) {
-        Log.d(TAG, "createAccount:" + email);
-        if (!validateForm()) {
-            return;
-        }
-        showProgressDialog();
 
-        // [START create_user_with_email]
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        if (task.isSuccessful()) {
-                            verificationEmail();
-                            String username = usernameField.getText().toString();
-                            createUserInDB(AuthUtils.getUserEmail()
-                                    ,username
-                                    ,AuthUtils.getUserUid());
-                            updateUI(0);
-
-                        }
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Email is already taken",
-                                    Toast.LENGTH_SHORT).show();
-                            // [START_EXCLUDE]
-                            hideProgressDialog();
-                            // [END_EXCLUDE]
-                        }
-
-                    }
-                });
-        // [END create_user_with_email]
-    }
-
-    private void verificationEmail() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            user.sendEmailVerification()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(MainActivity.this, "Signup successful. " +
-                                        "Verification email sent", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-        }
-    }
-
-    private void updateUI(int choice) {
-        hideProgressDialog();
-        //update to login
-        if(choice == 0){
-            email_btn.setVisibility(View.VISIBLE);
-            register_btn.setVisibility(View.VISIBLE);
-            password_recover.setVisibility(View.VISIBLE);
-            usernameText.setVisibility(View.INVISIBLE);
-            usernameField.setVisibility(View.INVISIBLE);
-            back_btn.setVisibility(View.INVISIBLE);
-            signup_btn.setVisibility(View.INVISIBLE);
-            passwordField.setVisibility(View.VISIBLE);
-            passwordText.setVisibility(View.VISIBLE);
-            reset_btn.setVisibility(View.INVISIBLE);
-            recovery.setVisibility(View.INVISIBLE);
-            google_btn.setVisibility(View.VISIBLE);
-            fb_btn.setVisibility(View.VISIBLE);
-            emailField.setText("");
-            passwordField.setText("");
-            emailField.setError(null);
-            passwordField.setError(null);
-        }
-        //update to signup
-        else if(choice == 1){
-            email_btn.setVisibility(View.INVISIBLE);
-            register_btn.setVisibility(View.INVISIBLE);
-            password_recover.setVisibility(View.INVISIBLE);
-            usernameText.setVisibility(View.VISIBLE);
-            usernameField.setVisibility(View.VISIBLE);
-            back_btn.setVisibility(View.VISIBLE);
-            signup_btn.setVisibility(View.VISIBLE);
-            emailField.setText("");
-            passwordField.setText("");
-            emailField.setError(null);
-            passwordField.setError(null);
-            google_btn.setVisibility(View.INVISIBLE);
-            fb_btn.setVisibility(View.INVISIBLE);
-            //update to password recover
-        }else if(choice == 2){
-            email_btn.setVisibility(View.INVISIBLE);
-            register_btn.setVisibility(View.INVISIBLE);
-            password_recover.setVisibility(View.INVISIBLE);
-            usernameText.setVisibility(View.VISIBLE);
-            usernameField.setVisibility(View.VISIBLE);
-            emailField.setText("");
-            passwordField.setText("");
-            passwordField.setVisibility(View.INVISIBLE);
-            passwordText.setVisibility(View.INVISIBLE);
-            reset_btn.setVisibility(View.VISIBLE);
-            back_btn.setVisibility(View.VISIBLE);
-            usernameField.setVisibility(View.INVISIBLE);
-            usernameText.setVisibility(View.INVISIBLE);
-            recovery.setVisibility(View.VISIBLE);
-            google_btn.setVisibility(View.INVISIBLE);
-            fb_btn.setVisibility(View.INVISIBLE);
-            emailField.setError(null);
-            passwordField.setError(null);
-        }
-
-    }
-
-
-    private void recoverPassword(String email){
-        mAuth.sendPasswordResetEmail(email)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this,
-                                    "Password recover email sent", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG,"PasswordEmailSent: " + task.isSuccessful());
-                            updateUI(0);
-                        }else{
-                            Log.d(TAG,"PasswordEmailSent: " + task.isSuccessful());
-                            Toast.makeText(MainActivity.this,
-                                    "Email does not exist", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
     
     @Override
     public void onBackPressed() {

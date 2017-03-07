@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -28,10 +29,9 @@ public class LogoutActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         app = (App)getApplicationContext();
 
-        //setContentView(R.layout.activity_logout);
+
         if(BasicActivity.getProvider().equals("Google")){
             mGoogleApiClient = app.getClient();
-            mGoogleApiClient.connect();
             Log.e(TAG, "Get Google API Client");
             Log.d(TAG, "GoogleApiClient Connected: "+ mGoogleApiClient.isConnected());
         }
