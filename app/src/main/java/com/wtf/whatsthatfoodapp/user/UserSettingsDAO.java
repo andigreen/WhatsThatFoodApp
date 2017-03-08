@@ -35,7 +35,7 @@ public class UserSettingsDAO {
         return FirebaseDatabase.getInstance().getReference().child(INFO_PATH).child(this.userId);
     }
 
-    public StorageReference getPhotoRef(UserSettings user) {
+    public StorageReference getPhotoRef() {
         return FirebaseStorage.getInstance()
                 .getReference()
                 .child(PROFILE_PHOTO_PATH)

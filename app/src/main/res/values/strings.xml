@@ -17,5 +17,7 @@
     <string name="collage_search">Search</string>
     <string name="search">Search</string>
     <string name="Logout">Logged Out</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_title">Profile Settings</string>
 
 </resources>
