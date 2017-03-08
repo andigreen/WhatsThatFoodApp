@@ -1,13 +1,11 @@
 package com.wtf.whatsthatfoodapp.memory;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @IgnoreExtraProperties

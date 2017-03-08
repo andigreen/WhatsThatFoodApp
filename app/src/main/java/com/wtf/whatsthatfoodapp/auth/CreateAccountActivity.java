@@ -41,8 +41,8 @@ public class CreateAccountActivity extends BasicActivity {
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
 
-        ((Button)findViewById(R.id.signup_btn)).setOnClickListener(this);
-        ((Button)findViewById(R.id.login_btn)).setOnClickListener(this);
+        findViewById(R.id.signup_btn).setOnClickListener(this);
+        findViewById(R.id.login_btn).setOnClickListener(this);
     }
 
     private void createAccount(final String email, final String password) {

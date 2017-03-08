@@ -134,7 +134,6 @@ public class SearchTable {
             mDatabase.execSQL(FTS_TABLE_CREATE);
 
             // Load memories
-            String userUid = AuthUtils.getUserUid();
             MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
             dao.getMemoriesRef()
                     .addChildEventListener(new MemoriesListener(this));

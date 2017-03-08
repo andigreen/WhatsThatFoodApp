@@ -1,8 +1,5 @@
 package com.wtf.whatsthatfoodapp.user;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.RestrictTo;
-
 /**
  * Created by peiranli on 2/20/17.
  */

@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
+import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
@@ -66,7 +67,6 @@ public class CollageActivity extends BasicActivity {
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
-                    return;
                 }
                 // ...
             }
@@ -97,7 +97,7 @@ public class CollageActivity extends BasicActivity {
         }
 
         // Set up list and adapter
-        MemoryDao dao = new MemoryDao(mAuth.getCurrentUser().getUid());
+        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
         ListAdapter collageListAdapter = new MemoryAdapter(this, Memory.class,
                 R.layout.memory_list_item,
                 dao.getMemoriesRef().orderByChild(Memory.TS_KEY_NEWEST),

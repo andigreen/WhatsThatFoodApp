@@ -9,25 +9,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.Image;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
-import static android.os.Process.setThreadPriority;
 
 /**
  * Created by Aitor on 23/02/2017.

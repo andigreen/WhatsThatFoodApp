@@ -2,7 +2,6 @@ package com.wtf.whatsthatfoodapp.auth;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,9 +28,9 @@ public class PasswordRecoveryActivity extends BasicActivity {
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
 
-        ((Button)findViewById(R.id.recover_btn)).setOnClickListener(this);
-        ((Button)findViewById(R.id.login_btn)).setOnClickListener(this);
-        ((Button)findViewById(R.id.signup_btn)).setOnClickListener(this);
+        findViewById(R.id.recover_btn).setOnClickListener(this);
+        findViewById(R.id.login_btn).setOnClickListener(this);
+        findViewById(R.id.signup_btn).setOnClickListener(this);
     }
 
     private void recoverPassword(String email){
