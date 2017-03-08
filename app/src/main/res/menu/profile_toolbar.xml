@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/profile_edit"
+        android:icon="@drawable/ic_edit_white_24dp"
+        app:showAsAction="always"
+        android:title="@string/profile_edit"/>
+    <item
+        android:id="@+id/profile_save"
+        android:icon="@drawable/ic_check_white_24dp"
+        app:showAsAction="always"
+        android:title="@string/profile_save"/>
+</menu>

@@ -8,6 +8,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -61,6 +63,9 @@ public class ProfileActivity extends BasicActivity {
         // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.profile_toolbar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         nameField = (EditText) findViewById(R.id.profile_name);
         nameField.setEnabled(false);
@@ -93,18 +98,46 @@ public class ProfileActivity extends BasicActivity {
                 });
     }
 
-    /**
-     * Toggles the editability of the Name field, and saves the new value if
-     * it was editable before. Should be used as the onClick value of the
-     * toggleEditable button.
-     */
-    public void toggleEditable(View v) {
-        if (editable) {
-            Map<String, Object> newName = new HashMap<>();
-            newName.put("username", nameField.getText().toString());
-            dao.getUserInfoRef().updateChildren(newName);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_toolbar, menu);
+
+        MenuItem editItem = menu.findItem(R.id.profile_edit);
+        MenuItem saveItem = menu.findItem(R.id.profile_save);
+        editItem.setVisible(!editable);
+        saveItem.setVisible(editable);
+
+        return true;
+    }
+
+    @SuppressWarnings("RestrictedApi")
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+            case R.id.profile_edit:
+                editable = true;
+                updateNameEditable();
+                invalidateOptionsMenu();
+                return true;
+            case R.id.profile_save:
+                Map<String, Object> newName = new HashMap<>();
+                newName.put("username", nameField.getText().toString());
+                dao.getUserInfoRef().updateChildren(newName);
+
+                editable = false;
+                updateNameEditable();
+                invalidateOptionsMenu();
+                return true;
         }
-        editable = !editable;
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Updates the editability of the Name field.
+     */
+    public void updateNameEditable() {
         nameField.setEnabled(editable);
     }
 
