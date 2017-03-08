@@ -29,8 +29,8 @@ public class Memory {
 
     private String description;
 
-    private int rate;
-    private int price;
+    private float rate;
+    private float price;
 
     public Memory() {
         title = loc = "";
@@ -137,19 +137,19 @@ public class Memory {
     }
     // Helper methods
 
-    public void setRate(int rate){
+    public void setRate(float rate){
         this.rate = rate;
     }
 
-    public int getRate(){
+    public float getRate(){
         return this.rate;
     }
 
-    public void setPrice(int price){
+    public void setPrice(float price){
         this.price = price;
     }
 
-    public int getPrice(){
+    public float getPrice(){
         return this.price;
     }
 

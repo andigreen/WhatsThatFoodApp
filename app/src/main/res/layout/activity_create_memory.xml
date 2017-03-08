@@ -102,7 +102,7 @@
                         android:layout_gravity="center"/>
 
                     <RatingBar
-                        android:id="@+id/rating_bar"
+                        android:id="@+id/create_rating_bar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </TableRow>
@@ -120,7 +120,7 @@
                         />
 
                     <RatingBar
-                        android:id="@+id/price_rating"
+                        android:id="@+id/create_price_rating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </TableRow>

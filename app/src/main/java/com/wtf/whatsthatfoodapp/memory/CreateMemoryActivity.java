@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -205,12 +206,20 @@ public class CreateMemoryActivity extends BasicActivity {
                 return false;
             }
 
+            float rating = ((RatingBar)findViewById(R.id.create_rating_bar))
+                    .getRating();
+
+            float price = ((RatingBar)findViewById(R.id.create_price_rating))
+                    .getRating();
+
             // Write memory to dao in order to generate db key
             MemoryDao dao = new MemoryDao(user.getUid());
             final Memory memory = new Memory();
             memory.setTitle(title);
             memory.setLoc(loc);
             memory.setDescription(description);
+            memory.setRate(rating);
+            memory.setPrice(price);
             memory.setSavedForNextTime(savedForNextTime);
             memory.setReminder(reminder);
             dao.writeMemory(memory);
