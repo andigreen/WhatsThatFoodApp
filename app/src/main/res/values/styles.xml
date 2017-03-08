@@ -27,6 +27,15 @@
         <item name="android:minHeight">40dip</item>
         <item name="android:maxHeight">40dip</item>
         <item name="android:numStars">4</item>
+        <item name="android:stepSize">1</item>
+    </style>
+
+    <style name="RatingBarRating" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/ratingbar_rating</item>
+        <item name="android:minHeight">40dip</item>
+        <item name="android:maxHeight">40dip</item>
+        <item name="android:numStars">5</item>
+        <item name="android:stepSize">1</item>
     </style>
 
 </resources>

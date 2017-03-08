@@ -9,9 +9,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/rating_rating_bar"
+        style="@style/RatingBarRating"
         android:layout_below="@+id/rating_liner"
         android:layout_centerHorizontal="true"
-        android:stepSize="1"
         android:layout_marginTop="12dp" />
 
     <LinearLayout
@@ -81,8 +81,7 @@
         android:layout_alignLeft="@+id/rating_rating_bar"
         android:layout_alignStart="@+id/rating_rating_bar"
         android:layout_below="@+id/rating_rating_bar"
-        android:layout_marginTop="65dp"
-        android:stepSize="1"/>
+        android:layout_marginTop="65dp" />
 
     <LinearLayout
         android:id="@+id/price_liner"
