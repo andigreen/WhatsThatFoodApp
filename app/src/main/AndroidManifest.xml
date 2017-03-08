@@ -69,11 +69,8 @@
         <activity
             android:name=".auth.ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".auth.SettingsActivity"
-            android:label="Preferences" />
         <activity android:name=".auth.CreateAccountActivity" />
-        <activity android:name=".auth.PasswordRecoveryActivity"></activity>
+        <activity android:name=".auth.PasswordRecoveryActivity"/>
     </application>
 
 </manifest>

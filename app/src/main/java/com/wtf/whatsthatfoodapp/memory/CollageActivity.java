@@ -2,7 +2,6 @@ package com.wtf.whatsthatfoodapp.memory;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -28,7 +26,6 @@ import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.ProfileActivity;
-import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
 
 public class CollageActivity extends BasicActivity {
@@ -127,9 +124,6 @@ public class CollageActivity extends BasicActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.profile:
-                viewProfile();
-                return true;
             case R.id.settings:
                 viewSettings();
                 return true;
@@ -165,14 +159,8 @@ public class CollageActivity extends BasicActivity {
     }
     // [END on_stop_remove_listener]
 
-    private void viewProfile(){
-        Intent intent = new Intent(this, ProfileActivity.class);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
-
     private void viewSettings(){
-        Intent intent = new Intent(this, SettingsActivity.class);
+        Intent intent = new Intent(this, ProfileActivity.class);
         startActivity(intent);
     }
 
