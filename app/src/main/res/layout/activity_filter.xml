@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/com_facebook_button_background_color_selected">
+    android:background="@color/white">
 
 
     <RatingBar
@@ -14,27 +14,27 @@
         android:layout_marginTop="12dp" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/sort"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_marginTop="310dp"
-        android:layout_below="@+id/linearLayout6"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="310dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <TextView
-            android:text="Sort by"
-            android:textSize="24sp"
+            android:id="@+id/sort_by"
             android:layout_width="100dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginStart="60dp"
-            android:id="@+id/sort_by"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="60dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="20dp"
+            android:text="Sort by"
+            android:textSize="24sp"
 
             />
 
@@ -83,28 +83,29 @@
         android:layout_alignStart="@+id/rating_rating_bar" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_below="@+id/rating_rating_bar"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rating_rating_bar"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <TextView
-            android:text="Price  "
-            android:textSize="24sp"
+            android:id="@+id/Price"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginStart="60dp"
-            android:id="@+id/Price"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="60dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.19"
+            android:text="Price  "
 
-            android:layout_weight="0.19" />
+            android:textSize="24sp" />
 
         <Spinner
             android:id="@+id/price_spinner"
@@ -118,28 +119,29 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_below="@+id/price_rating_bar"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/price_rating_bar"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <TextView
-            android:text="Time"
-            android:textSize="24sp"
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginStart="60dp"
-            android:id="@+id/time"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="60dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="0.16"
+            android:text="Time"
 
-            android:layout_weight="0.16" />
+            android:textSize="24sp" />
 
         <Spinner
             android:id="@+id/time_spinner"
