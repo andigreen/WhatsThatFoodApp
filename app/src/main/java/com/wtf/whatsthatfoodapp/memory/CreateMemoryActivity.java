@@ -62,13 +62,15 @@ public class CreateMemoryActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Initiate photo loading
-        fromCamera = getIntent().getBooleanExtra("camera",true);
-        if (fromCamera){
-            if (Build.VERSION.SDK_INT >= 21 ){
+        fromCamera = getIntent().getBooleanExtra("camera", true);
+        if (fromCamera) {
+            if (Build.VERSION.SDK_INT >= 21) {
                 // We need to ask for permission in runtime for android 6.0
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}
-                        ,1);
+                        new String[]{Manifest.permission
+                                .WRITE_EXTERNAL_STORAGE, Manifest.permission
+                                .CAMERA}
+                        , 1);
             } else {
                 dispatchTakePictureIntent();
             }
@@ -88,23 +90,27 @@ public class CreateMemoryActivity extends BasicActivity {
             startActivityForResult(takePictureIntent, REQUEST_PHOTO_GET);
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 1
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[1] == PackageManager
+                        .PERMISSION_GRANTED) {
 
                     // permission was granted, take picture
-                    Intent getPhoto = new Intent(this, TakePhotoAPI21Activity.class);
-                    startActivityForResult(getPhoto,REQUEST_PHOTO_GET);
+                    Intent getPhoto = new Intent(this,
+                            TakePhotoAPI21Activity.class);
+                    startActivityForResult(getPhoto, REQUEST_PHOTO_GET);
                 } else {
 
                     // permission denied, return to WelcomeActivity
-                    Toast.makeText(this, "Cannot Access Camera", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Cannot Access Camera",
+                            Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -114,7 +120,7 @@ public class CreateMemoryActivity extends BasicActivity {
     /**
      * Returns true if all of the form contents are valid, and also updates
      * the error status of form contents.
-     *
+     * <p>
      * Currently, the form only requires that title and loc are both nonempty.
      */
     private boolean validateForm() {
@@ -155,7 +161,7 @@ public class CreateMemoryActivity extends BasicActivity {
             finish();
         }
 
-        if (item.getItemId() == R.id.saveFNTcheck){
+        if (item.getItemId() == R.id.saveFNTcheck) {
             if (saveFNTCheck.isChecked()) {
                 saveFNTCheck.setChecked(false);
             } else {
@@ -164,7 +170,7 @@ public class CreateMemoryActivity extends BasicActivity {
 
         }
 
-        if (item.getItemId() == R.id.remindCheck){
+        if (item.getItemId() == R.id.remindCheck) {
             if (remindCheck.isChecked()) {
                 remindCheck.setChecked(false);
             } else {
@@ -181,7 +187,7 @@ public class CreateMemoryActivity extends BasicActivity {
             String loc = ((TextInputEditText) findViewById(
                     R.id.create_memory_loc))
                     .getText().toString();
-            String description= ((TextInputEditText) findViewById(
+            String description = ((TextInputEditText) findViewById(
                     R.id.create_memory_description))
                     .getText().toString();
             boolean savedForNextTime = saveFNTCheck.isChecked();
@@ -192,11 +198,10 @@ public class CreateMemoryActivity extends BasicActivity {
                 return false;
             }
 
-            float rating = ((RatingBar)findViewById(R.id.create_rating_bar))
-                    .getRating();
-
-            float price = ((RatingBar)findViewById(R.id.create_price_rating))
-                    .getRating();
+            int rating = (int) ((RatingBar) findViewById(
+                    R.id.create_rating_bar)).getRating();
+            int price = (int) ((RatingBar) findViewById(
+                    R.id.create_price_rating)).getRating();
 
             // Write memory to dao in order to generate db key
             MemoryDao dao = new MemoryDao(user.getUid());
@@ -258,7 +263,8 @@ public class CreateMemoryActivity extends BasicActivity {
             setContentView(R.layout.activity_create_memory);
 
             // Set up toolbar
-            Toolbar toolbar = (Toolbar) findViewById(R.id.create_memory_toolbar);
+            Toolbar toolbar = (Toolbar) findViewById(
+                    R.id.create_memory_toolbar);
             setSupportActionBar(toolbar);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -272,11 +278,11 @@ public class CreateMemoryActivity extends BasicActivity {
 
 
             // Load photo view with the result's URI
-            if (fromCamera){
-                Log.e("Photo Received","True");
+            if (fromCamera) {
+                Log.e("Photo Received", "True");
                 Bundle extras = data.getExtras();
                 String path;
-                if (Build.VERSION.SDK_INT >= 21){
+                if (Build.VERSION.SDK_INT >= 21) {
                     path = (String) extras.get("data");
                 } else {
                     Bitmap bitmapImage = (Bitmap) extras.get("data");
@@ -298,22 +304,26 @@ public class CreateMemoryActivity extends BasicActivity {
         }
     }
 
-    public void expandImage(View v){
+    public void expandImage(View v) {
         imageDialog = new Dialog(this);
 
-        imageDialog.setContentView(getLayoutInflater().inflate(R.layout.image_popup,null));
+        imageDialog.setContentView(
+                getLayoutInflater().inflate(R.layout.image_popup, null));
 
-        ImageView imageView = (ImageView) imageDialog.findViewById(R.id.image_popup);
-        try{
-            Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+        ImageView imageView = (ImageView) imageDialog.findViewById(
+                R.id.image_popup);
+        try {
+            Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(
+                    this.getContentResolver(), photoUri);
             imageView.setImageBitmap(bitmapImage);
             imageDialog.show();
-        } catch (IOException e){
-            Log.d(TAG,"IOEXCEPTION : photoUri");
+        } catch (IOException e) {
+            Log.d(TAG, "IOEXCEPTION : photoUri");
         }
     }
-    public void closeImage(View v){
-        if(imageDialog != null){
+
+    public void closeImage(View v) {
+        if (imageDialog != null) {
             imageDialog.dismiss();
         }
     }
