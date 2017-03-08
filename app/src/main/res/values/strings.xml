@@ -19,5 +19,9 @@
     <string name="settings_title">Settings</string>
     <string name="main_menu_settings">Settings</string>
     <string name="main_menu_logout">Log out</string>
+    <string name="image_popup_desc">Full image</string>
+    <string name="memory_item_desc">Memory image</string>
+    <string name="create_account_finish">Finish</string>
+    <string name="create_account_login">Log in</string>
 
 </resources>

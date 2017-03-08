@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/image_popup"
+        android:contentDescription="@string/image_popup_desc"
         android:onClick="closeImage"/>
 
 </LinearLayout>

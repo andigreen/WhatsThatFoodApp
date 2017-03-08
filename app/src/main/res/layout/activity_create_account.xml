@@ -75,7 +75,7 @@
         android:layout_alignStart="@+id/passwordfield" />
 
     <Button
-        android:text="Finish"
+        android:text="@string/create_account_finish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/signup_btn"
@@ -83,7 +83,7 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="Log in"
+        android:text="@string/create_account_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="101dp"
