@@ -25,7 +25,7 @@ import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
-import com.wtf.whatsthatfoodapp.auth.ProfileActivity;
+import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
 
 public class CollageActivity extends BasicActivity {
@@ -160,7 +160,7 @@ public class CollageActivity extends BasicActivity {
     // [END on_stop_remove_listener]
 
     private void viewSettings(){
-        Intent intent = new Intent(this, ProfileActivity.class);
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 

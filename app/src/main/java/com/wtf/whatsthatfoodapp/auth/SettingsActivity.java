@@ -1,39 +1,25 @@
 package com.wtf.whatsthatfoodapp.auth;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
-import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
 import com.wtf.whatsthatfoodapp.user.UserSettings;
 import com.wtf.whatsthatfoodapp.user.UserSettingsDAO;
 
@@ -42,37 +28,30 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileActivity extends BasicActivity {
+public class SettingsActivity extends BasicActivity {
 
-    private final String TAG = "ProfileActivity";
+    private final String TAG = SettingsActivity.class.getSimpleName();
 
     private UserSettingsDAO dao;
 
     private CircleImageView photo_button;
     private EditText nameField;
 
-    boolean editable = false;
-
     private static final int GALLERY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_settings);
 
         // Set up toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.profile_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        nameField = (EditText) findViewById(R.id.profile_name);
-        nameField.setEnabled(false);
-
-        dao = new UserSettingsDAO(AuthUtils.getUserUid());
-
-        photo_button = (CircleImageView) findViewById(R.id.profile_photo);
+        photo_button = (CircleImageView) findViewById(R.id.settings_photo);
         photo_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,12 +63,14 @@ public class ProfileActivity extends BasicActivity {
                         GALLERY);
             }
         });
+        nameField = (EditText) findViewById(R.id.settings_name);
 
+        dao = new UserSettingsDAO(AuthUtils.getUserUid());
         dao.getPhotoRef().getDownloadUrl().addOnSuccessListener(
                 new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Glide.with(ProfileActivity.this)
+                        Glide.with(SettingsActivity.this)
                                 .load(uri)
                                 .centerCrop()
                                 .dontAnimate() // required by CircleImageView
@@ -98,49 +79,31 @@ public class ProfileActivity extends BasicActivity {
                 });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.profile_toolbar, menu);
-
-        MenuItem editItem = menu.findItem(R.id.profile_edit);
-        MenuItem saveItem = menu.findItem(R.id.profile_save);
-        editItem.setVisible(!editable);
-        saveItem.setVisible(editable);
-
-        return true;
+    /**
+     * Writes the value of nameField to the DB using the dao.
+     */
+    private void updateName() {
+        Map<String, Object> newName = new HashMap<>();
+        newName.put("username", nameField.getText().toString());
+        dao.getUserInfoRef().updateChildren(newName);
     }
 
-    @SuppressWarnings("RestrictedApi")
+    // Update name when the toolbar back button is pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-            case R.id.profile_edit:
-                editable = true;
-                updateNameEditable();
-                invalidateOptionsMenu();
-                return true;
-            case R.id.profile_save:
-                Map<String, Object> newName = new HashMap<>();
-                newName.put("username", nameField.getText().toString());
-                dao.getUserInfoRef().updateChildren(newName);
-
-                editable = false;
-                updateNameEditable();
-                invalidateOptionsMenu();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            updateName();
+            finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Updates the editability of the Name field.
-     */
-    public void updateNameEditable() {
-        nameField.setEnabled(editable);
-        nameField.setFocusable(editable);
-        nameField.setFocusableInTouchMode(editable);
+    // Update name when the system back button is pressed
+    @Override
+    public void onBackPressed() {
+        updateName();
+        super.onBackPressed();
     }
 
     // [START on_start_add_listener]
@@ -162,7 +125,7 @@ public class ProfileActivity extends BasicActivity {
                 // Getting Post failed, log a message
                 Log.w(TAG, "loadData:onCancelled", databaseError.toException());
                 // [START_EXCLUDE]
-                Toast.makeText(ProfileActivity.this, "Failed to load data.",
+                Toast.makeText(SettingsActivity.this, "Failed to load data.",
                         Toast.LENGTH_SHORT).show();
                 // [END_EXCLUDE]
             }

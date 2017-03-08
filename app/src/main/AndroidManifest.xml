@@ -67,7 +67,7 @@
             android:theme="@style/AppTheme.FilterPopup" />
         <activity android:name=".auth.LogoutActivity" />
         <activity
-            android:name=".auth.ProfileActivity"
+            android:name=".auth.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".auth.CreateAccountActivity" />
         <activity android:name=".auth.PasswordRecoveryActivity"/>
