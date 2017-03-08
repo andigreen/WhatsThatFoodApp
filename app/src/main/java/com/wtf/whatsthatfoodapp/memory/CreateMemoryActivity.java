@@ -194,8 +194,8 @@ public class CreateMemoryActivity extends BasicActivity {
             String loc = ((TextInputEditText) findViewById(
                     R.id.create_memory_loc))
                     .getText().toString();
-            String tags = ((TextInputEditText) findViewById(
-                    R.id.create_memory_tags))
+            String description= ((TextInputEditText) findViewById(
+                    R.id.create_memory_description))
                     .getText().toString();
             boolean savedForNextTime = saveFNTCheck.isChecked();
             boolean reminder = this.remindCheck.isChecked();
@@ -210,7 +210,7 @@ public class CreateMemoryActivity extends BasicActivity {
             final Memory memory = new Memory();
             memory.setTitle(title);
             memory.setLoc(loc);
-            memory.setTag(tags);
+            memory.setDescription(description);
             memory.setSavedForNextTime(savedForNextTime);
             memory.setReminder(reminder);
             dao.writeMemory(memory);
