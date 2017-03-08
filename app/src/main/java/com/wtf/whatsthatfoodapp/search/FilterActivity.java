@@ -35,25 +35,21 @@ public class FilterActivity extends Activity {
 
         getWindow().setLayout((int) (width * .9), (int) (height * .8));
 
-        Spinner rating_spinner = (Spinner) findViewById(R.id.rating_spinner);
-        ArrayAdapter<CharSequence> rating_adapter = ArrayAdapter
-                .createFromResource(
-                        this,
-                        R.array.filter_rating,
-                        android.R.layout.simple_spinner_item);
-        rating_adapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
-        rating_spinner.setAdapter(rating_adapter);
+        final Spinner rating_spinner = (Spinner) findViewById(
+                R.id.rating_spinner);
+        ArrayAdapter<SearchActivity.FilterMode> ratingModeAdapter =
+                new ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        SearchActivity.FilterMode.values());
+        rating_spinner.setAdapter(ratingModeAdapter);
 
-        Spinner price_spinner = (Spinner) findViewById(R.id.price_spinner);
-        ArrayAdapter<CharSequence> price_adapter = ArrayAdapter
-                .createFromResource(
-                        this,
-                        R.array.filter_pricing,
-                        android.R.layout.simple_spinner_item);
-        price_adapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
-        price_spinner.setAdapter(price_adapter);
+        final Spinner price_spinner = (Spinner) findViewById(
+                R.id.price_spinner);
+        ArrayAdapter<SearchActivity.FilterMode> priceModeAdapter =
+                new ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        SearchActivity.FilterMode.values());
+        price_spinner.setAdapter(priceModeAdapter);
 
         Spinner time_spinner = (Spinner) findViewById(R.id.time_spinner);
         ArrayAdapter<CharSequence> time_adapter = ArrayAdapter
@@ -73,19 +69,33 @@ public class FilterActivity extends Activity {
                         SearchActivity.SortMode.values());
         sort_by_spinner.setAdapter(sortAdapter);
 
-        Object mode = getIntent().getSerializableExtra(SearchActivity
-                .SORT_MODE_KEY);
-        if (mode == null || !(mode instanceof SearchActivity.SortMode)) {
-            Log.d(TAG, "Activity created without sort mode extra!");
-        } else {
-            sort_by_spinner.setSelection(
-                    sortAdapter.getPosition((SearchActivity.SortMode) mode));
-        }
-
-        RatingBar rating_ratingbar = (RatingBar) findViewById(
+        final RatingBar rating_ratingbar = (RatingBar) findViewById(
                 R.id.rating_rating_bar);
-        RatingBar price_ratingbar = (RatingBar) findViewById(
+        final RatingBar price_ratingbar = (RatingBar) findViewById(
                 R.id.price_rating_bar);
+
+        // Init values from calling activity
+
+        SearchActivity.SortMode mode = (SearchActivity.SortMode)
+                getIntent().getSerializableExtra(SearchActivity.SORT_MODE_KEY);
+        sort_by_spinner.setSelection(sortAdapter.getPosition(mode));
+
+        SearchActivity.FilterMode ratingMode = (SearchActivity.FilterMode)
+                getIntent().getSerializableExtra(
+                        SearchActivity.RATING_MODE_KEY);
+        rating_spinner.setSelection(ratingModeAdapter.getPosition(ratingMode));
+
+        int ratingVal = getIntent().getIntExtra(SearchActivity.RATING_VAL_KEY,
+                1);
+        rating_ratingbar.setRating(ratingVal);
+
+        SearchActivity.FilterMode priceMode = (SearchActivity.FilterMode)
+                getIntent().getSerializableExtra(
+                        SearchActivity.PRICE_MODE_KEY);
+        price_spinner.setSelection(priceModeAdapter.getPosition(priceMode));
+
+        int priceVal = getIntent().getIntExtra(SearchActivity.PRICE_VAL_KEY, 1);
+        price_ratingbar.setRating(priceVal);
 
         Button cancel = (Button) findViewById(R.id.filter_cancel);
         Button apply = (Button) findViewById(R.id.filter_apply);
@@ -104,8 +114,19 @@ public class FilterActivity extends Activity {
             public void onClick(View v) {
                 SearchActivity.SortMode sortMode = (SearchActivity.SortMode)
                         sort_by_spinner.getSelectedItem();
+                SearchActivity.FilterMode ratingMode = (SearchActivity
+                        .FilterMode) rating_spinner.getSelectedItem();
+                int ratingVal = (int) rating_ratingbar.getRating();
+                SearchActivity.FilterMode priceMode = (SearchActivity
+                        .FilterMode) price_spinner.getSelectedItem();
+                int priceVal = (int) price_ratingbar.getRating();
+
                 Intent result = new Intent();
                 result.putExtra(SearchActivity.SORT_MODE_KEY, sortMode);
+                result.putExtra(SearchActivity.RATING_MODE_KEY, ratingMode);
+                result.putExtra(SearchActivity.RATING_VAL_KEY, ratingVal);
+                result.putExtra(SearchActivity.PRICE_MODE_KEY, priceMode);
+                result.putExtra(SearchActivity.PRICE_VAL_KEY, priceVal);
                 setResult(RESULT_OK, result);
                 finish();
             }

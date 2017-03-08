@@ -1,5 +1,6 @@
 package com.wtf.whatsthatfoodapp.search;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -28,9 +30,12 @@ public class SearchTable {
 
     private static final String TAG = SearchTable.class.getSimpleName();
 
-    public static final String COL_KEY = "KEY";
-    public static final String COL_TITLE = "TITLE";
-    public static final String COL_LOC = "LOC";
+    public static final String COL_KEY = "key";
+    public static final String COL_TITLE = "title";
+    public static final String COL_LOC = "loc";
+    public static final String COL_DESC = "desc";
+    public static final String COL_RATING = "rating";
+    public static final String COL_PRICE = "price";
 
     private static final String[] QUERY_COLS = {COL_KEY};
 
@@ -40,8 +45,37 @@ public class SearchTable {
 
     private final DatabaseHelper mHelper;
 
+    private int rating = 1;
+    private int price = 1;
+    private SearchActivity.FilterMode ratingMode = SearchActivity.FilterMode.ANY;
+    private SearchActivity.FilterMode priceMode = SearchActivity.FilterMode.ANY;
+
     public SearchTable(Context context) {
         mHelper = new DatabaseHelper(context);
+    }
+
+    public void setRating(SearchActivity.FilterMode mode, int rating) {
+        this.rating = rating;
+        this.ratingMode = mode;
+    }
+
+    public void setPrice(SearchActivity.FilterMode mode, int price) {
+        this.price = price;
+        this.priceMode = mode;
+    }
+
+    @SuppressLint("DefaultLocale")
+    private String getRatingClause() {
+        if (ratingMode == SearchActivity.FilterMode.ANY) return "";
+        return String.format(" AND CAST(%s AS NUMERIC) %s %d",
+                COL_RATING, ratingMode.getOperator(), rating);
+    }
+
+    @SuppressLint("DefaultLocale")
+    private String getPriceClause() {
+        if (priceMode == SearchActivity.FilterMode.ANY) return "";
+        return String.format(" AND CAST(%s AS NUMERIC) %s %d",
+                COL_PRICE, priceMode.getOperator(), price);
     }
 
     /**
@@ -53,19 +87,18 @@ public class SearchTable {
      * TODO describe queryStr format
      */
     public Cursor query(String queryStr) {
+        String selection = FTS_VIRTUAL_TABLE + " MATCH ?"
+                + getRatingClause() + getPriceClause();
+
         String[] tokens = SearchUtils.getTokens(queryStr);
         if (tokens.length == 0) return null;
         for (int i = 0; i < tokens.length; i++) tokens[i] += "*";
         String selArgs = TextUtils.join(" ", tokens);
 
-        Log.i(TAG, "querying for " + selArgs);
-
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(FTS_VIRTUAL_TABLE);
         Cursor cursor = builder.query(mHelper.getReadableDatabase(),
-                QUERY_COLS,
-                FTS_VIRTUAL_TABLE + " MATCH ?",
-                new String[]{selArgs},
+                QUERY_COLS, selection, new String[]{selArgs},
                 null, null, null);
 
         if (cursor == null) return null;
@@ -120,9 +153,9 @@ public class SearchTable {
         private static final String FTS_TABLE_DROP =
                 "DROP TABLE IF EXISTS " + FTS_VIRTUAL_TABLE;
         private static final String FTS_TABLE_CREATE = String.format(
-                "CREATE VIRTUAL TABLE %s USING fts4 (%s, %s, %s)",
+                "CREATE VIRTUAL TABLE %s USING fts4 (%s, %s, %s, %s, %s, %s)",
                 FTS_VIRTUAL_TABLE,
-                COL_KEY, COL_TITLE, COL_LOC
+                COL_KEY, COL_TITLE, COL_LOC, COL_DESC, COL_RATING, COL_PRICE
         );
 
         DatabaseHelper(Context context) {
@@ -148,6 +181,9 @@ public class SearchTable {
             vals.put(COL_KEY, memory.getKey());
             vals.put(COL_TITLE, memory.getTitle());
             vals.put(COL_LOC, memory.getLoc());
+            vals.put(COL_DESC, memory.getDescription());
+            vals.put(COL_RATING, memory.getRate());
+            vals.put(COL_PRICE, memory.getPrice());
             return mDatabase.insert(FTS_VIRTUAL_TABLE, null, vals);
         }
 

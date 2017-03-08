@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,6 @@ import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -52,19 +50,31 @@ public class SearchActivity extends BasicActivity {
 
     public final static String TAG = SearchActivity.class.getSimpleName();
     public final static String SORT_MODE_KEY = "sort_mode";
+    public final static String RATING_MODE_KEY = "rating_mode";
+    public final static String RATING_VAL_KEY = "rating_val";
+    public final static String PRICE_MODE_KEY = "price_mode";
+    public final static String PRICE_VAL_KEY = "price_val";
     public final static int FILTER_REQ = 343;
 
     private Map<String, Memory> memories;
     private SearchTable searchTable;
+    private String query;
     private MemoryDao dao;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    private SortMode sortMode;
     private List<Memory> results;
     private ArrayAdapter<Memory> resultsAdapter;
+
+    // Sort/filter options
+    private SortMode sortMode = SortMode.RATING_HIGH;
+    private FilterMode ratingMode = FilterMode.ANY;
+    private int ratingVal = 1;
+    private FilterMode priceMode = FilterMode.ANY;
+    private int priceVal = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,13 +110,15 @@ public class SearchActivity extends BasicActivity {
 
         results = new ArrayList<>();
         resultsAdapter = new ResultAdapter(this, results);
-        setSortMode(SortMode.RATING_HIGH);
 
         ListView listView = (ListView) findViewById(R.id.search_results);
         listView.setAdapter(resultsAdapter);
 
         // Initialize search table (pre-populate index)
         searchTable = new SearchTable(this);
+//        searchTable.setRating(ratingMode, ratingVal);
+//        searchTable.setPrice(priceMode, priceVal);
+        query = "";
 
         Button filter = (Button) findViewById(R.id.filter);
         filter.setOnClickListener(new View.OnClickListener() {
@@ -115,6 +127,10 @@ public class SearchActivity extends BasicActivity {
                 Intent filterIntent = new Intent(SearchActivity.this,
                         FilterActivity.class);
                 filterIntent.putExtra(SORT_MODE_KEY, sortMode);
+                filterIntent.putExtra(RATING_MODE_KEY, ratingMode);
+                filterIntent.putExtra(RATING_VAL_KEY, ratingVal);
+                filterIntent.putExtra(PRICE_MODE_KEY, priceMode);
+                filterIntent.putExtra(PRICE_VAL_KEY, priceVal);
                 startActivityForResult(filterIntent, FILTER_REQ);
             }
         });
@@ -133,22 +149,8 @@ public class SearchActivity extends BasicActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                results.clear();
-
-                Cursor cursor = searchTable.query(s.toString());
-                if (cursor == null) {
-                    resultsAdapter.notifyDataSetChanged();
-                    return;
-                }
-
-                int col = cursor.getColumnIndex(SearchTable.COL_KEY);
-                cursor.moveToFirst();
-                do {
-                    Memory m = memories.get(cursor.getString(col));
-                    if (m != null) results.add(m);
-                } while (cursor.moveToNext());
-                cursor.close();
-                setSortMode(sortMode);
+                query = s.toString();
+                requery();
             }
         });
 
@@ -157,28 +159,45 @@ public class SearchActivity extends BasicActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    private void requery() {
+        results.clear();
+
+        searchTable.setRating(ratingMode, ratingVal);
+        searchTable.setPrice(priceMode, priceVal);
+        Cursor cursor = searchTable.query(query);
+        if (cursor == null) {
+            resultsAdapter.notifyDataSetChanged();
+            return;
+        }
+
+        int col = cursor.getColumnIndex(SearchTable.COL_KEY);
+        cursor.moveToFirst();
+        do {
+            Memory m = memories.get(cursor.getString(col));
+            if (m != null) results.add(m);
+        } while (cursor.moveToNext());
+        cursor.close();
+
+        resultsAdapter.sort(sortMode.getComparator());
+    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent
+            data) {
         if (requestCode == FILTER_REQ && resultCode == RESULT_OK) {
-            Object mode = data.getSerializableExtra(SORT_MODE_KEY);
-            if (mode == null || !(mode instanceof SortMode)) {
-                Log.d(TAG, "onActivityResult:Filter result was invalid!");
-            } else {
-                setSortMode((SortMode) mode);
-            }
+            sortMode = (SortMode) data.getSerializableExtra(SORT_MODE_KEY);
+
+            ratingMode = (FilterMode) data.getSerializableExtra(
+                    RATING_MODE_KEY);
+            ratingVal = data.getIntExtra(RATING_VAL_KEY, ratingVal);
+            priceMode = (FilterMode) data.getSerializableExtra(PRICE_MODE_KEY);
+            priceVal = data.getIntExtra(PRICE_VAL_KEY, priceVal);
+
+            requery();
             return;
         }
 
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    /**
-     * Sets sortMode and sorts the resultsAdapter accordingly.
-     */
-    private void setSortMode(SortMode mode) {
-        sortMode = mode;
-        resultsAdapter.sort(sortMode.getComparator());
-        Log.d(TAG, "Set sort mode: " + sortMode);
     }
 
     /**
@@ -187,7 +206,9 @@ public class SearchActivity extends BasicActivity {
      */
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Search Page") // TODO: Define a title for the content shown.
+                .setName(
+                        "Search Page") // TODO: Define a title for the
+                // content shown.
                 // TODO: Make sure this auto-generated URL is correct.
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
@@ -215,6 +236,29 @@ public class SearchActivity extends BasicActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    enum FilterMode {
+        ANY("Any", ""),
+        AT_LEAST("At least", ">="),
+        AT_MOST("At most", "<="),;
+
+        private String label;
+        private String operator;
+
+        FilterMode(String label, String operator) {
+            this.label = label;
+            this.operator = operator;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+        public String getOperator() {
+            return operator;
+        }
     }
 
     enum SortMode {
@@ -255,8 +299,7 @@ public class SearchActivity extends BasicActivity {
             public int compare(Memory o1, Memory o2) {
                 return Long.compare(o1.getTsCreated(), o2.getTsCreated());
             }
-        }),
-        ;
+        }),;
 
         private String name;
         private Comparator<Memory> comparator;
@@ -312,17 +355,18 @@ public class SearchActivity extends BasicActivity {
                             GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e,
-                                    StorageReference model, Target<GlideDrawable>
-                                    target, boolean isFirstResource) {
+                                StorageReference model, Target<GlideDrawable>
+                                target, boolean isFirstResource) {
                             progress.setVisibility(View.GONE);
                             return false;
                         }
 
                         @Override
                         public boolean onResourceReady(GlideDrawable
-                                    resource, StorageReference model,
-                                    Target<GlideDrawable> target,
-                                    boolean isFromMemoryCache, boolean isFirstResource) {
+                                resource, StorageReference model,
+                                Target<GlideDrawable> target,
+                                boolean isFromMemoryCache, boolean
+                                isFirstResource) {
                             progress.setVisibility(View.GONE);
                             return false;
                         }
