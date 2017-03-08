@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -45,8 +44,8 @@ public class SearchTable {
 
     private final DatabaseHelper mHelper;
 
-    private int rating = 1;
-    private int price = 1;
+    private int ratingVal = 1;
+    private int priceVal = 1;
     private SearchActivity.FilterMode ratingMode = SearchActivity.FilterMode.ANY;
     private SearchActivity.FilterMode priceMode = SearchActivity.FilterMode.ANY;
 
@@ -54,13 +53,13 @@ public class SearchTable {
         mHelper = new DatabaseHelper(context);
     }
 
-    public void setRating(SearchActivity.FilterMode mode, int rating) {
-        this.rating = rating;
+    public void setRating(SearchActivity.FilterMode mode, int val) {
+        this.ratingVal = val;
         this.ratingMode = mode;
     }
 
-    public void setPrice(SearchActivity.FilterMode mode, int price) {
-        this.price = price;
+    public void setPrice(SearchActivity.FilterMode mode, int val) {
+        this.priceVal = val;
         this.priceMode = mode;
     }
 
@@ -68,14 +67,14 @@ public class SearchTable {
     private String getRatingClause() {
         if (ratingMode == SearchActivity.FilterMode.ANY) return "";
         return String.format(" AND CAST(%s AS NUMERIC) %s %d",
-                COL_RATING, ratingMode.getOperator(), rating);
+                COL_RATING, ratingMode.getOperator(), ratingVal);
     }
 
     @SuppressLint("DefaultLocale")
     private String getPriceClause() {
         if (priceMode == SearchActivity.FilterMode.ANY) return "";
         return String.format(" AND CAST(%s AS NUMERIC) %s %d",
-                COL_PRICE, priceMode.getOperator(), price);
+                COL_PRICE, priceMode.getOperator(), priceVal);
     }
 
     /**
