@@ -10,4 +10,6 @@
 .idea/tasks.xml
 .idea/gradle.xml
 .idea/dictionaries
-
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/misc.xml
