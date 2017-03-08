@@ -84,11 +84,46 @@
                         android:id="@+id/create_memory_tags"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/create_memory_tags"
+                        android:hint="@string/create_memory_description"
                         android:inputType="text"/>
 
                 </android.support.design.widget.TextInputLayout>
 
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:id="@+id/rating_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rating"
+                        android:layout_gravity="center"/>
+
+                    <RatingBar
+                        android:id="@+id/rating_bar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:id="@+id/price_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Price"
+                        android:layout_gravity="center"
+                        />
+
+                    <RatingBar
+                        android:id="@+id/price_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
 
                 <TableLayout
                     android:layout_width="match_parent"

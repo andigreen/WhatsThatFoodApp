@@ -11,7 +11,7 @@
     <string name="create_memory_photo_desc">Your photo</string>
     <string name="create_memory_title">Title</string>
     <string name="create_memory_loc">Location</string>
-    <string name="create_memory_tags">Tags</string>
+    <string name="create_memory_description">Description</string>
     <string name="collage_logout">logout</string>
     <string name="collage_title">What\'s That Food?</string>
     <string name="collage_search">Search</string>
