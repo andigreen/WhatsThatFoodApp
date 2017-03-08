@@ -17,7 +17,7 @@ import com.wtf.whatsthatfoodapp.R;
 
 public class LogoutActivity extends BasicActivity {
 
-    private static final String TAG = "LogoutActivity";
+    private static final String TAG = LogoutActivity.class.getSimpleName();
 
     private App app;
 

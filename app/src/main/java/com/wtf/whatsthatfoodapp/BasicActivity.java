@@ -15,7 +15,7 @@ import com.wtf.whatsthatfoodapp.R;
 
 public class BasicActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
-    public final String TAG = "BasicActivity";
+    public final String TAG = BasicActivity.class.getSimpleName();
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
 

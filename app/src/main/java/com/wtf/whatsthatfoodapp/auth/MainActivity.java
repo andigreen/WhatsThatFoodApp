@@ -40,7 +40,7 @@ import com.wtf.whatsthatfoodapp.user.UserSettings;
 import com.wtf.whatsthatfoodapp.user.UserSettingsDAO;
 
 public class MainActivity extends BasicActivity {
-    private final String TAG = "MainActivity";
+    private final String TAG = MainActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 9001;
     private EditText emailField;
     private EditText passwordField;

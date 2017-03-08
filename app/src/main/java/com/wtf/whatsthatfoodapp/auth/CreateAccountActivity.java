@@ -21,7 +21,7 @@ import com.wtf.whatsthatfoodapp.user.UserSettingsDAO;
 
 public class CreateAccountActivity extends BasicActivity {
 
-    public final String TAG = "CreateAccountActivity";
+    public final String TAG = CreateAccountActivity.class.getSimpleName();
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private EditText emailField;

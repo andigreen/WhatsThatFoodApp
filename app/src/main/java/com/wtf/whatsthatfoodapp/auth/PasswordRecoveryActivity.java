@@ -16,7 +16,7 @@ import com.wtf.whatsthatfoodapp.R;
 
 public class PasswordRecoveryActivity extends BasicActivity {
 
-    public final String TAG = "PaaswordRecoverActivity";
+    public final String TAG = PasswordRecoveryActivity.class.getSimpleName();
     private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

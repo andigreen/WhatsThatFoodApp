@@ -49,7 +49,6 @@ public class CollageActivity extends BasicActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.collage_toolbar);
         setSupportActionBar(toolbar);
 
-        App app1 = (App) getApplicationContext();
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
