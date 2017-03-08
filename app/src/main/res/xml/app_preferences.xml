@@ -1,29 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
-        android:defaultValue="Default value"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="Edit text preference"
-        android:key="edit_text_preference_1"
-        app:title="Email"
-        app:summary="Account email address" />
-    <SwitchPreference
-        android:defaultValue="false"
-        android:title="Switch preference"
-        android:key="switch_preference_1"
-        app:defaultValue="true"
-        app:title="Save Pictures to Album"
-        app:summary="If enabled, the pictures being uploaded will save to local album as well" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:title="Check box preference"
-        android:key="check_box_preference_1" />
     <SwitchPreference
         android:defaultValue="true"
-        android:title="Save Images To Gallery"
+        android:title="Save images to gallery"
         android:key="save_to_gallery"/>
 
 </PreferenceScreen>
