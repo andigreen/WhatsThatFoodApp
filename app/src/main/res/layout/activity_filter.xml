@@ -14,7 +14,7 @@
         android:layout_marginTop="12dp" />
 
     <LinearLayout
-        android:id="@+id/sort"
+        android:id="@+id/sort_liner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -83,7 +83,7 @@
         android:layout_alignStart="@+id/rating_rating_bar" />
 
     <LinearLayout
-        android:id="@+id/price"
+        android:id="@+id/price_liner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -119,7 +119,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/time"
+        android:id="@+id/time_liner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
