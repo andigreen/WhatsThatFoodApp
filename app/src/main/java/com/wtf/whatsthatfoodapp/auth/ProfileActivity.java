@@ -139,6 +139,8 @@ public class ProfileActivity extends BasicActivity {
      */
     public void updateNameEditable() {
         nameField.setEnabled(editable);
+        nameField.setFocusable(editable);
+        nameField.setFocusableInTouchMode(editable);
     }
 
     // [START on_start_add_listener]

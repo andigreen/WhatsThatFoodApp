@@ -18,26 +18,32 @@
         app:title="@string/profile_title"
         />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_photo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center"
-        app:civ_border_color="#fff"
-        app:civ_border_width="2dp"
-        />
-
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:errorEnabled="true">
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:orientation="vertical">
 
-        <android.support.design.widget.TextInputEditText
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_photo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            app:civ_border_color="#fff"
+            app:civ_border_width="2dp"
+            />
+
+        <EditText
             android:id="@+id/profile_name"
-            android:layout_width="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="textPersonName"
             android:hint="@string/profile_name"
-            android:inputType="textPersonName"/>
-    </android.support.design.widget.TextInputLayout>
+            android:textAlignment="center"
+            android:textColor="@android:color/primary_text_light_nodisable"
+            android:textSize="32sp"/>
+
+    </LinearLayout>
 
 </LinearLayout>
