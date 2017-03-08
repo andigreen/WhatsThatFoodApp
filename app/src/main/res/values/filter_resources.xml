@@ -18,15 +18,4 @@
         <item>Last month</item>
         <item>Last year</item>
     </string-array>
-
-    <string-array name="filter_sort_by">
-        <item>Any</item>
-        <item>Highest rating</item>
-        <item>Lowest rating</item>
-        <item>Highest price</item>
-        <item>Lowest price</item>
-        <item>Newest</item>
-        <item>Oldest</item>
-    </string-array>
-
 </resources>

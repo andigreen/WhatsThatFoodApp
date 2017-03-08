@@ -1,9 +1,11 @@
 package com.wtf.whatsthatfoodapp.search;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.text.Editable;
@@ -49,6 +51,9 @@ import java.util.Map;
 public class SearchActivity extends BasicActivity {
 
     public final static String TAG = SearchActivity.class.getSimpleName();
+    public final static String SORT_MODE_KEY = "sort_mode";
+    public final static int FILTER_REQ = 343;
+
     private Map<String, Memory> memories;
     private SearchTable searchTable;
     private MemoryDao dao;
@@ -57,19 +62,15 @@ public class SearchActivity extends BasicActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private SortMode sortMode;
     private List<Memory> results;
+    private ArrayAdapter<Memory> resultsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-
-        String sort_mode = getIntent().getStringExtra("sort_mode");
-
-        if(sort_mode == null){
-            sort_mode ="Any";
-        }
         // Cache memories in a map
         memories = new HashMap<>();
         dao = new MemoryDao(AuthUtils.getUserUid());
@@ -98,8 +99,8 @@ public class SearchActivity extends BasicActivity {
         });
 
         results = new ArrayList<>();
-        final ArrayAdapter<Memory> resultsAdapter = new ResultAdapter(this,
-                results);
+        resultsAdapter = new ResultAdapter(this, results);
+        setSortMode(SortMode.RATING_HIGH);
 
         ListView listView = (ListView) findViewById(R.id.search_results);
         listView.setAdapter(resultsAdapter);
@@ -108,15 +109,15 @@ public class SearchActivity extends BasicActivity {
         searchTable = new SearchTable(this);
 
         Button filter = (Button) findViewById(R.id.filter);
-
         filter.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SearchActivity.this, FilterActivity.class));
+                Intent filterIntent = new Intent(SearchActivity.this,
+                        FilterActivity.class);
+                filterIntent.putExtra(SORT_MODE_KEY, sortMode);
+                startActivityForResult(filterIntent, FILTER_REQ);
             }
         });
-
 
         final EditText searchQuery = (EditText) findViewById(R.id.search_query);
         searchQuery.addTextChangedListener(new TextWatcher() {
@@ -147,39 +148,37 @@ public class SearchActivity extends BasicActivity {
                     if (m != null) results.add(m);
                 } while (cursor.moveToNext());
                 cursor.close();
-                resultsAdapter.notifyDataSetChanged();
+                setSortMode(sortMode);
             }
         });
 
-        switch (sort_mode) {
-            case "Highest rating":
-                sort_by_rating(false);
-                Log.d(TAG, "sort by highest rating");
-                break;
-            case "Lowest rating":
-                sort_by_rating(true);
-                Log.d(TAG, "sort by lowest rating");
-                break;
-            case "Highest price":
-                sort_by_price(false);
-                Log.d(TAG, "sort by highest price");
-                break;
-            case "Lowest price":
-                sort_by_price(true);
-                Log.d(TAG, "sort by lowest price");
-                break;
-            case "Newest":
-                sort_by_time(true);
-                Log.d(TAG, "sort by newest");
-                break;
-            case "Oldest":
-                sort_by_time(false);
-                Log.d(TAG, "sort by oldest");
-                break;
-        }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FILTER_REQ && resultCode == RESULT_OK) {
+            Object mode = data.getSerializableExtra(SORT_MODE_KEY);
+            if (mode == null || !(mode instanceof SortMode)) {
+                Log.d(TAG, "onActivityResult:Filter result was invalid!");
+            } else {
+                setSortMode((SortMode) mode);
+            }
+            return;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * Sets sortMode and sorts the resultsAdapter accordingly.
+     */
+    private void setSortMode(SortMode mode) {
+        sortMode = mode;
+        resultsAdapter.sort(sortMode.getComparator());
+        Log.d(TAG, "Set sort mode: " + sortMode);
     }
 
     /**
@@ -218,47 +217,64 @@ public class SearchActivity extends BasicActivity {
         client.disconnect();
     }
 
-
-    public void sort_by_rating(final boolean at_least){
-        Collections.sort(results, new Comparator<Memory>() {
+    enum SortMode {
+        RATING_HIGH("Highest rating", new Comparator<Memory>() {
             @Override
-            public int compare(Memory lhs, Memory rhs) {
-                // -1 - less than, 1 - greater than, 0 - equal
-                if(at_least)
-                    return lhs.getRate() > rhs.getRate() ? -1 : (lhs.getRate() < rhs.getRate()) ? 1 : 0;
-
-                else
-                    return lhs.getRate() > rhs.getRate() ? 1 : (lhs.getRate() < rhs.getRate() ) ? -1 : 0;
+            public int compare(Memory o1, Memory o2) {
+                return Float.compare(o2.getRate(), o1.getRate());
             }
-        });
-    }
-
-    public void sort_by_price(final boolean at_least){
-        Collections.sort(results, new Comparator<Memory>() {
+        }),
+        RATING_LOW("Lowest rating", new Comparator<Memory>() {
             @Override
-            public int compare(Memory lhs, Memory rhs) {
-                // -1 - less than, 1 - greater than, 0 - equal
-                if(at_least) {
-                    return lhs.getRate() > rhs.getRate() ? -1 : (lhs.getRate() < rhs.getRate()) ? 1 : 0;
-                }else
-                    return lhs.getRate() > rhs.getRate() ? 1 : (lhs.getRate() < rhs.getRate()) ? -1 : 0;
+            public int compare(Memory o1, Memory o2) {
+                return Float.compare(o1.getRate(), o2.getRate());
             }
-        });
-    }
-
-    public void sort_by_time(final boolean recent){
-        Collections.sort(results, new Comparator<Memory>() {
+        }),
+        PRICE_HIGH("Highest price", new Comparator<Memory>() {
             @Override
-            public int compare(Memory lhs, Memory rhs) {
-                // -1 - less than, 1 - greater than, 0 - equal
-                if(recent) {
-                    return lhs.getTsModified() > rhs.getTsModified() ? 1 : (lhs.getTsModified() > rhs.getTsModified()) ? -1 : 0;
-                }else
-                    return lhs.getTsModified() > rhs.getTsModified() ? -1 : (lhs.getTsModified() > rhs.getTsModified()) ? 1 : 0;
+            public int compare(Memory o1, Memory o2) {
+                return Float.compare(o2.getPrice(), o1.getPrice());
             }
-        });
-    }
+        }),
+        PRICE_LOW("Lowest price", new Comparator<Memory>() {
+            @Override
+            public int compare(Memory o1, Memory o2) {
+                return Float.compare(o1.getPrice(), o2.getPrice());
+            }
+        }),
+        NEW("Newest", new Comparator<Memory>() {
+            @TargetApi(Build.VERSION_CODES.KITKAT)
+            @Override
+            public int compare(Memory o1, Memory o2) {
+                return Long.compare(o2.getTsCreated(), o1.getTsCreated());
+            }
+        }),
+        OLD("Oldest", new Comparator<Memory>() {
+            @TargetApi(Build.VERSION_CODES.KITKAT)
+            @Override
+            public int compare(Memory o1, Memory o2) {
+                return Long.compare(o1.getTsCreated(), o2.getTsCreated());
+            }
+        }),
+        ;
 
+        private String name;
+        private Comparator<Memory> comparator;
+
+        SortMode(String name, Comparator<Memory> comparator) {
+            this.name = name;
+            this.comparator = comparator;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        public Comparator<Memory> getComparator() {
+            return comparator;
+        }
+    }
 
     class ResultAdapter extends ArrayAdapter<Memory> {
         ResultAdapter(Context context, List<Memory> memories) {
