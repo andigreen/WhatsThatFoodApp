@@ -96,6 +96,14 @@ public class FilterActivity extends Activity {
 
         int priceVal = getIntent().getIntExtra(SearchActivity.PRICE_VAL_KEY, 1);
         price_ratingbar.setRating(priceVal);
+        price_ratingbar.setOnRatingBarChangeListener(
+                new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float
+                            rating, boolean fromUser) {
+                        Log.d(TAG, "Price rating is " + rating);
+                    }
+                });
 
         Button cancel = (Button) findViewById(R.id.filter_cancel);
         Button apply = (Button) findViewById(R.id.filter_apply);
