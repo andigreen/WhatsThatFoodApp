@@ -55,11 +55,12 @@ public class FilterActivity extends Activity {
         time_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         time_spinner.setAdapter(time_adapter);
 
-        Spinner sort_by_spinner = (Spinner) findViewById(R.id.sort_by_spinner);
+        final Spinner sort_by_spinner = (Spinner) findViewById(R.id.sort_by_spinner);
         ArrayAdapter<CharSequence> sort_by_adapter = ArrayAdapter.createFromResource(this,
                 R.array.filter_sort_by, android.R.layout.simple_spinner_item);
         sort_by_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sort_by_spinner.setAdapter(sort_by_adapter);
+        sort_by_spinner.setSelection(1);
 
         RatingBar rating_ratingbar = (RatingBar) findViewById(R.id.rating_rating_bar);
         RatingBar price_ratingbar = (RatingBar)  findViewById(R.id.price_rating_bar);
@@ -81,7 +82,10 @@ public class FilterActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //TODO
-                finish();
+                String sort_mode = sort_by_spinner.getSelectedItem().toString();
+                Intent toSearchActivity = new Intent(FilterActivity.this, SearchActivity.class);
+                toSearchActivity.putExtra("sort_mode", sort_mode);
+                startActivity(toSearchActivity);
             }
         });
 
