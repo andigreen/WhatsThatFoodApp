@@ -36,7 +36,7 @@ public class Memory {
         title = loc = "";
         tsCreated = tsModified = 0L;
         freq = 0;
-        tags = new ArrayList<String>();
+        tags = new ArrayList<>();
     }
 
     /**
@@ -109,10 +109,10 @@ public class Memory {
             System.out.println("tags array is empty");
             return;
         }
-        for(int i=0; i < tagsArr.length; i++){
+        for (String aTagsArr : tagsArr) {
             System.out.println("Parsing description");
-            if(Pattern.matches("(\\s|\\A)#(\\w+)", tagsArr[i])){
-                tags.add(tagsArr[i]);
+            if (Pattern.matches("(\\s|\\A)#(\\w+)", aTagsArr)) {
+                tags.add(aTagsArr);
             }
         }
     }

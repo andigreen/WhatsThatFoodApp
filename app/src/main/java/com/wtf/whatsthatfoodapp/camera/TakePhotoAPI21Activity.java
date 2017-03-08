@@ -292,7 +292,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                                     public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                                     }
                                 }, handler);
-                            } catch (CameraAccessException e) {
+                            } catch (CameraAccessException ignored) {
                             }
                         }
 
@@ -309,10 +309,13 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                     cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 
                     String[] cameraIdList = cameraManager.getCameraIdList();
-                    for (int i=0; i<cameraIdList.length; i++){
-                        cc = cameraManager.getCameraCharacteristics(cameraIdList[i]);
-                        if (cc.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK){
-                            cameraId = cameraIdList[i];
+                    for (String aCameraIdList : cameraIdList) {
+                        cc = cameraManager.getCameraCharacteristics(
+                                aCameraIdList);
+                        if (cc.get(
+                                CameraCharacteristics.LENS_FACING) ==
+                                CameraCharacteristics.LENS_FACING_BACK) {
+                            cameraId = aCameraIdList;
                             break;
                         }
                     }
@@ -460,10 +463,8 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                     camera.close();
                 }
             },handler);
-        } catch (SecurityException e){
+        } catch (SecurityException | CameraAccessException e){
             // User Didn't Accept Camera Usage
-            handleCameraAccessNotAccepted();
-        } catch (CameraAccessException e){
             handleCameraAccessNotAccepted();
         }
     }
@@ -539,7 +540,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
 
     }
     private static Size chooseOptimalSize(Size[] choices, int width, int height) {
-        List<Size> bigEnough = new ArrayList<Size>();
+        List<Size> bigEnough = new ArrayList<>();
         for(Size option : choices) {
             if(option.getHeight() == option.getWidth() * height / width &&
                     option.getWidth() >= width && option.getHeight() >= height) {
@@ -596,7 +597,7 @@ public class TakePhotoAPI21Activity extends AppCompatActivity {
                 if (msg.getData().getString("function").equals("photoTaken")){
                     weakReference.get().handlePhotoTaken();
                 }
-            } catch (NullPointerException e){
+            } catch (NullPointerException ignored){
 
             }
         }

@@ -19,8 +19,6 @@ public class LogoutActivity extends BasicActivity {
 
     private static final String TAG = "LogoutActivity";
 
-    private GoogleApiClient mGoogleApiClient;
-
     private App app;
 
     @Override
@@ -30,7 +28,7 @@ public class LogoutActivity extends BasicActivity {
 
 
         if(BasicActivity.getProvider().equals("Google")){
-            mGoogleApiClient = app.getClient();
+            GoogleApiClient mGoogleApiClient = app.getClient();
             Log.e(TAG, "Get Google API Client");
             Log.d(TAG, "GoogleApiClient Connected: "+ mGoogleApiClient.isConnected());
         }

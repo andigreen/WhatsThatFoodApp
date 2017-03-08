@@ -36,24 +36,20 @@ public class CollageActivity extends BasicActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    private String signInMethod;
-    private GoogleApiClient mGoogleApiClient;
-    private AppEventsLogger logger;
-    private App app;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collage);
 
         sharedPrefs = getSharedPreferences(PREFS_NAME,0);
-        signInMethod = sharedPrefs.getString("signInMethod","default");
+        String signInMethod = sharedPrefs.getString("signInMethod", "default");
         Log.d(TAG, signInMethod);
 
         // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.collage_toolbar);
         setSupportActionBar(toolbar);
 
-        app = (App)getApplicationContext();
+        App app1 = (App) getApplicationContext();
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -73,7 +69,7 @@ public class CollageActivity extends BasicActivity {
         };
 
         if(BasicActivity.getProvider().equals("Facebook")){
-            logger = AppEventsLogger.newLogger(this);
+            AppEventsLogger logger = AppEventsLogger.newLogger(this);
             logger.logEvent("User logged in with Facebook");
 
         }
@@ -87,8 +83,9 @@ public class CollageActivity extends BasicActivity {
                     .build();
             // [END config_signin]
             app.setGso(gso);
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+            GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this /* FragmentActivity */, this /*
+                    OnConnectionFailedListener */)
                     .addApi(Auth.GOOGLE_SIGN_IN_API, app.getGso())
                     .build();
 
@@ -99,7 +96,6 @@ public class CollageActivity extends BasicActivity {
         // Set up list and adapter
         MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
         ListAdapter collageListAdapter = new MemoryAdapter(this, Memory.class,
-                R.layout.memory_list_item,
                 dao.getMemoriesRef().orderByChild(Memory.TS_KEY_NEWEST),
                 dao);
 

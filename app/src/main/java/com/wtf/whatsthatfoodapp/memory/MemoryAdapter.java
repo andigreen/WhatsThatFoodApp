@@ -20,9 +20,8 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
 
     private MemoryDao dao;
 
-    public MemoryAdapter(Activity activity, Class<Memory> modelClass, int
-            modelLayout, Query query, MemoryDao dao) {
-        super(activity, modelClass, modelLayout, query);
+    public MemoryAdapter(Activity activity, Class<Memory> modelClass, Query query, MemoryDao dao) {
+        super(activity, modelClass, R.layout.memory_list_item, query);
         this.dao = dao;
     }
 

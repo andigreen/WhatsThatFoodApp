@@ -55,7 +55,7 @@ public class IOImage {
     public Bitmap getBitmapImage(){
         try{
             backgroundThread.join();
-        } catch (InterruptedException e){
+        } catch (InterruptedException ignored){
 
         }
         return bitmapImage;
@@ -79,7 +79,7 @@ public class IOImage {
                 fos.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (NullPointerException e) {
+            } catch (NullPointerException ignored) {
 
             }
         }
@@ -119,8 +119,8 @@ public class IOImage {
                 try{
                     bitmapImage.compress(Bitmap.CompressFormat.JPEG,90,imageOutput);
                     imageOutput.close();
-                } catch (IOException e){}
-            } catch(FileNotFoundException e){}
+                } catch (IOException ignored){}
+            } catch(FileNotFoundException ignored){}
         }
     }
     @TargetApi(21)

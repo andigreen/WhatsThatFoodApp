@@ -58,7 +58,6 @@ public class SearchActivity extends BasicActivity {
      */
     private GoogleApiClient client;
     private List<Memory> results;
-    private String sort_mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +65,10 @@ public class SearchActivity extends BasicActivity {
         setContentView(R.layout.activity_search);
 
 
-
-        sort_mode = getIntent().getStringExtra("sort_mode");
+        String sort_mode = getIntent().getStringExtra("sort_mode");
 
         if(sort_mode == null){
-            sort_mode="Any";
+            sort_mode ="Any";
         }
         // Cache memories in a map
         memories = new HashMap<>();
@@ -153,24 +151,31 @@ public class SearchActivity extends BasicActivity {
             }
         });
 
-        if(sort_mode.equals("Highest rating")){
-            sort_by_rating(false);
-            Log.d(TAG,"sort by highest rating");
-        }else if(sort_mode.equals("Lowest rating")){
-            sort_by_rating(true);
-            Log.d(TAG,"sort by lowest rating");
-        }else if(sort_mode.equals("Highest price")){
-            sort_by_price(false);
-            Log.d(TAG,"sort by highest price");
-        }else if(sort_mode.equals("Lowest price")){
-            sort_by_price(true);
-            Log.d(TAG,"sort by lowest price");
-        }else if(sort_mode.equals("Newest")){
-            sort_by_time(true);
-            Log.d(TAG,"sort by newest");
-        }else if(sort_mode.equals("Oldest")){
-            sort_by_time(false);
-            Log.d(TAG,"sort by oldest");
+        switch (sort_mode) {
+            case "Highest rating":
+                sort_by_rating(false);
+                Log.d(TAG, "sort by highest rating");
+                break;
+            case "Lowest rating":
+                sort_by_rating(true);
+                Log.d(TAG, "sort by lowest rating");
+                break;
+            case "Highest price":
+                sort_by_price(false);
+                Log.d(TAG, "sort by highest price");
+                break;
+            case "Lowest price":
+                sort_by_price(true);
+                Log.d(TAG, "sort by lowest price");
+                break;
+            case "Newest":
+                sort_by_time(true);
+                Log.d(TAG, "sort by newest");
+                break;
+            case "Oldest":
+                sort_by_time(false);
+                Log.d(TAG, "sort by oldest");
+                break;
         }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.

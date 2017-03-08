@@ -42,16 +42,11 @@ import com.wtf.whatsthatfoodapp.user.UserSettingsDAO;
 public class MainActivity extends BasicActivity {
     private final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
-    private Button email_btn;
-    private SignInButton google_btn;
-    private LoginButton fb_btn;
     private EditText emailField;
     private EditText passwordField;
-    private Button register_btn;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser user;
-    private Button password_recover;
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager mCallbackManager;
     Intent displayHomePage;
@@ -61,14 +56,15 @@ public class MainActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sharedPrefs = getSharedPreferences(PREFS_NAME,0);
-        email_btn = (Button)findViewById(R.id.email_button);
-        google_btn = (SignInButton)findViewById(R.id.google_button);
+        Button email_btn = (Button) findViewById(R.id.email_button);
+        SignInButton google_btn = (SignInButton) findViewById(
+                R.id.google_button);
         google_btn.setSize(SignInButton.SIZE_WIDE);
-        fb_btn = (LoginButton)findViewById(R.id.fb_btn);
+        LoginButton fb_btn = (LoginButton) findViewById(R.id.fb_btn);
         emailField = (EditText)findViewById(R.id.emailfield);
         passwordField = (EditText)findViewById(R.id.passwordfield);
-        register_btn = (Button)findViewById(R.id.Register_btn);
-        password_recover = (Button)findViewById(R.id.password_recover);
+        Button register_btn = (Button) findViewById(R.id.Register_btn);
+        Button password_recover = (Button) findViewById(R.id.password_recover);
 
         email_btn.setOnClickListener(this);
         google_btn.setOnClickListener(this);
