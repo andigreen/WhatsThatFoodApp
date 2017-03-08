@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ import java.util.Map;
 
 public class SearchActivity extends BasicActivity {
 
+    public final static String TAG = SearchActivity.class.getSimpleName();
     private Map<String, Memory> memories;
     private SearchTable searchTable;
     private MemoryDao dao;
@@ -56,12 +58,20 @@ public class SearchActivity extends BasicActivity {
      */
     private GoogleApiClient client;
     private List<Memory> results;
+    private String sort_mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+
+
+        sort_mode = getIntent().getStringExtra("sort_mode");
+
+        if(sort_mode == null){
+            sort_mode="Any";
+        }
         // Cache memories in a map
         memories = new HashMap<>();
         dao = new MemoryDao(AuthUtils.getUserUid());
@@ -142,6 +152,26 @@ public class SearchActivity extends BasicActivity {
                 resultsAdapter.notifyDataSetChanged();
             }
         });
+
+        if(sort_mode.equals("Highest rating")){
+            sort_by_rating(false);
+            Log.d(TAG,"sort by highest rating");
+        }else if(sort_mode.equals("Lowest rating")){
+            sort_by_rating(true);
+            Log.d(TAG,"sort by lowest rating");
+        }else if(sort_mode.equals("Highest price")){
+            sort_by_price(false);
+            Log.d(TAG,"sort by highest price");
+        }else if(sort_mode.equals("Lowest price")){
+            sort_by_price(true);
+            Log.d(TAG,"sort by lowest price");
+        }else if(sort_mode.equals("Newest")){
+            sort_by_time(true);
+            Log.d(TAG,"sort by newest");
+        }else if(sort_mode.equals("Oldest")){
+            sort_by_time(false);
+            Log.d(TAG,"sort by oldest");
+        }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
