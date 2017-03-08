@@ -218,6 +218,7 @@ public class CreateMemoryActivity extends BasicActivity {
             memory.setTitle(title);
             memory.setLoc(loc);
             memory.setDescription(description);
+            memory.setTag(description);
             memory.setRate(rating);
             memory.setPrice(price);
             memory.setSavedForNextTime(savedForNextTime);

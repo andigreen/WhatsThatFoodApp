@@ -7,6 +7,8 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @IgnoreExtraProperties
 public class Memory {
@@ -103,12 +105,17 @@ public class Memory {
         return tags;
     }
 
-    public void setTag(String tags){
-        String[] tagsArr = tags.split("#");
-        if(tagsArr == null)
+    public void setTag(String description){
+        String[] tagsArr = description.split("\\s");
+        if(tagsArr == null) {
+            System.out.println("tags array is empty");
             return;
+        }
         for(int i=0; i < tagsArr.length; i++){
-            this.tags.add(tagsArr[i]);
+            System.out.println("Parsing description");
+            if(Pattern.matches("(\\s|\\A)#(\\w+)", tagsArr[i])){
+                tags.add(tagsArr[i]);
+            }
         }
     }
 
