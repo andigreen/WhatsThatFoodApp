@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -100,6 +101,15 @@ public class CollageActivity extends BasicActivity {
 
         ListView collageList = (ListView) findViewById(R.id.collage_list);
         collageList.setAdapter(collageListAdapter);
+
+        //TODO
+        collageList.setOnItemClickListener( new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent viewMemory = new Intent(CollageActivity.this,ViewMemoryActivity.class);
+                startActivity(viewMemory);
+            }
+        });
     }
 
     @Override
@@ -130,6 +140,9 @@ public class CollageActivity extends BasicActivity {
                 Intent searchIntent = new Intent(this, SearchActivity.class);
                 startActivity(searchIntent);
                 return true;
+            case R.id.test_view_memory:
+                Intent viewMemory = new Intent(CollageActivity.this,ViewMemoryActivity.class);
+                startActivity(viewMemory);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -166,7 +179,7 @@ public class CollageActivity extends BasicActivity {
     }
 
     public void viewMemory(View v){
-        //Intent intent = new Intent(this, ViewMemoryActivity.class);
+        Intent intent = new Intent(this, ViewMemoryActivity.class);
         //startActivity(intent);
     }
 
