@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -19,11 +20,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,6 +53,8 @@ public class CreateMemoryActivity extends BasicActivity {
             .getSimpleName();
     private static final int REQUEST_PHOTO_GET = 144;
 
+    private static final int PLACE_PICKER_REQUEST = 200;
+
     private boolean fromCamera;
 
     private Uri photoUri;
@@ -57,6 +68,10 @@ public class CreateMemoryActivity extends BasicActivity {
     private CheckBox remindCheck;
 
     private Dialog imageDialog;
+
+    private PlaceAutocompleteFragment placeAutocompleteFragment;
+
+    private String localString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,8 +142,10 @@ public class CreateMemoryActivity extends BasicActivity {
         String title = ((TextInputEditText) findViewById(
                 R.id.create_memory_title))
                 .getText().toString();
-        String loc = ((TextInputEditText) findViewById(R.id.create_memory_loc))
-                .getText().toString();
+        /*String loc = ((TextInputEditText) findViewById(R.id
+        .create_memory_loc)).getText().toString();*/
+        String loc = localString;
+
         TextInputLayout titleWrapper = (TextInputLayout) findViewById(R.id
                 .create_memory_title_wrapper);
         TextInputLayout locWrapper = (TextInputLayout) findViewById(R.id
@@ -184,9 +201,10 @@ public class CreateMemoryActivity extends BasicActivity {
             String title = ((TextInputEditText) findViewById(
                     R.id.create_memory_title))
                     .getText().toString();
-            String loc = ((TextInputEditText) findViewById(
+            /*String loc = ((TextInputEditText) findViewById(
                     R.id.create_memory_loc))
-                    .getText().toString();
+                    .getText().toString();*/
+            String loc = localString;
             String description = ((TextInputEditText) findViewById(
                     R.id.create_memory_description))
                     .getText().toString();
@@ -250,9 +268,22 @@ public class CreateMemoryActivity extends BasicActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void createPlacePicker(View v) {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent
             data) {
+
+
         if (requestCode == REQUEST_PHOTO_GET) {
             if (resultCode != RESULT_OK) {
                 Log.d(TAG, "onActivityResult (PHOTO_GET): Failed to get photo");
@@ -276,6 +307,22 @@ public class CreateMemoryActivity extends BasicActivity {
             saveFNTCheck.setOnClickListener(this);
             remindCheck.setOnClickListener(this);
 
+            // Set up placeAutoComplete fragment
+            placeAutocompleteFragment = (PlaceAutocompleteFragment)
+                    getFragmentManager().findFragmentById(R.id.create_memory_loc);
+            placeAutocompleteFragment.setHint("Your Restaurant");
+            placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(Place place) {
+                    localString = place.getName().toString();
+                }
+
+                @Override
+                public void onError(Status status) {
+                    // TODO: Handle the error.
+                    Log.i(TAG, "An error occurred: " + status);
+                }
+            });
 
             // Load photo view with the result's URI
             if (fromCamera) {
@@ -301,6 +348,13 @@ public class CreateMemoryActivity extends BasicActivity {
                     .load(photoUri)
                     .centerCrop()
                     .into(imageView);
+        }
+        if(requestCode == PLACE_PICKER_REQUEST){
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(this, data);
+                placeAutocompleteFragment.setText(place.getName());
+                localString = place.getName().toString();
+            }
         }
     }
 

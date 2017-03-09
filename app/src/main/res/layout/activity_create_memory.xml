@@ -66,12 +66,25 @@
                     android:layout_height="wrap_content"
                     app:errorEnabled="true">
 
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/create_memory_loc"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/create_memory_loc"
-                        android:inputType="text"/>
+                        android:layout_height="match_parent">
+                        <fragment
+                            android:id="@+id/create_memory_loc"
+                            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            />
+
+                        <ImageButton
+                            android:id="@+id/pickerButton"
+                            android:layout_width="42dp"
+                            android:layout_height="45dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/my_location"
+                            android:onClick="createPlacePicker"/>
+                    </LinearLayout>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
