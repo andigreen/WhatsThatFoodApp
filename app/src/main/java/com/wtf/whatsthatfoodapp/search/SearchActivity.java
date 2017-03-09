@@ -111,6 +111,14 @@ public class SearchActivity extends BasicActivity
         results = new ArrayList<>();
         resultsAdapter = new ResultAdapter(this, results);
 
+        ListView listView = (ListView) findViewById(R.id.search_results);
+        listView.setAdapter(resultsAdapter);
+
+        // Initialize search table (pre-populate index)
+        searchTable = new SearchTable(this);
+        query = "";
+
+        // Set up searchView
         FloatingSearchView searchView = (FloatingSearchView) findViewById(
                 R.id.search_view);
         searchView.setOnSearchListener(searchListener);
@@ -123,13 +131,7 @@ public class SearchActivity extends BasicActivity
                         finish();
                     }
                 });
-
-        ListView listView = (ListView) findViewById(R.id.search_results);
-        listView.setAdapter(resultsAdapter);
-
-        // Initialize search table (pre-populate index)
-        searchTable = new SearchTable(this);
-        query = "";
+        searchView.setSearchFocused(true);
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -154,6 +156,8 @@ public class SearchActivity extends BasicActivity
         @Override
         public void onSearchTextChanged(String oldQuery, String
                 newQuery) {
+            query = newQuery;
+            requery();
         }
     };
 

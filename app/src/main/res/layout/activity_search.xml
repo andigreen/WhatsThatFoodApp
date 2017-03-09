@@ -17,14 +17,15 @@
             android:id="@+id/search_results"
             style="@style/MemoryList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:paddingTop="60dp"/>
 
         <com.arlib.floatingsearchview.FloatingSearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:floatingSearch_close_search_on_keyboard_dismiss="false"
-            app:floatingSearch_dimBackground="false"
+            app:floatingSearch_dimBackground="true"
             app:floatingSearch_leftActionMode="showHome"
             app:floatingSearch_menu="@menu/menu_search"
             app:floatingSearch_searchBarMarginLeft="5dp"
