@@ -23,5 +23,8 @@
     <string name="memory_item_desc">Memory image</string>
     <string name="create_account_finish">Finish</string>
     <string name="create_account_login">Log in</string>
+    <string name="filter_rating">Rating</string>
+    <string name="filter_price">Price</string>
+    <string name="filter_created">Created</string>
 
 </resources>

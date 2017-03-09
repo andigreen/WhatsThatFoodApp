@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -60,31 +59,32 @@ public class FilterDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.activity_filter, null);
 
-        ratingSpinner = (Spinner) view.findViewById(R.id.rating_spinner);
+        ratingSpinner = (Spinner) view.findViewById(R.id.filter_rating_spinner);
         ArrayAdapter<FilterMode> ratingAdapter = new ArrayAdapter<>(
                 getActivity(), android.R.layout.simple_spinner_dropdown_item,
                 FilterMode.values());
         ratingSpinner.setAdapter(ratingAdapter);
 
-        priceSpinner = (Spinner) view.findViewById(R.id.price_spinner);
+        priceSpinner = (Spinner) view.findViewById(R.id.filter_price_spinner);
         ArrayAdapter<FilterMode> priceAdapter = new ArrayAdapter<>(
                 getActivity(), android.R.layout.simple_spinner_dropdown_item,
                 FilterMode.values());
         priceSpinner.setAdapter(priceAdapter);
 
-        Spinner time_spinner = (Spinner) view.findViewById(R.id.time_spinner);
+        Spinner time_spinner = (Spinner) view.findViewById(
+                R.id.filter_created_spinner);
         time_spinner.setAdapter(ArrayAdapter.createFromResource(getActivity(),
                 R.array.filter_time,
                 android.R.layout.simple_spinner_dropdown_item));
 
-        sortSpinner = (Spinner) view.findViewById(R.id.sort_by_spinner);
+        sortSpinner = (Spinner) view.findViewById(R.id.filter_sort_spinner);
         ArrayAdapter<SortMode> sortAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_dropdown_item,
                 SortMode.values());
         sortSpinner.setAdapter(sortAdapter);
 
-        ratingRating = (RatingBar) view.findViewById(R.id.rating_rating_bar);
-        priceRating = (RatingBar) view.findViewById(R.id.price_rating_bar);
+        ratingRating = (RatingBar) view.findViewById(R.id.filter_rating_rating);
+        priceRating = (RatingBar) view.findViewById(R.id.filter_price_rating);
 
         // Initialize values
 

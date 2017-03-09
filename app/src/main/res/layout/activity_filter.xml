@@ -13,14 +13,14 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/Rating"
+                android:id="@+id/filter_rating_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Rating"/>
+                android:text="@string/filter_rating"/>
 
             <Spinner
-                android:id="@+id/rating_spinner"
+                android:id="@+id/filter_rating_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </TableRow>
@@ -30,7 +30,7 @@
             <RelativeLayout android:layout_column="1">
 
                 <RatingBar
-                    android:id="@+id/rating_rating_bar"
+                    android:id="@+id/filter_rating_rating"
                     style="@style/RatingBarRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -40,14 +40,14 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/Price"
+                android:id="@+id/filter_price_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Price  "/>
+                android:text="@string/filter_price"/>
 
             <Spinner
-                android:id="@+id/price_spinner"
+                android:id="@+id/filter_price_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </TableRow>
@@ -57,7 +57,7 @@
             <RelativeLayout android:layout_column="1">
 
                 <RatingBar
-                    android:id="@+id/price_rating_bar"
+                    android:id="@+id/filter_price_rating"
                     style="@style/RatingBarPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -67,14 +67,14 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/time"
+                android:id="@+id/filter_created_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Created"/>
+                android:text="@string/filter_created"/>
 
             <Spinner
-                android:id="@+id/time_spinner"
+                android:id="@+id/filter_created_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </TableRow>
@@ -82,14 +82,14 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/sort_by"
+                android:id="@+id/filter_sort_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="Sort by"/>
 
             <Spinner
-                android:id="@+id/sort_by_spinner"
+                android:id="@+id/filter_sort_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </TableRow>
