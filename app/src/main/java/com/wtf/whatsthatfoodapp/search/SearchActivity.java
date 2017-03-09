@@ -2,15 +2,15 @@ package com.wtf.whatsthatfoodapp.search;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -21,6 +21,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
+import com.arlib.floatingsearchview.FloatingSearchView.OnMenuItemClickListener;
+import com.arlib.floatingsearchview.FloatingSearchView.OnQueryChangeListener;
+import com.arlib.floatingsearchview.FloatingSearchView.OnSearchListener;
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -34,9 +39,9 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.storage.StorageReference;
+import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
-import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
 
@@ -106,6 +111,19 @@ public class SearchActivity extends BasicActivity
         results = new ArrayList<>();
         resultsAdapter = new ResultAdapter(this, results);
 
+        FloatingSearchView searchView = (FloatingSearchView) findViewById(
+                R.id.search_view);
+        searchView.setOnSearchListener(searchListener);
+        searchView.setOnQueryChangeListener(queryListener);
+        searchView.setOnMenuItemClickListener(menuListener);
+        searchView.setOnHomeActionClickListener(
+                new FloatingSearchView.OnHomeActionClickListener() {
+                    @Override
+                    public void onHomeClicked() {
+                        finish();
+                    }
+                });
+
         ListView listView = (ListView) findViewById(R.id.search_results);
         listView.setAdapter(resultsAdapter);
 
@@ -113,39 +131,41 @@ public class SearchActivity extends BasicActivity
         searchTable = new SearchTable(this);
         query = "";
 
-        Button filter = (Button) findViewById(R.id.filter);
-        filter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FilterDialog.newInstance(sortMode, ratingMode, ratingVal,
-                        priceMode, priceVal)
-                        .show(getFragmentManager(), "FilterDialog");
-            }
-        });
-
-        final EditText searchQuery = (EditText) findViewById(R.id.search_query);
-        searchQuery.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int
-                    count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before,
-                    int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                query = s.toString();
-                requery();
-            }
-        });
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
+
+    private OnSearchListener searchListener = new OnSearchListener() {
+        @Override
+        public void onSuggestionClicked(SearchSuggestion
+                searchSuggestion) {
+
+        }
+
+        @Override
+        public void onSearchAction(String currentQuery) {
+            query = currentQuery;
+            requery();
+        }
+    };
+
+    private OnQueryChangeListener queryListener = new OnQueryChangeListener() {
+        @Override
+        public void onSearchTextChanged(String oldQuery, String
+                newQuery) {
+        }
+    };
+
+    private OnMenuItemClickListener menuListener = new
+            OnMenuItemClickListener() {
+                @Override
+                public void onActionMenuItemSelected(MenuItem item) {
+                    FilterDialog.newInstance(sortMode, ratingMode, ratingVal,
+                            priceMode, priceVal)
+                            .show(getFragmentManager(), "FilterDialog");
+                }
+            };
 
     @Override
     public void onApply(SortMode sortMode, FilterMode ratingMode, int
