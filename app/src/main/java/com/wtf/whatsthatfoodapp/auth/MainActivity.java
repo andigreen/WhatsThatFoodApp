@@ -15,6 +15,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -39,6 +40,8 @@ import com.wtf.whatsthatfoodapp.memory.CollageActivity;
 import com.wtf.whatsthatfoodapp.user.UserSettings;
 import com.wtf.whatsthatfoodapp.user.UserSettingsDAO;
 
+import java.util.Arrays;
+
 public class MainActivity extends BasicActivity {
     private final String TAG = MainActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 9001;
@@ -59,12 +62,13 @@ public class MainActivity extends BasicActivity {
         Button email_btn = (Button) findViewById(R.id.email_button);
         SignInButton google_btn = (SignInButton) findViewById(
                 R.id.google_button);
-        google_btn.setSize(SignInButton.SIZE_WIDE);
+        google_btn.setSize(SignInButton.SIZE_ICON_ONLY);
         LoginButton fb_btn = (LoginButton) findViewById(R.id.fb_btn);
         emailField = (EditText)findViewById(R.id.emailfield);
         passwordField = (EditText)findViewById(R.id.passwordfield);
         Button register_btn = (Button) findViewById(R.id.Register_btn);
         Button password_recover = (Button) findViewById(R.id.password_recover);
+        Button facebook_login_btn = (Button) findViewById(R.id.btn_fb_login);
 
         email_btn.setOnClickListener(this);
         google_btn.setOnClickListener(this);
@@ -122,8 +126,7 @@ public class MainActivity extends BasicActivity {
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
 
-        fb_btn.setReadPermissions("email", "public_profile");
-        fb_btn.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
@@ -140,6 +143,14 @@ public class MainActivity extends BasicActivity {
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
                 // ...
+            }
+        });
+
+        facebook_login_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginManager.getInstance().logInWithReadPermissions(MainActivity.this,
+                        Arrays.asList("email","public_profile"));
             }
         });
        

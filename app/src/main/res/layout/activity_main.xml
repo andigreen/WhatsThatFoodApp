@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -39,23 +40,42 @@
         android:textSize="8sp"
         android:layout_marginBottom="17dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
+
 
     <com.facebook.login.widget.LoginButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/fb_btn"
+        android:layout_marginBottom="29dp"
         android:layout_above="@+id/Register_btn"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="29dp" />
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/btn_fb_login"
+        android:layout_width="55dp"
+        android:layout_height="50dp"
+        android:background="@drawable/facebook_round_button"
+        android:text="f"
+        android:textStyle="bold"
+        android:textColor="#f7f7f7"
+        android:textSize="25dp"
+        android:textAllCaps="false"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp"
+        android:layout_alignTop="@+id/google_button"
+        android:layout_alignLeft="@+id/passwordfield"
+        android:layout_alignStart="@+id/passwordfield" />
 
     <com.google.android.gms.common.SignInButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/google_button"
-        android:layout_above="@+id/fb_btn"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="17dp">
+        android:layout_below="@+id/email_button"
+        android:layout_alignRight="@+id/passwordfield"
+        android:layout_alignEnd="@+id/passwordfield"
+        android:layout_marginTop="21dp">
 
     </com.google.android.gms.common.SignInButton>
 
@@ -65,20 +85,19 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/emailfield"
-        android:layout_marginTop="19dp"
+        android:layout_marginTop="23dp"
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/passwordfield"
-        android:layout_alignStart="@+id/passwordfield" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:text="Login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/email_button"
-        android:layout_marginBottom="18dp"
-        android:layout_above="@+id/google_button"
+        android:layout_below="@+id/passwordfield"
         android:layout_alignLeft="@+id/Register_btn"
-        android:layout_alignStart="@+id/Register_btn" />
+        android:layout_alignStart="@+id/Register_btn"
+        android:layout_marginTop="47dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -86,10 +105,10 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/passwordfield"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/emailfield"
-        android:layout_alignLeft="@+id/fb_btn"
-        android:layout_alignStart="@+id/fb_btn"
-        android:layout_marginTop="14dp" />
+        android:layout_alignLeft="@+id/emailfield"
+        android:layout_alignStart="@+id/emailfield" />
 
     <TextView
         android:text="Email:"
