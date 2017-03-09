@@ -5,8 +5,8 @@
               android:id="@+id/activity_collage"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              tools:context="com.wtf.whatsthatfoodapp.memory.CollageActivity"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              tools:context="com.wtf.whatsthatfoodapp.memory.CollageActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/collage_toolbar"
@@ -23,26 +23,27 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/create_memory_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            app:fabSize="normal"
-            app:srcCompat="@drawable/ic_add_white_24dp"
-            android:id="@+id/create_memory_button"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:onClick="addMemory"/>
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:clickable="true"
+            android:onClick="addMemory"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_add_white_24dp"/>
 
         <ListView
+            android:id="@+id/collage_list"
+            style="@style/MemoryList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:id="@+id/collage_list" />
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
 
 
