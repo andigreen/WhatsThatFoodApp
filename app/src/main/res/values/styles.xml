@@ -38,4 +38,10 @@
         <item name="android:stepSize">1</item>
     </style>
 
+    <style name="FilterLabel" parent="TextAppearance.AppCompat">
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#90000000</item>
+    </style>
+
 </resources>

@@ -61,26 +61,22 @@ public class FilterDialog extends DialogFragment {
 
         ratingSpinner = (Spinner) view.findViewById(R.id.filter_rating_spinner);
         ArrayAdapter<FilterMode> ratingAdapter = new ArrayAdapter<>(
-                getActivity(), android.R.layout.simple_spinner_dropdown_item,
-                FilterMode.values());
+                getActivity(), R.layout.filter_spinner, FilterMode.values());
         ratingSpinner.setAdapter(ratingAdapter);
 
         priceSpinner = (Spinner) view.findViewById(R.id.filter_price_spinner);
         ArrayAdapter<FilterMode> priceAdapter = new ArrayAdapter<>(
-                getActivity(), android.R.layout.simple_spinner_dropdown_item,
-                FilterMode.values());
+                getActivity(), R.layout.filter_spinner, FilterMode.values());
         priceSpinner.setAdapter(priceAdapter);
 
         Spinner time_spinner = (Spinner) view.findViewById(
                 R.id.filter_created_spinner);
         time_spinner.setAdapter(ArrayAdapter.createFromResource(getActivity(),
-                R.array.filter_time,
-                android.R.layout.simple_spinner_dropdown_item));
+                R.array.filter_time, R.layout.filter_spinner));
 
         sortSpinner = (Spinner) view.findViewById(R.id.filter_sort_spinner);
         ArrayAdapter<SortMode> sortAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_dropdown_item,
-                SortMode.values());
+                R.layout.filter_spinner, SortMode.values());
         sortSpinner.setAdapter(sortAdapter);
 
         ratingRating = (RatingBar) view.findViewById(R.id.filter_rating_rating);
