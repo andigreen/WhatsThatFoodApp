@@ -46,15 +46,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SearchActivity extends BasicActivity {
+public class SearchActivity extends BasicActivity
+        implements FilterDialog.FilterDialogListener {
 
     public final static String TAG = SearchActivity.class.getSimpleName();
-    public final static String SORT_MODE_KEY = "sort_mode";
-    public final static String RATING_MODE_KEY = "rating_mode";
-    public final static String RATING_VAL_KEY = "rating_val";
-    public final static String PRICE_MODE_KEY = "price_mode";
-    public final static String PRICE_VAL_KEY = "price_val";
-    public final static int FILTER_REQ = 343;
 
     private Map<String, Memory> memories;
     private SearchTable searchTable;
@@ -116,22 +111,15 @@ public class SearchActivity extends BasicActivity {
 
         // Initialize search table (pre-populate index)
         searchTable = new SearchTable(this);
-//        searchTable.setRating(ratingMode, ratingVal);
-//        searchTable.setPrice(priceMode, priceVal);
         query = "";
 
         Button filter = (Button) findViewById(R.id.filter);
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent filterIntent = new Intent(SearchActivity.this,
-                        FilterActivity.class);
-                filterIntent.putExtra(SORT_MODE_KEY, sortMode);
-                filterIntent.putExtra(RATING_MODE_KEY, ratingMode);
-                filterIntent.putExtra(RATING_VAL_KEY, ratingVal);
-                filterIntent.putExtra(PRICE_MODE_KEY, priceMode);
-                filterIntent.putExtra(PRICE_VAL_KEY, priceVal);
-                startActivityForResult(filterIntent, FILTER_REQ);
+                FilterDialog.newInstance(sortMode, ratingMode, ratingVal,
+                        priceMode, priceVal)
+                        .show(getFragmentManager(), "FilterDialog");
             }
         });
 
@@ -159,6 +147,17 @@ public class SearchActivity extends BasicActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    @Override
+    public void onApply(SortMode sortMode, FilterMode ratingMode, int
+            ratingVal, FilterMode priceMode, int priceVal) {
+        this.sortMode = sortMode;
+        this.ratingMode = ratingMode;
+        this.ratingVal = ratingVal;
+        this.priceMode = priceMode;
+        this.priceVal = priceVal;
+        requery();
+    }
+
     private void requery() {
         results.clear();
 
@@ -179,25 +178,6 @@ public class SearchActivity extends BasicActivity {
         cursor.close();
 
         resultsAdapter.sort(sortMode.getComparator());
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent
-            data) {
-        if (requestCode == FILTER_REQ && resultCode == RESULT_OK) {
-            sortMode = (SortMode) data.getSerializableExtra(SORT_MODE_KEY);
-
-            ratingMode = (FilterMode) data.getSerializableExtra(
-                    RATING_MODE_KEY);
-            ratingVal = data.getIntExtra(RATING_VAL_KEY, ratingVal);
-            priceMode = (FilterMode) data.getSerializableExtra(PRICE_MODE_KEY);
-            priceVal = data.getIntExtra(PRICE_VAL_KEY, priceVal);
-
-            requery();
-            return;
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
