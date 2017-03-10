@@ -28,5 +28,9 @@
     <string name="filter_created">Created</string>
     <string name="search_noresults">No results.</string>
     <string name="search_clearfilters">Clear all filters</string>
+    <string name="dialog_delete_memory_title">Delete this Memory?</string>
+    <string name="dialog_delete_memory_message">Once this Memory is deleted, it cannot be restored.</string>
+    <string name="dialog_delete_pos">Delete</string>
+    <string name="dialog_delete_neg">Cancel</string>
 
 </resources>

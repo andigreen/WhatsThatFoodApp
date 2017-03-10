@@ -1,9 +1,13 @@
 package com.wtf.whatsthatfoodapp.memory;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -12,18 +16,22 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 
-public class ViewMemoryActivity extends Activity {
+public class ViewMemoryActivity extends BasicActivity {
+
+    private MemoryDao dao;
+    private Memory memory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_view_memory);
-        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
-        Memory memory = getIntent().getExtras().getParcelable(
+        dao = new MemoryDao(AuthUtils.getUserUid());
+        memory = getIntent().getExtras().getParcelable(
                 CollageActivity.MEMORY_KEY);
 
         ImageView view_memory_image = (ImageView) findViewById(
@@ -44,6 +52,7 @@ public class ViewMemoryActivity extends Activity {
 
         Toolbar view_memory_bar = (Toolbar) findViewById(
                 R.id.view_memory_toolbar);
+//        setSupportActionBar(view_memory_bar);
         view_memory_bar.setTitle(memory.getTitle());
 
         TextView view_memory_loc = (TextView) findViewById(
@@ -72,7 +81,47 @@ public class ViewMemoryActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_view_memory, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.view_memory_share:
+                Intent shareIntent = new Intent(this,
+                        SharePictureActivity.class);
+                startActivity(shareIntent);
+                break;
+            case R.id.view_memory_edit:
+                break;
+            case R.id.view_memory_delete:
+                AlertDialog dialog;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.dialog_delete_memory_title);
+                builder.setMessage(R.string.dialog_delete_memory_message);
+                builder.setPositiveButton(R.string.dialog_delete_pos,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int
+                                    which) {
+                                dao.deleteMemory(memory);
+                                finish();
+                            }
+                        });
+                builder.setNegativeButton(R.string.dialog_delete_neg,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int
+                                    which) {
+                                dialog.cancel();
+                            }
+                        });
+                dialog = builder.create();
+                dialog.show();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
