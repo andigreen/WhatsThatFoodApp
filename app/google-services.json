@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "1059716098332-2oaf3f8rn8kt277kpgvj9gqn6ecgmov8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wtf.whatsthatfoodapp",
+            "certificate_hash": "42b8e76cba993617f1f25d17fa62af694c92f2a6"
+          }
+        },
+        {
+          "client_id": "1059716098332-gf2ns0cvntlqarimk5ve27e0p50f89tr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wtf.whatsthatfoodapp",
+            "certificate_hash": "8e2061ffc2f8f375cb041c684316314ab2ddd4ee"
+          }
+        },
+        {
           "client_id": "1059716098332-r7b07eir95mo6qmego9fs74io7bpdqui.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.wtf.whatsthatfoodapp",
-            "certificate_hash": "33636D9A8B7512F1E62724EDF3449699CD5B0A5F"
+            "certificate_hash": "33636d9a8b7512f1e62724edf3449699cd5b0a5f"
           }
         },
         {
@@ -27,7 +43,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.wtf.whatsthatfoodapp",
-            "certificate_hash": "3ED9DF7D11C1DC58BD2D7ABFEBEAB13633293E95"
+            "certificate_hash": "3ed9df7d11c1dc58bd2d7abfebeab13633293e95"
           }
         },
         {
@@ -35,7 +51,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.wtf.whatsthatfoodapp",
-            "certificate_hash": "25BC05843E0612A277EFE4CB157D5E51508A7D45"
+            "certificate_hash": "25bc05843e0612a277efe4cb157d5e51508a7d45"
           }
         },
         {
@@ -43,7 +59,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.wtf.whatsthatfoodapp",
-            "certificate_hash": "101C93128AE0E856E4CE9BF354CAA366D002BEE8"
+            "certificate_hash": "101c93128ae0e856e4ce9bf354caa366d002bee8"
           }
         },
         {

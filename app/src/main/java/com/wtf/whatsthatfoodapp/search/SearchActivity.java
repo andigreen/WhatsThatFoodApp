@@ -2,6 +2,7 @@ package com.wtf.whatsthatfoodapp.search;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -47,6 +48,7 @@ import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
+import com.wtf.whatsthatfoodapp.memory.ViewMemoryActivity;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -161,7 +163,8 @@ public class SearchActivity extends BasicActivity
         @Override
         public void onSuggestionClicked(SearchSuggestion
                 searchSuggestion) {
-
+            Intent intent = new Intent(SearchActivity.this, ViewMemoryActivity.class);
+            startActivity(intent);
         }
 
         @Override
