@@ -86,6 +86,8 @@
         <activity android:name=".memory.ViewMemoryActivity"/>
         <activity android:name=".auth.CreateAccountActivity"/>
         <activity android:name=".auth.PasswordRecoveryActivity"/>
+        <activity android:name=".memory.ShareTextActivity"/>
+        <activity android:name=".memory.SharePictureActivity"/>
     </application>
 
 </manifest>

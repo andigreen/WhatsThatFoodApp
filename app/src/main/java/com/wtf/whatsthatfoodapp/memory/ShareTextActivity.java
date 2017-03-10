@@ -1,6 +1,7 @@
 package com.wtf.whatsthatfoodapp.memory;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +10,7 @@ import android.widget.EditText;
 
 import com.wtf.whatsthatfoodapp.R;
 
-public class ShareTextActivity extends AppCompatActivity {
+public class ShareTextActivity extends ActionBarActivity {
 
     private EditText textEntry;
     @Override

@@ -245,7 +245,7 @@ public class CollageActivity extends BasicActivity {
                 startActivity(searchIntent);
                 return true;
             case R.id.menu_item_share:
-                Intent shareIntent = new Intent(this, ShareTextActivity.class);
+                Intent shareIntent = new Intent(this, SharePictureActivity.class);
                 startActivity(shareIntent);
             default:
                 return super.onOptionsItemSelected(item);
