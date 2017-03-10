@@ -41,9 +41,10 @@ public class ViewMemoryActivity extends BasicActivity {
         view_memory_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent full_image = new Intent(ViewMemoryActivity.this,
+                Intent full_image_intent = new Intent(ViewMemoryActivity.this,
                         FullImageActivity.class);
-                startActivity(full_image);
+                full_image_intent.putExtra("memory_key",(Parcelable)memory);
+                startActivity(full_image_intent);
             }
         });
         Glide.with(this)

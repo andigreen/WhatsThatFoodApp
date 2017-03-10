@@ -84,6 +84,7 @@
             android:name=".auth.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".memory.ViewMemoryActivity"/>
+        <activity android:name=".memory.FullImageActivity"/>
         <activity android:name=".auth.CreateAccountActivity"/>
         <activity android:name=".auth.PasswordRecoveryActivity"/>
         <activity android:name=".memory.ShareTextActivity"/>
