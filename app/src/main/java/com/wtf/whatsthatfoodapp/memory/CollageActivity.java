@@ -216,19 +216,8 @@ public class CollageActivity extends BasicActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-
-        // Locate MenuItem with ShareActionProvider
-        MenuItem item = menu.findItem(R.id.menu_item_share);
-
-        // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat
-                .getActionProvider(
-                item);
-
-
         return true;
     }
 
@@ -247,9 +236,6 @@ public class CollageActivity extends BasicActivity {
                 Intent searchIntent = new Intent(this, SearchActivity.class);
                 startActivity(searchIntent);
                 return true;
-            case R.id.menu_item_share:
-                Intent shareIntent = new Intent(this, SharePictureActivity.class);
-                startActivity(shareIntent);
             default:
                 return super.onOptionsItemSelected(item);
         }
