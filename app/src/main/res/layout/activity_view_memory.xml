@@ -47,7 +47,8 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp">
+                android:layout_margin="16dp"
+                android:id="@+id/view_memory_loc_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -74,7 +75,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                android:id="@+id/view_memory_description_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -101,7 +103,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                android:id="@+id/view_memory_rating_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -121,7 +124,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/view_memory_rating_bar"
-                        android:numStars="5"/>
+                        android:numStars="5"
+                        android:clickable="false"
+                        android:focusableInTouchMode="false"
+                        android:focusable="false"/>
 
                 </LinearLayout>
 
@@ -132,7 +138,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                android:id="@+id/view_memory_price_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -151,7 +158,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:numStars="4"
-                        android:id="@+id/view_memory_price"/>
+                        android:id="@+id/view_memory_price"
+                        android:clickable="false"
+                        android:focusableInTouchMode="false"
+                        android:focusable="false"/>
 
                 </LinearLayout>
 
@@ -162,15 +172,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                android:id="@+id/view_memory_SFNT_card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp">
-
-
 
                     <TextView
                         android:text="Save For later"
@@ -182,7 +191,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/view_memory_SFNT"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:focusableInTouchMode="false"
+                        android:focusable="false"/>
 
 
 
@@ -193,9 +205,11 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="30dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                android:id="@+id/view_memory_remind_later_card">
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -212,7 +226,10 @@
                     <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/view_memory_remind_later"/>
+                        android:id="@+id/view_memory_remind_later"
+                        android:clickable="false"
+                        android:focusableInTouchMode="false"
+                        android:focusable="false"/>
 
                 </LinearLayout>
 

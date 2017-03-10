@@ -33,14 +33,11 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
                 .memory_list_item_loc);
         ImageView viewImage = (ImageView) v.findViewById(R.id
                 .memory_list_item_image);
-        TextView viewKey = (TextView) v.findViewById(R.id
-                .memory_list_item_key);
         final ProgressBar progress = (ProgressBar) v.findViewById(R.id
                 .memory_list_item_progress);
 
         viewTitle.setText(model.getTitle());
         viewLoc.setText(model.getLoc());
-        viewKey.setText(model.getKey());
 
 
         // Load photo into view

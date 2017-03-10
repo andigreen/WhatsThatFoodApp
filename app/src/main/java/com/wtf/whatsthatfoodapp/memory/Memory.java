@@ -16,12 +16,12 @@ public class Memory {
     public static final String TS_KEY_NEWEST = "tsCreatedNeg";
 
     private String key;
-    @NonNull private String title;
-    @NonNull private String loc;
+    @NonNull private String title = null;
+    @NonNull private String loc = null;
     private ArrayList<String> tags;
     private int freq;
-    private boolean savedForNextTime;
-    private boolean reminder;
+    private boolean savedForNextTime = false;
+    private boolean reminder = false;
     // UNIX timestamps
     private long tsCreated;
     private long tsCreatedNeg; // Negative timestamp, so we can sort descending
@@ -29,8 +29,8 @@ public class Memory {
 
     private String description;
 
-    private int rate;
-    private int price;
+    private int rate = -1;
+    private int price = -1;
 
     public Memory() {
         title = loc = "";
