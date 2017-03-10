@@ -101,7 +101,8 @@ public class FilterDialog extends DialogFragment {
 
         // Build dialog
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.Dialog);
         builder.setView(view)
                 .setTitle("Search filters")
                 .setPositiveButton("Apply", applyClickListener)

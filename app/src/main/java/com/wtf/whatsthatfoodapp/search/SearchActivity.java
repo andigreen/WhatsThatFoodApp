@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.arlib.floatingsearchview.FloatingSearchView.OnMenuItemClickListener;
 import com.arlib.floatingsearchview.FloatingSearchView.OnQueryChangeListener;
 import com.arlib.floatingsearchview.FloatingSearchView.OnSearchListener;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
+import com.arlib.floatingsearchview.util.Util;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -69,8 +71,10 @@ public class SearchActivity extends BasicActivity
     private GoogleApiClient client;
     private List<Memory> results;
     private ArrayAdapter<Memory> resultsAdapter;
+
     private TextView noResults;
     private Button clearFilters;
+    private FloatingSearchView searchView;
 
     // Sort/filter options
     private SortMode sortMode = SortMode.RATING_HIGH;
@@ -121,6 +125,7 @@ public class SearchActivity extends BasicActivity
             public void onClick(View v) {
                 ratingMode = FilterMode.ANY;
                 priceMode = FilterMode.ANY;
+                updateFilterButton();
                 requery();
             }
         });
@@ -133,7 +138,7 @@ public class SearchActivity extends BasicActivity
         query = "";
 
         // Set up searchView
-        FloatingSearchView searchView = (FloatingSearchView) findViewById(
+        searchView = (FloatingSearchView) findViewById(
                 R.id.search_view);
         searchView.setOnSearchListener(searchListener);
         searchView.setOnQueryChangeListener(queryListener);
@@ -193,7 +198,18 @@ public class SearchActivity extends BasicActivity
         this.ratingVal = ratingVal;
         this.priceMode = priceMode;
         this.priceVal = priceVal;
+        updateFilterButton();
         requery();
+    }
+
+    private void updateFilterButton() {
+        int resColor = filtersApplied()
+                ? R.color.colorAccent : R.color.menu_icon_color;
+        searchView.setMenuItemIconColor(ContextCompat.getColor(this, resColor));
+    }
+
+    private boolean filtersApplied() {
+        return !(ratingMode == FilterMode.ANY && priceMode == FilterMode.ANY);
     }
 
     private void requery() {
@@ -204,9 +220,8 @@ public class SearchActivity extends BasicActivity
         Cursor cursor = searchTable.query(query);
         if (cursor == null) {
             noResults.setVisibility(View.VISIBLE);
-            if (!query.isEmpty()) {
-                clearFilters.setVisibility(View.VISIBLE);
-            }
+            clearFilters.setVisibility(
+                    filtersApplied() ? View.VISIBLE : View.GONE);
 
             resultsAdapter.notifyDataSetChanged();
             return;
