@@ -32,5 +32,7 @@
     <string name="dialog_delete_memory_message">Once this Memory is deleted, it cannot be restored.</string>
     <string name="dialog_delete_pos">Delete</string>
     <string name="dialog_delete_neg">Cancel</string>
+    <string name="edit_memory_title">Edit Memory</string>
+    <string name="edit_memory_photo_desc">Your photo</string>
 
 </resources>

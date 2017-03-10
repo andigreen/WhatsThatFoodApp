@@ -1,13 +1,13 @@
 package com.wtf.whatsthatfoodapp.memory;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.widget.CardView;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,8 +24,17 @@ import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 
 public class ViewMemoryActivity extends BasicActivity {
 
+    private static final String TAG = ViewMemoryActivity.class.getSimpleName();
+    private static final int REQ_EDIT = 3936;
+
     private MemoryDao dao;
     private Memory memory;
+
+    private CollapsingToolbarLayout title;
+    private TextView loc;
+    private TextView desc;
+    private RatingBar rating;
+    private RatingBar price;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +52,7 @@ public class ViewMemoryActivity extends BasicActivity {
             public void onClick(View v) {
                 Intent full_image_intent = new Intent(ViewMemoryActivity.this,
                         FullImageActivity.class);
-                full_image_intent.putExtra("memory_key",(Parcelable)memory);
+                full_image_intent.putExtra("memory_key", memory);
                 startActivity(full_image_intent);
             }
         });
@@ -53,35 +62,48 @@ public class ViewMemoryActivity extends BasicActivity {
                 .centerCrop()
                 .into(view_memory_image);
 
-        Toolbar view_memory_bar = (Toolbar) findViewById(
-                R.id.view_memory_toolbar);
-        view_memory_bar.setTitle(memory.getTitle());
+        title = (CollapsingToolbarLayout) findViewById(
+                R.id.view_memory_collapsing_toolbar);
+        loc = (TextView) findViewById(R.id.view_memory_location);
+        desc = (TextView) findViewById(R.id.view_memory_description);
+        rating = (RatingBar) findViewById(R.id.view_memory_rating_bar);
+        price = (RatingBar) findViewById(R.id.view_memory_price);
 
-        TextView view_memory_loc = (TextView) findViewById(
-                R.id.view_memory_location);
-        view_memory_loc.setText(memory.getLoc());
+        populateFields();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent
+            data) {
+        if (requestCode == REQ_EDIT && resultCode == RESULT_OK) {
+            memory = data.getParcelableExtra(EditMemoryActivity.MEMORY_KEY);
+            populateFields();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void populateFields() {
+        title.setTitle(memory.getTitle());
+        loc.setText(memory.getLoc());
 
         String memoryDesc = memory.getDescription();
         if (memoryDesc == null || memoryDesc.isEmpty()) {
             findViewById(R.id.view_memory_description_card)
                     .setVisibility(View.GONE);
         } else {
-            ((TextView) findViewById(R.id.view_memory_description))
-                    .setText(memoryDesc);
+            desc.setText(memoryDesc);
         }
 
         if (memory.getRate() == 0) {
             findViewById(R.id.view_memory_rating_card).setVisibility(View.GONE);
         } else {
-            ((RatingBar) findViewById(R.id.view_memory_rating_bar))
-                    .setRating(memory.getRate());
+            rating.setRating(memory.getRate());
         }
 
         if (memory.getPrice() == 0) {
             findViewById(R.id.view_memory_price_card).setVisibility(View.GONE);
         } else {
-            ((RatingBar) findViewById(R.id.view_memory_price))
-                    .setRating(memory.getPrice());
+            price.setRating(memory.getPrice());
         }
 
         CheckBox view_memory_SFNT = (CheckBox) findViewById(
@@ -105,10 +127,13 @@ public class ViewMemoryActivity extends BasicActivity {
             case R.id.view_memory_share:
                 Intent shareIntent = new Intent(this,
                         SharePictureActivity.class);
-                shareIntent.putExtra("memory",(Parcelable) memory);
+                shareIntent.putExtra("memory", memory);
                 startActivity(shareIntent);
                 break;
             case R.id.view_memory_edit:
+                Intent editIntent = new Intent(this, EditMemoryActivity.class);
+                editIntent.putExtra(EditMemoryActivity.MEMORY_KEY, memory);
+                startActivityForResult(editIntent, REQ_EDIT);
                 break;
             case R.id.view_memory_delete:
                 AlertDialog dialog;

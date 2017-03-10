@@ -3,20 +3,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_create_memory"
+    android:id="@+id/activity_edit_memory"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/create_memory_toolbar"
+        android:id="@+id/edit_memory_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="@string/create_memory"
+        app:title="@string/edit_memory_title"
         tools:targetApi="lollipop"/>
 
     <ScrollView
@@ -29,15 +29,15 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/create_memory_photo"
+                android:id="@+id/edit_memory_photo"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:adjustViewBounds="false"
-                android:contentDescription="@string/create_memory_photo_desc"
+                android:contentDescription="@string/edit_memory_photo_desc"
                 app:srcCompat="@android:color/transparent"/>
 
             <FrameLayout
-                android:id="@+id/create_memory_form"
+                android:id="@+id/edit_memory_form"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
