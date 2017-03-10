@@ -1,38 +1,21 @@
 package com.wtf.whatsthatfoodapp.memory;
 
-import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
-
-import java.io.IOException;
 
 public class CreateMemoryActivity extends BasicActivity {
 
@@ -40,26 +23,13 @@ public class CreateMemoryActivity extends BasicActivity {
 
     private static final String TAG = CreateMemoryActivity.class
             .getSimpleName();
-    private static final int PLACE_PICKER_REQUEST = 200;
 
     private Uri imageUri;
     private UploadTask imageUpload;
 
-    private boolean savedForNextTime;
-    private boolean reminder;
-
-    private CheckBox saveFNTCheck;
-    private CheckBox remindCheck;
-    private Dialog imageDialog;
-
-    private EditText titleText;
-    private EditText locText;
-    private EditText descText;
-    private TextInputLayout titleWrapper;
-    private TextInputLayout locWrapper;
-
     private MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
     private Memory memory;
+    private MemoryFormFragment form;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,25 +43,6 @@ public class CreateMemoryActivity extends BasicActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        titleText = (EditText) findViewById(R.id.create_memory_title);
-        locText = (EditText) findViewById(R.id.create_memory_loc);
-        descText = (EditText) findViewById(R.id.create_memory_description);
-        titleWrapper = (TextInputLayout) findViewById(
-                R.id.create_memory_title_wrapper);
-        locWrapper = (TextInputLayout) findViewById(
-                R.id.create_memory_loc_wrapper);
-
-        // Clear errors whenever text changes
-        titleText.addTextChangedListener(
-                new ErrorClearTextWatcher(titleWrapper));
-        locText.addTextChangedListener(new ErrorClearTextWatcher(locWrapper));
-
-        saveFNTCheck = (CheckBox) findViewById(R.id.saveFNTcheck);
-        remindCheck = (CheckBox) findViewById(R.id.remindCheck);
-
-        saveFNTCheck.setOnClickListener(this);
-        remindCheck.setOnClickListener(this);
 
         // Load photo view with the result's URI
         imageUri = getIntent().getParcelableExtra(IMAGE_URI_KEY);
@@ -121,80 +72,24 @@ public class CreateMemoryActivity extends BasicActivity {
         };
         imageUpload = dao.getPhotoRef(memory).putFile(imageUri);
         imageUpload.addOnFailureListener(imageFailure);
+
+        // Set up form fragment
+        form = MemoryFormFragment.newInstance(memory);
+        getFragmentManager().beginTransaction().add(R.id.create_memory_form,
+                form).commit();
     }
 
-    private void saveMemory() {
-        boolean savedForNextTime = saveFNTCheck.isChecked();
-        boolean reminder = this.remindCheck.isChecked();
-
-        int rating = (int) ((RatingBar) findViewById(
-                R.id.create_rating_bar)).getRating();
-        int price = (int) ((RatingBar) findViewById(
-                R.id.create_price_rating)).getRating();
-
-        // Write memory to dao
-        memory.setTitle(titleText.getText().toString());
-        memory.setLoc(locText.getText().toString());
-        memory.setDescription(descText.getText().toString());
-        memory.setTag(descText.getText().toString());
-        memory.setRate(rating);
-        memory.setPrice(price);
-        memory.setSavedForNextTime(savedForNextTime);
-        memory.setReminder(reminder);
-        dao.writeMemory(memory);
-
+    private boolean saveMemory() {
+        if (form.saveToMemory(memory)) {
+            dao.writeMemory(memory);
+            return true;
+        }
+        return false;
     }
 
     private void cancelMemory() {
         if (imageUpload.isInProgress()) imageUpload.cancel();
         dao.deleteMemory(memory);
-    }
-
-    /**
-     * Returns true if all of the form contents are valid, and also updates
-     * the error status of form contents.
-     * <p>
-     * Currently, the form only requires that title and loc are both nonempty.
-     */
-    private boolean validateForm() {
-        String title = titleText.getText().toString();
-        String loc = locText.getText().toString();
-        boolean valid = true;
-
-        if (title.isEmpty()) {
-            titleWrapper.setError("Please enter a title.");
-            valid = false;
-        } else titleWrapper.setErrorEnabled(false);
-
-        if (loc.isEmpty()) {
-            locWrapper.setError("Please enter a location.");
-            valid = false;
-        } else locWrapper.setErrorEnabled(false);
-
-        return valid;
-    }
-
-    private class ErrorClearTextWatcher implements TextWatcher {
-        private TextInputLayout layout;
-
-        ErrorClearTextWatcher(TextInputLayout layout) {
-            this.layout = layout;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count,
-                int after) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int
-                count) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            layout.setErrorEnabled(false);
-        }
     }
 
     @Override
@@ -217,26 +112,8 @@ public class CreateMemoryActivity extends BasicActivity {
             finish();
         }
 
-        if (item.getItemId() == R.id.saveFNTcheck) {
-            if (saveFNTCheck.isChecked()) {
-                saveFNTCheck.setChecked(false);
-            } else {
-                saveFNTCheck.setChecked(true);
-            }
-
-        }
-
-        if (item.getItemId() == R.id.remindCheck) {
-            if (remindCheck.isChecked()) {
-                remindCheck.setChecked(false);
-            } else {
-                remindCheck.setChecked(true);
-            }
-
-        }
-
         // Save new memory
-        if (item.getItemId() == R.id.create_memory_save && validateForm()) {
+        if (item.getItemId() == R.id.create_memory_save) {
             saveMemory();
             finish();
         }
@@ -245,47 +122,27 @@ public class CreateMemoryActivity extends BasicActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void createPlacePicker(View v) {
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-        try {
-            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent
-            data) {
-        if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
-            Place place = PlacePicker.getPlace(this, data);
-            locText.setText(place.getName());
-        }
-    }
-
-    public void expandImage(View v) {
-        imageDialog = new Dialog(this);
-
-        imageDialog.setContentView(
-                getLayoutInflater().inflate(R.layout.image_popup, null));
-
-        ImageView imageView = (ImageView) imageDialog.findViewById(
-                R.id.image_popup);
-        try {
-            Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(), imageUri);
-            imageView.setImageBitmap(bitmapImage);
-            imageDialog.show();
-        } catch (IOException e) {
-            Log.d(TAG, "IOEXCEPTION : photoUri");
-        }
-    }
-
-    public void closeImage(View v) {
-        if (imageDialog != null) {
-            imageDialog.dismiss();
-        }
-    }
+//    public void expandImage(View v) {
+//        imageDialog = new Dialog(this);
+//
+//        imageDialog.setContentView(
+//                getLayoutInflater().inflate(R.layout.image_popup, null));
+//
+//        ImageView imageView = (ImageView) imageDialog.findViewById(
+//                R.id.image_popup);
+//        try {
+//            Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(
+//                    this.getContentResolver(), imageUri);
+//            imageView.setImageBitmap(bitmapImage);
+//            imageDialog.show();
+//        } catch (IOException e) {
+//            Log.d(TAG, "IOEXCEPTION : photoUri");
+//        }
+//    }
+//
+//    public void closeImage(View v) {
+//        if (imageDialog != null) {
+//            imageDialog.dismiss();
+//        }
+//    }
 }
