@@ -39,7 +39,6 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
         viewTitle.setText(model.getTitle());
         viewLoc.setText(model.getLoc());
 
-
         // Load photo into view
         Glide.with(mActivity)
                 .using(new FirebaseImageLoader())

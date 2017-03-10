@@ -123,18 +123,19 @@ public class CollageActivity extends BasicActivity {
         final ListView collageList = (ListView) findViewById(R.id.collage_list);
         collageList.setAdapter(collageListAdapter);
 
-        collageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Memory selectedFromList =(Memory) (collageList.getItemAtPosition(position));
-                String selectedKey = (String) selectedFromList.getKey();
-                Intent viewMemory = new Intent(CollageActivity.this,
-                        ViewMemoryActivity.class);
-                viewMemory.putExtra(MEMORY_KEY,selectedKey);
-                startActivity(viewMemory);
-            }
-        });
+        collageList.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+                        Memory memory = (Memory) collageList
+                                .getItemAtPosition(position);
+                        Intent viewMemory = new Intent(view.getContext(),
+                                ViewMemoryActivity.class);
+                        viewMemory.putExtra(MEMORY_KEY, memory);
+                        startActivity(viewMemory);
+                    }
+                });
 
         // Set up buttons
         createMenu = (FloatingActionsMenu) findViewById(
@@ -223,7 +224,9 @@ public class CollageActivity extends BasicActivity {
         MenuItem item = menu.findItem(R.id.menu_item_share);
 
         // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat
+                .getActionProvider(
+                item);
 
 
         return true;

@@ -121,13 +121,11 @@
                         android:text="Rating"/>
 
                     <RatingBar
+                        android:id="@+id/view_memory_rating_bar"
+                        style="@style/RatingBarRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/view_memory_rating_bar"
-                        android:numStars="5"
-                        android:clickable="false"
-                        android:focusableInTouchMode="false"
-                        android:focusable="false"/>
+                        android:isIndicator="true"/>
 
                 </LinearLayout>
 
@@ -154,14 +152,12 @@
                         android:text="Price"/>
 
                     <RatingBar
+                        android:id="@+id/view_memory_price"
+                        style="@style/RatingBarPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:numStars="4"
-                        android:id="@+id/view_memory_price"
-                        android:clickable="false"
-                        android:focusableInTouchMode="false"
-                        android:focusable="false"/>
+                        android:isIndicator="true"/>
 
                 </LinearLayout>
 
@@ -195,7 +191,6 @@
                         android:clickable="false"
                         android:focusableInTouchMode="false"
                         android:focusable="false"/>
-
 
 
                 </LinearLayout>

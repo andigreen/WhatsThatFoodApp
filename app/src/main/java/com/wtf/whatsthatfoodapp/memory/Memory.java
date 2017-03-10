@@ -1,5 +1,7 @@
 package com.wtf.whatsthatfoodapp.memory;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
@@ -9,19 +11,19 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 @IgnoreExtraProperties
-public class Memory {
+public class Memory implements Parcelable {
 
     private static final String TAG = Memory.class.getSimpleName();
 
     public static final String TS_KEY_NEWEST = "tsCreatedNeg";
 
     private String key;
-    @NonNull private String title = null;
-    @NonNull private String loc = null;
+    @NonNull private String title;
+    @NonNull private String loc;
     private ArrayList<String> tags;
     private int freq;
-    private boolean savedForNextTime = false;
-    private boolean reminder = false;
+    private boolean savedForNextTime;
+    private boolean reminder;
     // UNIX timestamps
     private long tsCreated;
     private long tsCreatedNeg; // Negative timestamp, so we can sort descending
@@ -29,8 +31,8 @@ public class Memory {
 
     private String description;
 
-    private int rate = -1;
-    private int price = -1;
+    private int rate;
+    private int price;
 
     public Memory() {
         title = loc = "";
@@ -169,5 +171,59 @@ public class Memory {
     public void setDescription(String description){
         this.description = description;
     }
+
+    /*
+     * Parcelable implementation
+     */
+
+    protected Memory(Parcel in) {
+        key = in.readString();
+        title = in.readString();
+        loc = in.readString();
+        tags = in.createStringArrayList();
+        freq = in.readInt();
+        savedForNextTime = in.readByte() != 0;
+        reminder = in.readByte() != 0;
+        tsCreated = in.readLong();
+        tsCreatedNeg = in.readLong();
+        tsModified = in.readLong();
+        description = in.readString();
+        rate = in.readInt();
+        price = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(key);
+        dest.writeString(title);
+        dest.writeString(loc);
+        dest.writeStringList(tags);
+        dest.writeInt(freq);
+        dest.writeByte((byte) (savedForNextTime ? 1 : 0));
+        dest.writeByte((byte) (reminder ? 1 : 0));
+        dest.writeLong(tsCreated);
+        dest.writeLong(tsCreatedNeg);
+        dest.writeLong(tsModified);
+        dest.writeString(description);
+        dest.writeInt(rate);
+        dest.writeInt(price);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Memory> CREATOR = new Creator<Memory>() {
+        @Override
+        public Memory createFromParcel(Parcel in) {
+            return new Memory(in);
+        }
+
+        @Override
+        public Memory[] newArray(int size) {
+            return new Memory[size];
+        }
+    };
 
 }
