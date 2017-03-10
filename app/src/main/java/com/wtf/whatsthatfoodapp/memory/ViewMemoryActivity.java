@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,24 +53,34 @@ public class ViewMemoryActivity extends BasicActivity {
 
         Toolbar view_memory_bar = (Toolbar) findViewById(
                 R.id.view_memory_toolbar);
-//        setSupportActionBar(view_memory_bar);
         view_memory_bar.setTitle(memory.getTitle());
 
         TextView view_memory_loc = (TextView) findViewById(
                 R.id.view_memory_location);
         view_memory_loc.setText(memory.getLoc());
 
-        TextView view_memory_description = (TextView) findViewById(
-                R.id.view_memory_description);
-        view_memory_description.setText(memory.getDescription());
+        String memoryDesc = memory.getDescription();
+        if (memoryDesc == null || memoryDesc.isEmpty()) {
+            findViewById(R.id.view_memory_description_card)
+                    .setVisibility(View.GONE);
+        } else {
+            ((TextView) findViewById(R.id.view_memory_description))
+                    .setText(memoryDesc);
+        }
 
-        RatingBar view_memory_rating = (RatingBar) findViewById(
-                R.id.view_memory_rating_bar);
-        view_memory_rating.setRating(memory.getRate());
+        if (memory.getRate() == 0) {
+            findViewById(R.id.view_memory_rating_card).setVisibility(View.GONE);
+        } else {
+            ((RatingBar) findViewById(R.id.view_memory_rating_bar))
+                    .setRating(memory.getRate());
+        }
 
-        RatingBar view_memory_price = (RatingBar) findViewById(
-                R.id.view_memory_price);
-        view_memory_price.setRating(memory.getPrice());
+        if (memory.getPrice() == 0) {
+            findViewById(R.id.view_memory_price_card).setVisibility(View.GONE);
+        } else {
+            ((RatingBar) findViewById(R.id.view_memory_price))
+                    .setRating(memory.getPrice());
+        }
 
         CheckBox view_memory_SFNT = (CheckBox) findViewById(
                 R.id.view_memory_SFNT);
