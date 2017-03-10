@@ -1,39 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context=".memory.SharePictureActivity"
+    android:gravity="center"
+    android:background="#f6546a">
+    <ImageView
+        android:id="@+id/share_picture_thumbnail"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        />
 
     <TextView
-        android:layout_width="fill_parent"
+        android:text="WhatsThatFood"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Share Picture" />
-
-    <LinearLayout android:layout_width="200dp"
-        android:layout_height="320dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical">
-
-        <ImageView android:id="@+id/share_picture_thumbnail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:contentDescription="Picture" />
-
-        <Button
-            android:id="@+id/share_picture_camera_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Camera" />
-
-    </LinearLayout>
-
+        android:textSize="28sp"
+        android:layout_marginTop="10dp"
+        android:textColor="#ffffff"
+        android:typeface="serif"/>
     <Button
         android:id="@+id/share_picture_share_button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Share" />
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="Share it"
+        android:textSize="20sp"
+        android:textColor="#ffffff"
+        android:background="#20b2aa"
+        android:layout_marginTop="40dp"
+        android:typeface="serif"/>
+
+
 
 </LinearLayout>

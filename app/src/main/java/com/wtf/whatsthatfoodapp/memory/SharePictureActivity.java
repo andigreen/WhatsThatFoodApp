@@ -26,7 +26,9 @@ public class SharePictureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_share_picture);
 
         thumbnail = (ImageView) findViewById(R.id.share_picture_thumbnail);
-        Button cameraButton = (Button) findViewById(R.id.share_picture_camera_button);
+
+        //temperary comment out camera button
+        /*Button cameraButton = (Button) findViewById(R.id.share_picture_camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -35,7 +37,8 @@ public class SharePictureActivity extends AppCompatActivity {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intent, PHOTO_ID);
             }
-        });
+        });*/
+
 
 
         Button sharePicture = (Button) findViewById(R.id.share_picture_share_button);
