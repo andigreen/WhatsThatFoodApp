@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -41,6 +42,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.BasicActivity;
+import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.camera.IOImage;
 import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
 
@@ -63,8 +65,12 @@ public class CreateMemoryActivity extends BasicActivity {
     private CheckBox saveFNTCheck;
     private CheckBox remindCheck;
     private Dialog imageDialog;
-    private PlaceAutocompleteFragment placeAutocompleteFragment;
-    private String localString;
+
+    private EditText titleText;
+    private EditText locText;
+    private EditText descText;
+    private TextInputLayout titleWrapper;
+    private TextInputLayout locWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,28 +85,19 @@ public class CreateMemoryActivity extends BasicActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        titleText = (EditText) findViewById(R.id.create_memory_title);
+        locText = (EditText) findViewById(R.id.create_memory_loc);
+        descText = (EditText) findViewById(R.id.create_memory_description);
+        titleWrapper = (TextInputLayout) findViewById(
+                R.id.create_memory_title_wrapper);
+        locWrapper = (TextInputLayout) findViewById(
+                R.id.create_memory_loc_wrapper);
+
         saveFNTCheck = (CheckBox) findViewById(R.id.saveFNTcheck);
         remindCheck = (CheckBox) findViewById(R.id.remindCheck);
 
         saveFNTCheck.setOnClickListener(this);
         remindCheck.setOnClickListener(this);
-
-        // Set up placeAutoComplete fragment
-        placeAutocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.create_memory_loc);
-        placeAutocompleteFragment.setHint("Your Restaurant");
-        placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                localString = place.getName().toString();
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
 
         // Load photo view with the result's URI
         imageUri = getIntent().getParcelableExtra(IMAGE_URI_KEY);
@@ -112,6 +109,58 @@ public class CreateMemoryActivity extends BasicActivity {
                 .into(imageView);
     }
 
+    private void saveMemory() {
+        boolean savedForNextTime = saveFNTCheck.isChecked();
+        boolean reminder = this.remindCheck.isChecked();
+
+        int rating = (int) ((RatingBar) findViewById(
+                R.id.create_rating_bar)).getRating();
+        int price = (int) ((RatingBar) findViewById(
+                R.id.create_price_rating)).getRating();
+
+        // Write memory to dao in order to generate db key
+        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+        final Memory memory = new Memory();
+        memory.setTitle(titleText.getText().toString());
+        memory.setLoc(locText.getText().toString());
+        memory.setDescription(descText.getText().toString());
+        memory.setTag(descText.getText().toString());
+        memory.setRate(rating);
+        memory.setPrice(price);
+        memory.setSavedForNextTime(savedForNextTime);
+        memory.setReminder(reminder);
+        dao.writeMemory(memory);
+
+        // Upload photo
+        StorageReference photoRef = dao.getPhotoRef(memory);
+        UploadTask uploadTask = photoRef.putFile(imageUri);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Failed to upload photo for memory "
+                        + memory.getKey());
+                Toast error = Toast.makeText(getApplicationContext(),
+                        "Photo upload failed. We'll try again later.",
+                        Toast.LENGTH_SHORT);
+                error.show();
+                CreateMemoryActivity.this.finish();
+            }
+        }).addOnSuccessListener(
+                new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot
+                            taskSnapshot) {
+                        Toast success = Toast.makeText(
+                                getApplicationContext(),
+                                "Photo upload succeeded!",
+                                Toast.LENGTH_SHORT
+                        );
+                        success.show();
+                        CreateMemoryActivity.this.finish();
+                    }
+                });
+    }
+
     /**
      * Returns true if all of the form contents are valid, and also updates
      * the error status of form contents.
@@ -119,17 +168,8 @@ public class CreateMemoryActivity extends BasicActivity {
      * Currently, the form only requires that title and loc are both nonempty.
      */
     private boolean validateForm() {
-        String title = ((TextInputEditText) findViewById(
-                R.id.create_memory_title))
-                .getText().toString();
-        /*String loc = ((TextInputEditText) findViewById(R.id
-        .create_memory_loc)).getText().toString();*/
-        String loc = localString;
-
-        TextInputLayout titleWrapper = (TextInputLayout) findViewById(R.id
-                .create_memory_title_wrapper);
-        TextInputLayout locWrapper = (TextInputLayout) findViewById(R.id
-                .create_memory_loc_wrapper);
+        String title = titleText.getText().toString();
+        String loc = locText.getText().toString();
         boolean valid = true;
 
         if (title.isEmpty()) {
@@ -178,70 +218,7 @@ public class CreateMemoryActivity extends BasicActivity {
 
         // Save new memory
         if (item.getItemId() == R.id.create_memory_save && validateForm()) {
-            String title = ((TextInputEditText) findViewById(
-                    R.id.create_memory_title))
-                    .getText().toString();
-            /*String loc = ((TextInputEditText) findViewById(
-                    R.id.create_memory_loc))
-                    .getText().toString();*/
-            String loc = localString;
-            String description = ((TextInputEditText) findViewById(
-                    R.id.create_memory_description))
-                    .getText().toString();
-            boolean savedForNextTime = saveFNTCheck.isChecked();
-            boolean reminder = this.remindCheck.isChecked();
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                Log.e(TAG, "onOptionsItemSelected: current user is null!");
-                return false;
-            }
-
-            int rating = (int) ((RatingBar) findViewById(
-                    R.id.create_rating_bar)).getRating();
-            int price = (int) ((RatingBar) findViewById(
-                    R.id.create_price_rating)).getRating();
-
-            // Write memory to dao in order to generate db key
-            MemoryDao dao = new MemoryDao(user.getUid());
-            final Memory memory = new Memory();
-            memory.setTitle(title);
-            memory.setLoc(loc);
-            memory.setDescription(description);
-            memory.setTag(description);
-            memory.setRate(rating);
-            memory.setPrice(price);
-            memory.setSavedForNextTime(savedForNextTime);
-            memory.setReminder(reminder);
-            dao.writeMemory(memory);
-
-            // Upload photo
-            StorageReference photoRef = dao.getPhotoRef(memory);
-            UploadTask uploadTask = photoRef.putFile(imageUri);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Failed to upload photo for memory "
-                            + memory.getKey());
-                    Toast error = Toast.makeText(getApplicationContext(),
-                            "Photo upload failed. We'll try again later.",
-                            Toast.LENGTH_SHORT);
-                    error.show();
-                    CreateMemoryActivity.this.finish();
-                }
-            }).addOnSuccessListener(
-                    new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot
-                                taskSnapshot) {
-                            Toast success = Toast.makeText(
-                                    getApplicationContext(),
-                                    "Photo upload succeeded!",
-                                    Toast.LENGTH_SHORT
-                            );
-                            success.show();
-                            CreateMemoryActivity.this.finish();
-                        }
-                    });
+            saveMemory();
         }
 
         // Other options not handled
@@ -258,16 +235,13 @@ public class CreateMemoryActivity extends BasicActivity {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent
             data) {
-        if(requestCode == PLACE_PICKER_REQUEST){
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(this, data);
-                placeAutocompleteFragment.setText(place.getName());
-                localString = place.getName().toString();
-            }
+        if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
+            Place place = PlacePicker.getPlace(this, data);
+            locText.setText(place.getName());
         }
     }
 
