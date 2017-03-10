@@ -22,8 +22,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/create_memory_button"
+        <ListView
+            android:id="@+id/collage_list"
+            style="@style/MemoryList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/collage_create_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -32,19 +40,28 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:clickable="true"
-            android:onClick="addMemory"
-            app:fabSize="normal"
-            app:srcCompat="@drawable/ic_add_white_24dp"/>
+            app:fab_addButtonColorNormal="@color/colorAccent"
+            app:fab_addButtonColorPressed="@color/colorAccent"
+            app:fab_labelStyle="@style/FabLabel"
+            app:fab_labelsPosition="left">
 
-        <ListView
-            android:id="@+id/collage_list"
-            style="@style/MemoryList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"/>
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/collage_create_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/colorPrimary"
+                app:fab_colorPressed="@color/colorPrimary"
+                app:fab_icon="@drawable/ic_photo_camera_white_24dp"
+                app:fab_title="Take a picture"/>
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/collage_create_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/colorPrimary"
+                app:fab_colorPressed="@color/colorPrimary"
+                app:fab_icon="@drawable/ic_photo_library_white_24dp"
+                app:fab_title="Choose from gallery"/>
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
     </RelativeLayout>
-
-
 </LinearLayout>

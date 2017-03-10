@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.appevents.AppEventsLogger;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -37,12 +39,14 @@ public class CollageActivity extends BasicActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private FloatingActionsMenu createMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collage);
 
-        sharedPrefs = getSharedPreferences(PREFS_NAME,0);
+        sharedPrefs = getSharedPreferences(PREFS_NAME, 0);
         String signInMethod = sharedPrefs.getString("signInMethod", "default");
         Log.d(TAG, signInMethod);
 
@@ -68,16 +72,17 @@ public class CollageActivity extends BasicActivity {
             }
         };
 
-        if(BasicActivity.getProvider().equals("Facebook")){
+        if (BasicActivity.getProvider().equals("Facebook")) {
             AppEventsLogger logger = AppEventsLogger.newLogger(this);
             logger.logEvent("User logged in with Facebook");
 
         }
 
-        if(BasicActivity.getProvider().equals("Google")){
-            App app = (App)getApplicationContext();
+        if (BasicActivity.getProvider().equals("Google")) {
+            App app = (App) getApplicationContext();
             // Configure Google Sign In
-            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(
+                    GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
                     .requestEmail()
                     .build();
@@ -103,22 +108,41 @@ public class CollageActivity extends BasicActivity {
         collageList.setAdapter(collageListAdapter);
 
         //TODO
-        collageList.setOnItemClickListener( new AdapterView.OnItemClickListener(){
+        collageList.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+
+                        Intent viewMemory = new Intent(CollageActivity.this,
+                                ViewMemoryActivity.class);
+                        startActivity(viewMemory);
+                    }
+                });
+
+        // Set up buttons
+        createMenu = (FloatingActionsMenu) findViewById(
+                R.id.collage_create_menu);
+        FloatingActionButton cameraButton = (FloatingActionButton) findViewById(
+                R.id.collage_create_camera);
+        FloatingActionButton galleryButton = (FloatingActionButton)
+                findViewById(R.id.collage_create_gallery);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent viewMemory = new Intent(CollageActivity.this,ViewMemoryActivity.class);
-                startActivity(viewMemory);
+            public void onClick(View v) {
+                createMemory(true);
+            }
+        });
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createMemory(false);
             }
         });
     }
 
     @Override
-    public void onResume(){
-        super.onResume();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
@@ -141,12 +165,14 @@ public class CollageActivity extends BasicActivity {
                 startActivity(searchIntent);
                 return true;
             case R.id.test_view_memory:
-                Intent viewMemory = new Intent(CollageActivity.this,ViewMemoryActivity.class);
+                Intent viewMemory = new Intent(CollageActivity.this,
+                        ViewMemoryActivity.class);
                 startActivity(viewMemory);
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
     // [START on_start_add_listener]
     @Override
     public void onStart() {
@@ -155,6 +181,12 @@ public class CollageActivity extends BasicActivity {
 
     }
     // [END on_start_add_listener]
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        createMenu.collapseImmediately();
+    }
 
     // [START on_stop_remove_listener]
     @Override
@@ -167,7 +199,7 @@ public class CollageActivity extends BasicActivity {
     }
     // [END on_stop_remove_listener]
 
-    private void viewSettings(){
+    private void viewSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
@@ -175,36 +207,21 @@ public class CollageActivity extends BasicActivity {
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Google Play Services error.",
+                Toast.LENGTH_SHORT).show();
     }
 
-    public void viewMemory(View v){
+    public void viewMemory(View v) {
         Intent intent = new Intent(this, ViewMemoryActivity.class);
         //startActivity(intent);
     }
 
-    public void addMemory(View v){
-        PopupMenu popupMenu = new PopupMenu(this,v);
-
-        popupMenu.getMenuInflater().inflate(R.menu.collage_create_memory_button_menu,popupMenu.getMenu());
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
-            @Override
-            public boolean onMenuItemClick(MenuItem item){
-                Intent intent = new Intent(getApplicationContext(), CreateMemoryActivity.class);
-
-                if (item.getItemId() == R.id.camera){
-                    intent.putExtra("camera",true);
-                    startActivity(intent);
-                    return true;
-                } else if (item.getItemId() == R.id.gallery){
-                    intent.putExtra("camera",false);
-                    startActivity(intent);
-                    return true;
-                }
-                return false;
-            }
-        });
-        popupMenu.show();
+    private void createMemory(boolean camera) {
+        Intent intent = new Intent(getApplicationContext(),
+                CreateMemoryActivity.class);
+        intent.putExtra("camera", camera);
+        startActivity(intent);
     }
+
 }
+
