@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,6 +69,8 @@ public class SearchActivity extends BasicActivity
     private GoogleApiClient client;
     private List<Memory> results;
     private ArrayAdapter<Memory> resultsAdapter;
+    private TextView noResults;
+    private Button clearFilters;
 
     // Sort/filter options
     private SortMode sortMode = SortMode.RATING_HIGH;
@@ -110,6 +113,17 @@ public class SearchActivity extends BasicActivity
 
         results = new ArrayList<>();
         resultsAdapter = new ResultAdapter(this, results);
+
+        noResults = (TextView) findViewById(R.id.search_noresults);
+        clearFilters = (Button) findViewById(R.id.search_clearfilters);
+        clearFilters.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ratingMode = FilterMode.ANY;
+                priceMode = FilterMode.ANY;
+                requery();
+            }
+        });
 
         ListView listView = (ListView) findViewById(R.id.search_results);
         listView.setAdapter(resultsAdapter);
@@ -189,9 +203,16 @@ public class SearchActivity extends BasicActivity
         searchTable.setPrice(priceMode, priceVal);
         Cursor cursor = searchTable.query(query);
         if (cursor == null) {
+            noResults.setVisibility(View.VISIBLE);
+            if (!query.isEmpty()) {
+                clearFilters.setVisibility(View.VISIBLE);
+            }
+
             resultsAdapter.notifyDataSetChanged();
             return;
         }
+        noResults.setVisibility(View.GONE);
+        clearFilters.setVisibility(View.GONE);
 
         int col = cursor.getColumnIndex(SearchTable.COL_KEY);
         cursor.moveToFirst();
