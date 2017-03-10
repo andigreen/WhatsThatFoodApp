@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -103,6 +104,7 @@ public class ViewMemoryActivity extends BasicActivity {
             case R.id.view_memory_share:
                 Intent shareIntent = new Intent(this,
                         SharePictureActivity.class);
+                shareIntent.putExtra("memory",(Parcelable) memory);
                 startActivity(shareIntent);
                 break;
             case R.id.view_memory_edit:

@@ -11,7 +11,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.auth.AuthUtils;
+import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 
 
 public class SharePictureActivity extends AppCompatActivity {
@@ -25,56 +30,39 @@ public class SharePictureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_picture);
 
+        Memory memory = getIntent().getParcelableExtra("memory");
         thumbnail = (ImageView) findViewById(R.id.share_picture_thumbnail);
 
-        //temperary comment out camera button
-        /*Button cameraButton = (Button) findViewById(R.id.share_picture_camera_button);
-        cameraButton.setOnClickListener(new View.OnClickListener() {
+        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+        dao.getPhotoRef(memory).getDownloadUrl().addOnSuccessListener(
+                new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(SharePictureActivity.this)
+                                .load(uri)
+                                .centerCrop()
+                                .dontAnimate() // required by CircleImageView
+                                .into(thumbnail);
+                        pictureUri = uri;
+                    }
+                });
 
-            @Override
+
+        Button btn_share=(Button)findViewById(R.id.share_picture_share_button);
+        btn_share.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // we want to start an intent to get a picture!
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, PHOTO_ID);
-            }
-        });*/
-
-
-
-        Button sharePicture = (Button) findViewById(R.id.share_picture_share_button);
-        sharePicture.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (picture == null) {
-                    Toast.makeText(SharePictureActivity.this, "Please take a valid picture", Toast.LENGTH_LONG);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("image/jpeg");
-                    intent.putExtra(Intent.EXTRA_STREAM, pictureUri);
-                    startActivity(Intent.createChooser(intent, "Share picture with..."));
-                }
+                shareIt();
             }
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == PHOTO_ID) {
-            if (resultCode == RESULT_OK) {
-                // we got a picture back
-                this.showPicture(intent);
-            }
-        }
+    private void shareIt() {
+        //sharing implementation here
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("image/jpeg");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
+        startActivity(Intent.createChooser(sharingIntent, "Share picture with..."));
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
-    private void showPicture(Intent intent) {
-        Bundle intentExtras = intent.getExtras();
-        picture = (Bitmap)intentExtras.get("data");
-        pictureUri = intent.getData();
-
-        if (picture != null) {
-            thumbnail.setImageBitmap(picture);
-        }
-    }
 }
