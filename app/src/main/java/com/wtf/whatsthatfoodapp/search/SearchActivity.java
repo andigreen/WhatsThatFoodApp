@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -60,6 +61,7 @@ public class SearchActivity extends BasicActivity
         implements FilterDialog.FilterDialogListener {
 
     public final static String TAG = SearchActivity.class.getSimpleName();
+    public static final String MEMORY_KEY = "memory";
 
     private Map<String, Memory> memories;
     private SearchTable searchTable;
@@ -132,9 +134,22 @@ public class SearchActivity extends BasicActivity
             }
         });
 
-        ListView listView = (ListView) findViewById(R.id.search_results);
+        final ListView listView = (ListView) findViewById(R.id.search_results);
         listView.setAdapter(resultsAdapter);
 
+        listView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        Memory memory = (Memory) listView
+                                .getItemAtPosition(position);
+                        Intent viewMemory = new Intent(view.getContext(),
+                                ViewMemoryActivity.class);
+                        viewMemory.putExtra(MEMORY_KEY, memory);
+                        startActivity(viewMemory);
+                    }
+                });
         // Initialize search table (pre-populate index)
         searchTable = new SearchTable(this);
         query = "";
