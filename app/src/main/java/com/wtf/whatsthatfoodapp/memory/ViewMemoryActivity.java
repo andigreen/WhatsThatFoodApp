@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -31,6 +32,7 @@ public class ViewMemoryActivity extends BasicActivity {
     private Memory memory;
 
     private CollapsingToolbarLayout title;
+    private Toolbar toolbar;
     private TextView loc;
     private TextView desc;
     private RatingBar rating;
@@ -62,8 +64,13 @@ public class ViewMemoryActivity extends BasicActivity {
                 .centerCrop()
                 .into(view_memory_image);
 
+        // Set up collapsing toolbar
+        toolbar = (Toolbar) findViewById(R.id.view_memory_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         title = (CollapsingToolbarLayout) findViewById(
                 R.id.view_memory_collapsing_toolbar);
+
         loc = (TextView) findViewById(R.id.view_memory_location);
         desc = (TextView) findViewById(R.id.view_memory_description);
         rating = (RatingBar) findViewById(R.id.view_memory_rating_bar);
@@ -124,6 +131,9 @@ public class ViewMemoryActivity extends BasicActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.view_memory_share:
                 Intent shareIntent = new Intent(this,
                         SharePictureActivity.class);
