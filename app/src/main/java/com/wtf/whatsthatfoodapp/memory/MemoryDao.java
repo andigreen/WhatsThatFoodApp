@@ -44,6 +44,22 @@ public class MemoryDao {
     }
 
     /**
+     * Deletes the memory from the database if the memory has a key;
+     * otherwise, this is a no-op.
+     *
+     * If the key exists, this method will also attempt to delete the
+     * corresponding photo.
+     *
+     * @param memory a memory to delete from the database
+     */
+    public void deleteMemory(Memory memory) {
+        if (memory.getKey() == null) return;
+
+        getMemoriesRef().child(memory.getKey()).removeValue();
+        getPhotoRef(memory).delete();
+    }
+
+    /**
      * Returns a {@link StorageReference} to the path corresponding to the
      * memory. The target file is not guaranteed to exist.
      */

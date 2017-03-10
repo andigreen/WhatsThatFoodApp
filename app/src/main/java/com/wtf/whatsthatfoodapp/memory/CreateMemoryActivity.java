@@ -1,19 +1,13 @@
 package com.wtf.whatsthatfoodapp.memory;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
@@ -31,24 +24,14 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.BasicActivity;
+import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
-import com.wtf.whatsthatfoodapp.camera.IOImage;
-import com.wtf.whatsthatfoodapp.camera.TakePhotoAPI21Activity;
 
-import java.io.File;
 import java.io.IOException;
 
 public class CreateMemoryActivity extends BasicActivity {
@@ -60,6 +43,7 @@ public class CreateMemoryActivity extends BasicActivity {
     private static final int PLACE_PICKER_REQUEST = 200;
 
     private Uri imageUri;
+    private UploadTask imageUpload;
 
     private boolean savedForNextTime;
     private boolean reminder;
@@ -73,6 +57,9 @@ public class CreateMemoryActivity extends BasicActivity {
     private EditText descText;
     private TextInputLayout titleWrapper;
     private TextInputLayout locWrapper;
+
+    private MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+    private Memory memory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +101,26 @@ public class CreateMemoryActivity extends BasicActivity {
                 .load(imageUri)
                 .centerCrop()
                 .into(imageView);
+
+        // Create memory in db and initiate image upload
+        memory = new Memory();
+        dao.writeMemory(memory);
+        OnFailureListener imageFailure = new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // We cancelled the upload, no error here
+                if (imageUpload.isCanceled()) return;
+
+                Log.e(TAG,
+                        "Failed to upload photo for memory " + memory.getKey());
+                Toast error = Toast.makeText(getApplicationContext(),
+                        "Photo upload failed. We'll try again later.",
+                        Toast.LENGTH_SHORT);
+                error.show();
+            }
+        };
+        imageUpload = dao.getPhotoRef(memory).putFile(imageUri);
+        imageUpload.addOnFailureListener(imageFailure);
     }
 
     private void saveMemory() {
@@ -125,9 +132,7 @@ public class CreateMemoryActivity extends BasicActivity {
         int price = (int) ((RatingBar) findViewById(
                 R.id.create_price_rating)).getRating();
 
-        // Write memory to dao in order to generate db key
-        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
-        final Memory memory = new Memory();
+        // Write memory to dao
         memory.setTitle(titleText.getText().toString());
         memory.setLoc(locText.getText().toString());
         memory.setDescription(descText.getText().toString());
@@ -138,34 +143,11 @@ public class CreateMemoryActivity extends BasicActivity {
         memory.setReminder(reminder);
         dao.writeMemory(memory);
 
-        // Upload photo
-        StorageReference photoRef = dao.getPhotoRef(memory);
-        UploadTask uploadTask = photoRef.putFile(imageUri);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e(TAG, "Failed to upload photo for memory "
-                        + memory.getKey());
-                Toast error = Toast.makeText(getApplicationContext(),
-                        "Photo upload failed. We'll try again later.",
-                        Toast.LENGTH_SHORT);
-                error.show();
-                CreateMemoryActivity.this.finish();
-            }
-        }).addOnSuccessListener(
-                new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot
-                            taskSnapshot) {
-                        Toast success = Toast.makeText(
-                                getApplicationContext(),
-                                "Photo upload succeeded!",
-                                Toast.LENGTH_SHORT
-                        );
-                        success.show();
-                        CreateMemoryActivity.this.finish();
-                    }
-                });
+    }
+
+    private void cancelMemory() {
+        if (imageUpload.isInProgress()) imageUpload.cancel();
+        dao.deleteMemory(memory);
     }
 
     /**
@@ -216,6 +198,12 @@ public class CreateMemoryActivity extends BasicActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        cancelMemory();
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.create_memory_toolbar, menu);
         return true;
@@ -225,6 +213,7 @@ public class CreateMemoryActivity extends BasicActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Back to collage
         if (item.getItemId() == android.R.id.home) {
+            cancelMemory();
             finish();
         }
 
@@ -249,6 +238,7 @@ public class CreateMemoryActivity extends BasicActivity {
         // Save new memory
         if (item.getItemId() == R.id.create_memory_save && validateForm()) {
             saveMemory();
+            finish();
         }
 
         // Other options not handled
