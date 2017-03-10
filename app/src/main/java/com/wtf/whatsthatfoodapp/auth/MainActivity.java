@@ -69,12 +69,14 @@ public class MainActivity extends BasicActivity {
         Button register_btn = (Button) findViewById(R.id.Register_btn);
         Button password_recover = (Button) findViewById(R.id.password_recover);
         Button facebook_login_btn = (Button) findViewById(R.id.btn_fb_login);
+        Button google_login_btn = (Button) findViewById(R.id.btn_google_login);
 
         email_btn.setOnClickListener(this);
         google_btn.setOnClickListener(this);
         fb_btn.setOnClickListener(this);
         register_btn.setOnClickListener(this);
         password_recover.setOnClickListener(this);
+        google_login_btn.setOnClickListener(this);
 
         App app = (App)getApplicationContext();
         // Configure Google Sign In
@@ -291,7 +293,7 @@ public class MainActivity extends BasicActivity {
         }else if(i == R.id.password_recover){
             Intent toRecoveryPage = new Intent(MainActivity.this, PasswordRecoveryActivity.class);
             startActivity(toRecoveryPage);
-        }else if(i == R.id.google_button){
+        }else if(i == R.id.btn_google_login){
             GoogleSignIn();
         }
     }
