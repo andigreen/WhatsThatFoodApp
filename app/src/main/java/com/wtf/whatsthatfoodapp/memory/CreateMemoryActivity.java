@@ -15,6 +15,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -92,6 +94,11 @@ public class CreateMemoryActivity extends BasicActivity {
                 R.id.create_memory_title_wrapper);
         locWrapper = (TextInputLayout) findViewById(
                 R.id.create_memory_loc_wrapper);
+
+        // Clear errors whenever text changes
+        titleText.addTextChangedListener(
+                new ErrorClearTextWatcher(titleWrapper));
+        locText.addTextChangedListener(new ErrorClearTextWatcher(locWrapper));
 
         saveFNTCheck = (CheckBox) findViewById(R.id.saveFNTcheck);
         remindCheck = (CheckBox) findViewById(R.id.remindCheck);
@@ -183,6 +190,29 @@ public class CreateMemoryActivity extends BasicActivity {
         } else locWrapper.setErrorEnabled(false);
 
         return valid;
+    }
+
+    private class ErrorClearTextWatcher implements TextWatcher {
+        private TextInputLayout layout;
+
+        ErrorClearTextWatcher(TextInputLayout layout) {
+            this.layout = layout;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int
+                count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            layout.setErrorEnabled(false);
+        }
     }
 
     @Override
