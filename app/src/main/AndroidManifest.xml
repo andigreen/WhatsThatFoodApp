@@ -92,8 +92,8 @@
         <activity android:name=".memory.FullImageActivity"/>
         <activity android:name=".auth.CreateAccountActivity"/>
         <activity android:name=".auth.PasswordRecoveryActivity"/>
-        <activity android:name=".memory.ShareTextActivity"/>
-        <activity android:name=".memory.SharePictureActivity"/>
+        <activity android:name=".share.ShareTextActivity"/>
+        <activity android:name=".share.SharePictureActivity"/>
     </application>
 
 </manifest>

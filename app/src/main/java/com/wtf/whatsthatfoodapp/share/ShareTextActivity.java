@@ -1,4 +1,4 @@
-package com.wtf.whatsthatfoodapp.memory;
+package com.wtf.whatsthatfoodapp.share;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
