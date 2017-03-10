@@ -88,11 +88,13 @@
                     android:layout_gravity="center"
                     android:text="Rating"/>
 
-                <RatingBar
-                    android:id="@+id/create_rating_bar"
-                    style="@style/RatingBarRating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                <RelativeLayout>
+                    <RatingBar
+                        android:id="@+id/create_rating_bar"
+                        style="@style/RatingBarRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
             </TableRow>
 
             <TableRow
@@ -107,11 +109,13 @@
                     android:text="Price"
                     />
 
-                <RatingBar
-                    android:id="@+id/create_price_rating"
-                    style="@style/RatingBarPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                <RelativeLayout>
+                    <RatingBar
+                        android:id="@+id/create_price_rating"
+                        style="@style/RatingBarPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
             </TableRow>
 
             <TableRow
