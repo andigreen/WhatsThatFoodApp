@@ -19,9 +19,6 @@ public class BasicActivity extends AppCompatActivity implements GoogleApiClient.
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
 
-    public static final String PREFS_NAME = "WTF";
-    public SharedPreferences sharedPrefs;
-
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);

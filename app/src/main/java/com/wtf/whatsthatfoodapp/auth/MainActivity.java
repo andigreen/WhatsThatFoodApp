@@ -58,11 +58,7 @@ public class MainActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sharedPrefs = getSharedPreferences(PREFS_NAME,0);
         Button email_btn = (Button) findViewById(R.id.email_button);
-        SignInButton google_btn = (SignInButton) findViewById(
-                R.id.google_button);
-        google_btn.setSize(SignInButton.SIZE_ICON_ONLY);
         LoginButton fb_btn = (LoginButton) findViewById(R.id.fb_btn);
         emailField = (EditText)findViewById(R.id.emailfield);
         passwordField = (EditText)findViewById(R.id.passwordfield);
@@ -72,7 +68,6 @@ public class MainActivity extends BasicActivity {
         Button google_login_btn = (Button) findViewById(R.id.btn_google_login);
 
         email_btn.setOnClickListener(this);
-        google_btn.setOnClickListener(this);
         fb_btn.setOnClickListener(this);
         register_btn.setOnClickListener(this);
         password_recover.setOnClickListener(this);
@@ -173,9 +168,6 @@ public class MainActivity extends BasicActivity {
                                     ,AuthUtils.getUserDisplayName()
                                 ,AuthUtils.getUserUid());
                             Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                            SharedPreferences.Editor editor = sharedPrefs.edit();
-                            editor.putString("signInMethod","Facebook");
-                            editor.commit();
                             startActivity(displayHomePage);
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -201,9 +193,6 @@ public class MainActivity extends BasicActivity {
         showProgressDialog();
 
         // [START sign_in_with_email]
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString("signInMethod","Email");
-        editor.apply();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -312,9 +301,6 @@ public class MainActivity extends BasicActivity {
     // [START signin]
     private void GoogleSignIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString("signInMethod","Google");
-        editor.apply();
         startActivityForResult(signInIntent, RC_SIGN_IN);
 
     }

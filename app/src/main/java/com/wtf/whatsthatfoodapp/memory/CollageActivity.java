@@ -8,8 +8,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -20,16 +18,12 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.facebook.appevents.AppEventsLogger;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
@@ -50,11 +44,7 @@ public class CollageActivity extends BasicActivity {
     private static final int REQUEST_IMAGE_CAMERA = 9924;
     public static final String MEMORY_KEY = "memory";
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-
     private Uri imageUri;
-    private ShareActionProvider mShareActionProvider;
     private FloatingActionsMenu createMenu;
 
     @Override
@@ -62,37 +52,9 @@ public class CollageActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collage);
 
-        sharedPrefs = getSharedPreferences(PREFS_NAME, 0);
-        String signInMethod = sharedPrefs.getString("signInMethod", "default");
-        Log.d(TAG, signInMethod);
-
         // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.collage_toolbar);
         setSupportActionBar(toolbar);
-
-
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                // ...
-            }
-        };
-
-        if (BasicActivity.getProvider().equals("Facebook")) {
-            AppEventsLogger logger = AppEventsLogger.newLogger(this);
-            logger.logEvent("User logged in with Facebook");
-
-        }
 
         if (BasicActivity.getProvider().equals("Google")) {
             App app = (App) getApplicationContext();
@@ -245,8 +207,6 @@ public class CollageActivity extends BasicActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-
     }
     // [END on_start_add_listener]
 
@@ -260,10 +220,6 @@ public class CollageActivity extends BasicActivity {
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-
     }
     // [END on_stop_remove_listener]
 
