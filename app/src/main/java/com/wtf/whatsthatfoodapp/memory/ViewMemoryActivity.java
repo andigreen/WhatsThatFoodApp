@@ -116,10 +116,6 @@ public class ViewMemoryActivity extends BasicActivity {
         CheckBox view_memory_SFNT = (CheckBox) findViewById(
                 R.id.view_memory_SFNT);
         view_memory_SFNT.setChecked(memory.getSavedForNextTime());
-
-        CheckBox view_memory_remind = (CheckBox) findViewById(
-                R.id.view_memory_remind_later);
-        view_memory_remind.setChecked(memory.getReminder());
     }
 
     @Override

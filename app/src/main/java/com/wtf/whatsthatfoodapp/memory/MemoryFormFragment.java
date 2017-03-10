@@ -38,7 +38,6 @@ public class MemoryFormFragment extends Fragment {
     private RatingBar ratingRating;
     private RatingBar priceRating;
     private CheckBox saveFNTCheck;
-    private CheckBox remindCheck;
 
     private TextInputLayout titleWrapper;
     private TextInputLayout locWrapper;
@@ -76,7 +75,6 @@ public class MemoryFormFragment extends Fragment {
         ratingRating = (RatingBar) a.findViewById(R.id.create_rating_bar);
         priceRating = (RatingBar) a.findViewById(R.id.create_price_rating);
         saveFNTCheck = (CheckBox) a.findViewById(R.id.saveFNTcheck);
-        remindCheck = (CheckBox) a.findViewById(R.id.remindCheck);
 
         titleText.setText(memory.getTitle());
         locText.setText(memory.getLoc());
@@ -84,7 +82,6 @@ public class MemoryFormFragment extends Fragment {
         ratingRating.setRating(memory.getRate());
         priceRating.setRating(memory.getPrice());
         saveFNTCheck.setChecked(memory.getSavedForNextTime());
-        remindCheck.setChecked(memory.getReminder());
 
         // Clear errors whenever text changes
         titleWrapper = (TextInputLayout) a.findViewById(
@@ -116,7 +113,6 @@ public class MemoryFormFragment extends Fragment {
         memory.setRate((int) ratingRating.getRating());
         memory.setPrice((int) priceRating.getRating());
         memory.setSavedForNextTime(saveFNTCheck.isChecked());
-        memory.setReminder(this.remindCheck.isChecked());
 
         return true;
     }

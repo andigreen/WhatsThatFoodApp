@@ -89,6 +89,7 @@
                     android:text="Rating"/>
 
                 <RelativeLayout>
+
                     <RatingBar
                         android:id="@+id/create_rating_bar"
                         style="@style/RatingBarRating"
@@ -110,6 +111,7 @@
                     />
 
                 <RelativeLayout>
+
                     <RatingBar
                         android:id="@+id/create_price_rating"
                         style="@style/RatingBarPrice"
@@ -134,24 +136,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"/>
             </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/create_memory_reminder"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Remind me later"/>
-
-                <CheckBox
-                    android:id="@+id/remindCheck"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </TableRow>
-
         </TableLayout>
-
     </LinearLayout>
 </FrameLayout>

@@ -23,7 +23,6 @@ public class Memory implements Parcelable {
     private ArrayList<String> tags;
     private int freq;
     private boolean savedForNextTime;
-    private boolean reminder;
     // UNIX timestamps
     private long tsCreated;
     private long tsCreatedNeg; // Negative timestamp, so we can sort descending
@@ -135,15 +134,6 @@ public class Memory implements Parcelable {
         savedForNextTime = save;
     }
 
-    public boolean getReminder(){
-        return reminder;
-    }
-
-    public void setReminder(boolean remind){
-        reminder = remind;
-    }
-    // Helper methods
-
     public void setRate(int rate){
         this.rate = rate;
     }
@@ -183,7 +173,6 @@ public class Memory implements Parcelable {
         tags = in.createStringArrayList();
         freq = in.readInt();
         savedForNextTime = in.readByte() != 0;
-        reminder = in.readByte() != 0;
         tsCreated = in.readLong();
         tsCreatedNeg = in.readLong();
         tsModified = in.readLong();
@@ -200,7 +189,6 @@ public class Memory implements Parcelable {
         dest.writeStringList(tags);
         dest.writeInt(freq);
         dest.writeByte((byte) (savedForNextTime ? 1 : 0));
-        dest.writeByte((byte) (reminder ? 1 : 0));
         dest.writeLong(tsCreated);
         dest.writeLong(tsCreatedNeg);
         dest.writeLong(tsModified);
