@@ -21,8 +21,6 @@ import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 
 public class SharePictureActivity extends AppCompatActivity {
 
-    private static int PHOTO_ID = 101;
-    Bitmap picture;
     Uri pictureUri;
     ImageView thumbnail;
     @Override
