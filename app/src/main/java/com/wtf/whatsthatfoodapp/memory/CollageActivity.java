@@ -8,6 +8,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -52,7 +54,7 @@ public class CollageActivity extends BasicActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private Uri imageUri;
-
+    private ShareActionProvider mShareActionProvider;
     private FloatingActionsMenu createMenu;
 
     @Override
@@ -216,6 +218,14 @@ public class CollageActivity extends BasicActivity {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+
         return true;
     }
 
@@ -234,6 +244,9 @@ public class CollageActivity extends BasicActivity {
                 Intent searchIntent = new Intent(this, SearchActivity.class);
                 startActivity(searchIntent);
                 return true;
+            case R.id.menu_item_share:
+                Intent shareIntent = new Intent(this, ShareTextActivity.class);
+                startActivity(shareIntent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -277,10 +290,6 @@ public class CollageActivity extends BasicActivity {
                 Toast.LENGTH_SHORT).show();
     }
 
-    public void viewMemory(View v) {
-        Intent intent = new Intent(this, ViewMemoryActivity.class);
-        //startActivity(intent);
-    }
 
 }
 
