@@ -1,9 +1,13 @@
 package com.wtf.whatsthatfoodapp.memory;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
-import android.support.v7.widget.PopupMenu;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -32,12 +36,21 @@ import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class CollageActivity extends BasicActivity {
 
     private static final String TAG = CollageActivity.class.getSimpleName();
+    private static final int REQUEST_IMAGE_GALLERY = 4843;
+    private static final int REQUEST_IMAGE_CAMERA = 9924;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private Uri imageUri;
 
     private FloatingActionsMenu createMenu;
 
@@ -130,15 +143,71 @@ public class CollageActivity extends BasicActivity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createMemory(true);
+                imageFromCamera();
             }
         });
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createMemory(false);
+                imageFromGallery();
             }
         });
+    }
+
+    /**
+     * Opens the native camera UI to get an image.
+     */
+    private void imageFromCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) == null) return;
+
+        @SuppressLint("SimpleDateFormat")
+        String ts = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile;
+        try {
+            imageFile = File.createTempFile("WTF_" + ts, ".jpg", storageDir);
+        } catch (IOException e) {
+            Log.e(TAG, "Could not create image file.");
+            return;
+        }
+
+        imageUri = FileProvider.getUriForFile(this,
+                "com.wtf.whatsthatfoodapp.fileprovider", imageFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
+    }
+
+    /**
+     * Opens the native image gallery to get an image.
+     */
+    private void imageFromGallery() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, null),
+                REQUEST_IMAGE_GALLERY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent
+            data) {
+        // Send image URI from camera to CreateMemoryActivity
+        if (requestCode == REQUEST_IMAGE_CAMERA && resultCode == RESULT_OK) {
+            Intent createMemory = new Intent(this, CreateMemoryActivity.class);
+            createMemory.putExtra(CreateMemoryActivity.IMAGE_URI_KEY, imageUri);
+            startActivity(createMemory);
+        }
+
+        // Send image URI from gallery to CreateMemoryActivity
+        if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK) {
+            Intent createMemory = new Intent(this, CreateMemoryActivity.class);
+            createMemory.putExtra(CreateMemoryActivity.IMAGE_URI_KEY,
+                    data.getData());
+            startActivity(createMemory);
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -214,13 +283,6 @@ public class CollageActivity extends BasicActivity {
     public void viewMemory(View v) {
         Intent intent = new Intent(this, ViewMemoryActivity.class);
         //startActivity(intent);
-    }
-
-    private void createMemory(boolean camera) {
-        Intent intent = new Intent(getApplicationContext(),
-                CreateMemoryActivity.class);
-        intent.putExtra("camera", camera);
-        startActivity(intent);
     }
 
 }

@@ -49,87 +49,67 @@ import java.io.IOException;
 
 public class CreateMemoryActivity extends BasicActivity {
 
+    public static final String IMAGE_URI_KEY = "imageUri";
+
     private static final String TAG = CreateMemoryActivity.class
             .getSimpleName();
-    private static final int REQUEST_PHOTO_GET = 144;
-
     private static final int PLACE_PICKER_REQUEST = 200;
 
-    private boolean fromCamera;
-
-    private Uri photoUri;
+    private Uri imageUri;
 
     private boolean savedForNextTime;
-
     private boolean reminder;
 
     private CheckBox saveFNTCheck;
-
     private CheckBox remindCheck;
-
     private Dialog imageDialog;
-
     private PlaceAutocompleteFragment placeAutocompleteFragment;
-
     private String localString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Initiate photo loading
-        fromCamera = getIntent().getBooleanExtra("camera", true);
-        if (fromCamera) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                // We need to ask for permission in runtime for android 6.0
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission
-                                .WRITE_EXTERNAL_STORAGE, Manifest.permission
-                                .CAMERA}
-                        , 1);
-            } else {
-                dispatchTakePictureIntent();
+        setContentView(R.layout.activity_create_memory);
+
+        // Set up toolbar
+        Toolbar toolbar = (Toolbar) findViewById(
+                R.id.create_memory_toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        saveFNTCheck = (CheckBox) findViewById(R.id.saveFNTcheck);
+        remindCheck = (CheckBox) findViewById(R.id.remindCheck);
+
+        saveFNTCheck.setOnClickListener(this);
+        remindCheck.setOnClickListener(this);
+
+        // Set up placeAutoComplete fragment
+        placeAutocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.create_memory_loc);
+        placeAutocompleteFragment.setHint("Your Restaurant");
+        placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                localString = place.getName().toString();
             }
-        } else {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,
-                    "Select Picture"), REQUEST_PHOTO_GET);
-        }
-    }
 
-    private void dispatchTakePictureIntent() {
-        final int REQUEST_IMAGE_CAPTURE = 1;
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_PHOTO_GET);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-            String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 1
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager
-                        .PERMISSION_GRANTED) {
-
-                    // permission was granted, take picture
-                    Intent getPhoto = new Intent(this,
-                            TakePhotoAPI21Activity.class);
-                    startActivityForResult(getPhoto, REQUEST_PHOTO_GET);
-                } else {
-
-                    // permission denied, return to WelcomeActivity
-                    Toast.makeText(this, "Cannot Access Camera",
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                }
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
             }
-        }
+        });
+
+        // Load photo view with the result's URI
+        imageUri = getIntent().getParcelableExtra(IMAGE_URI_KEY);
+        ImageView imageView = (ImageView) findViewById(R.id
+                .create_memory_photo);
+        Glide.with(this)
+                .load(imageUri)
+                .centerCrop()
+                .into(imageView);
     }
 
     /**
@@ -236,7 +216,7 @@ public class CreateMemoryActivity extends BasicActivity {
 
             // Upload photo
             StorageReference photoRef = dao.getPhotoRef(memory);
-            UploadTask uploadTask = photoRef.putFile(photoUri);
+            UploadTask uploadTask = photoRef.putFile(imageUri);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
@@ -278,77 +258,10 @@ public class CreateMemoryActivity extends BasicActivity {
             e.printStackTrace();
         }
     }
-
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent
             data) {
-
-
-        if (requestCode == REQUEST_PHOTO_GET) {
-            if (resultCode != RESULT_OK) {
-                Log.d(TAG, "onActivityResult (PHOTO_GET): Failed to get photo");
-                finish();
-                return;
-            }
-            // Setup CreateMemoryActivity UI once the image is taken
-            setContentView(R.layout.activity_create_memory);
-
-            // Set up toolbar
-            Toolbar toolbar = (Toolbar) findViewById(
-                    R.id.create_memory_toolbar);
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
-
-            saveFNTCheck = (CheckBox) findViewById(R.id.saveFNTcheck);
-            remindCheck = (CheckBox) findViewById(R.id.remindCheck);
-
-            saveFNTCheck.setOnClickListener(this);
-            remindCheck.setOnClickListener(this);
-
-            // Set up placeAutoComplete fragment
-            placeAutocompleteFragment = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.create_memory_loc);
-            placeAutocompleteFragment.setHint("Your Restaurant");
-            placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(Place place) {
-                    localString = place.getName().toString();
-                }
-
-                @Override
-                public void onError(Status status) {
-                    // TODO: Handle the error.
-                    Log.i(TAG, "An error occurred: " + status);
-                }
-            });
-
-            // Load photo view with the result's URI
-            if (fromCamera) {
-                Log.e("Photo Received", "True");
-                Bundle extras = data.getExtras();
-                String path;
-                if (Build.VERSION.SDK_INT >= 21) {
-                    path = (String) extras.get("data");
-                } else {
-                    Bitmap bitmapImage = (Bitmap) extras.get("data");
-                    IOImage ioImage = new IOImage(this, bitmapImage);
-                    path = ioImage.saveImage();
-                }
-                photoUri = Uri.fromFile(new File(path));
-            } else {
-                photoUri = data.getData();
-            }
-
-            ImageView imageView = (ImageView) findViewById(R.id
-                    .create_memory_photo);
-
-            Glide.with(this)
-                    .load(photoUri)
-                    .centerCrop()
-                    .into(imageView);
-        }
         if(requestCode == PLACE_PICKER_REQUEST){
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(this, data);
@@ -368,7 +281,7 @@ public class CreateMemoryActivity extends BasicActivity {
                 R.id.image_popup);
         try {
             Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(
-                    this.getContentResolver(), photoUri);
+                    this.getContentResolver(), imageUri);
             imageView.setImageBitmap(bitmapImage);
             imageDialog.show();
         } catch (IOException e) {
