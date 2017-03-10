@@ -46,6 +46,7 @@ public class CollageActivity extends BasicActivity {
     private static final String TAG = CollageActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_GALLERY = 4843;
     private static final int REQUEST_IMAGE_CAMERA = 9924;
+    public static final String MEMORY_KEY = "memory";
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -117,21 +118,21 @@ public class CollageActivity extends BasicActivity {
                 dao.getMemoriesRef().orderByChild(Memory.TS_KEY_NEWEST),
                 dao);
 
-        ListView collageList = (ListView) findViewById(R.id.collage_list);
+        final ListView collageList = (ListView) findViewById(R.id.collage_list);
         collageList.setAdapter(collageListAdapter);
 
-        //TODO
-        collageList.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int position, long id) {
-
-                        Intent viewMemory = new Intent(CollageActivity.this,
-                                ViewMemoryActivity.class);
-                        startActivity(viewMemory);
-                    }
-                });
+        collageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Memory selectedFromList =(Memory) (collageList.getItemAtPosition(position));
+                String selectedKey = (String) selectedFromList.getKey();
+                Intent viewMemory = new Intent(CollageActivity.this,
+                        ViewMemoryActivity.class);
+                viewMemory.putExtra(MEMORY_KEY,selectedKey);
+                startActivity(viewMemory);
+            }
+        });
 
         // Set up buttons
         createMenu = (FloatingActionsMenu) findViewById(
@@ -233,10 +234,6 @@ public class CollageActivity extends BasicActivity {
                 Intent searchIntent = new Intent(this, SearchActivity.class);
                 startActivity(searchIntent);
                 return true;
-            case R.id.test_view_memory:
-                Intent viewMemory = new Intent(CollageActivity.this,
-                        ViewMemoryActivity.class);
-                startActivity(viewMemory);
             default:
                 return super.onOptionsItemSelected(item);
         }

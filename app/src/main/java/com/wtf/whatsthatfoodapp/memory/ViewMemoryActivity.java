@@ -16,6 +16,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 
 /**
  * Created by andig on 3/8/2017.
@@ -23,13 +24,20 @@ import com.wtf.whatsthatfoodapp.R;
 
 public class ViewMemoryActivity extends Activity{
 
-    MemoryDao dao;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_view_memory);
+        String memoryKey = getIntent().getStringExtra(CollageActivity.MEMORY_KEY);
+        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+
+        dao.getMemoriesRef().child(memoryKey);
+
+
+
 
         ImageView view_memory_image = (ImageView) findViewById(R.id.view_memory_image) ;
         //view_memory_image.setImageURI(Nullable);
@@ -68,4 +76,8 @@ public class ViewMemoryActivity extends Activity{
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 }
