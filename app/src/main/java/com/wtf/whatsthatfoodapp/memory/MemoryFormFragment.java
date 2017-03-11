@@ -14,10 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
-import android.widget.TableRow;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -69,11 +67,11 @@ public class MemoryFormFragment extends Fragment {
             return;
         }
 
-        titleText = (EditText) a.findViewById(R.id.create_memory_title);
-        locText = (EditText) a.findViewById(R.id.create_memory_loc);
-        descText = (EditText) a.findViewById(R.id.create_memory_description);
-        ratingRating = (RatingBar) a.findViewById(R.id.create_rating_bar);
-        priceRating = (RatingBar) a.findViewById(R.id.create_price_rating);
+        titleText = (EditText) a.findViewById(R.id.memory_form_title);
+        locText = (EditText) a.findViewById(R.id.memory_form_loc);
+        descText = (EditText) a.findViewById(R.id.memory_form_desc);
+        ratingRating = (RatingBar) a.findViewById(R.id.memory_form_rating);
+        priceRating = (RatingBar) a.findViewById(R.id.memory_form_price);
 
         titleText.setText(memory.getTitle());
         locText.setText(memory.getLoc());
@@ -87,9 +85,9 @@ public class MemoryFormFragment extends Fragment {
 
         // Clear errors whenever text changes
         titleWrapper = (TextInputLayout) a.findViewById(
-                R.id.create_memory_title_wrapper);
+                R.id.memory_form_title_wrapper);
         locWrapper = (TextInputLayout) a.findViewById(
-                R.id.create_memory_loc_wrapper);
+                R.id.memory_form_loc_wrapper);
         titleWrapper.setErrorEnabled(false);
         locWrapper.setErrorEnabled(false);
         titleText.addTextChangedListener(
