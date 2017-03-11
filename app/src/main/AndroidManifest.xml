@@ -89,7 +89,6 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".auth.CreateAccountActivity"/>
         <activity android:name=".auth.PasswordRecoveryActivity"/>
-        <activity android:name=".PairsMemoryGameActivity"/>
         <receiver  android:process=":remote" android:name=".notification.AlarmReceiver"/>
         <activity android:name=".share.ShareActivity"/>
     </application>

@@ -17,7 +17,6 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/collage_title"
-        android:onClick="play"
         />
 
     <RelativeLayout
