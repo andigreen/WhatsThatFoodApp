@@ -40,5 +40,6 @@
     <string name="memory_form_discard">Discard changes?</string>
     <string name="memory_form_discard_pos">Discard</string>
     <string name="memory_form_discard_neg">Cancel</string>
+    <string name="reset_password_sent">Password reset email sent.</string>
 
 </resources>
