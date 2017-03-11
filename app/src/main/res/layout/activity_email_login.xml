@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.wtf.whatsthatfoodapp.auth.EmailLoginActivity">
+
+
+    !--Background-->
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/login_background"
+        android:scaleType="centerCrop"
+        />
+
+    <!--Logo-->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="300dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/stroked_logo"
+        />
+
+    <!--Email Field-->
+    <EditText
+        android:id="@+id/emailfield"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="Email"
+        android:backgroundTint="#ffffff"
+        android:textColorHint="#eeeeee"
+        android:textColor="#ffffff"
+        android:layout_marginTop="23dp"
+        android:fontFamily="sans-serif"
+        android:textColorHighlight="@color/colorPrimary"
+        android:layout_alignLeft="@+id/logo"
+        android:layout_alignRight="@+id/logo"
+        android:layout_below="@+id/logo"
+        />
+
+    <!--Password Field-->
+    <EditText
+        android:id="@+id/passwordfield"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="Password"
+        android:backgroundTint="#ffffff"
+        android:textColorHint="#eeeeee"
+        android:textColor="#ffffff"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif"
+        android:textColorHighlight="@color/colorPrimary"
+        android:layout_alignLeft="@+id/logo"
+        android:layout_alignRight="@+id/logo"
+        android:layout_below="@+id/emailfield"
+        />
+
+    <!--Login Button-->
+    <Button
+        android:id="@+id/email_button"
+        android:background="@drawable/login_button"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Login"
+        android:textColor="#ffffff"
+        android:textAllCaps="false"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/passwordfield"
+        />
+
+    <!--Sign Up Button-->
+    <Button
+        android:id="@+id/Register_btn"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Sign Up"
+        android:textSize="16sp"
+        android:textColor="#ffffff"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/password_recover"
+        />
+
+    <!--Forgot Password Button-->
+    <Button
+        android:id="@+id/password_recover"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Forgot password?"
+        android:textColor="#ffffff"
+        android:textSize="16sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_centerHorizontal="true"
+        />
+
+
+
+</RelativeLayout>

@@ -13,54 +13,20 @@
         android:layout_height="fill_parent"
         android:src="@drawable/login_background"
         android:scaleType="centerCrop"
-        />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <!--Logo-->
     <ImageView
         android:id="@+id/logo"
         android:layout_width="300dp"
         android:layout_height="80dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="30dp"
         android:src="@drawable/stroked_logo"
-        />
+        android:layout_marginTop="80dp"
+        android:layout_below="@+id/fb_btn"
+        android:layout_centerHorizontal="true" />
 
-    <!--Email Field-->
-    <EditText
-        android:id="@+id/emailfield"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:hint="Email"
-        android:backgroundTint="#ffffff"
-        android:textColorHint="#eeeeee"
-        android:textColor="#ffffff"
-        android:layout_marginTop="23dp"
-        android:fontFamily="sans-serif"
-        android:textColorHighlight="@color/colorPrimary"
-        android:layout_alignLeft="@+id/logo"
-        android:layout_alignRight="@+id/logo"
-        android:layout_below="@+id/logo"
-        />
-
-    <!--Password Field-->
-    <EditText
-        android:id="@+id/passwordfield"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:hint="Password"
-        android:backgroundTint="#ffffff"
-        android:textColorHint="#eeeeee"
-        android:textColor="#ffffff"
-        android:layout_marginTop="10dp"
-        android:fontFamily="sans-serif"
-        android:textColorHighlight="@color/colorPrimary"
-        android:layout_alignLeft="@+id/logo"
-        android:layout_alignRight="@+id/logo"
-        android:layout_below="@+id/emailfield"
-        />
 
     <!--Login Button-->
     <Button
@@ -68,14 +34,13 @@
         android:background="@drawable/login_button"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Login"
+        android:text="Login with Email"
         android:textColor="#ffffff"
         android:textAllCaps="false"
         android:textSize="20dp"
+        android:layout_below="@+id/logo"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/passwordfield"
-        />
+        android:layout_marginTop="43dp" />
 
     <!--"or" text-->
     <TextView
@@ -88,6 +53,7 @@
         android:textColor="#eeeeee"
         android:text="or"
         android:textStyle="bold"
+        android:layout_marginTop="10dp"
         />
 
     <!--Facebook Login Button-->
@@ -96,15 +62,16 @@
         android:background="@drawable/facebook_login_button"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginBottom="15dp"
         android:textAllCaps="false"
         android:textColor="#f7f7f7"
         android:textSize="16dp"
         android:text="Login with Facebook"
         android:layout_below="@+id/or_text"
         android:layout_alignLeft="@+id/email_button"
+        android:layout_alignStart="@+id/email_button"
+        android:layout_marginTop="10dp"
         android:layout_alignRight="@+id/email_button"
-        />
+        android:layout_alignEnd="@+id/email_button" />
 
     <!--Google Login Button-->
     <Button
@@ -112,42 +79,20 @@
         android:background="@drawable/google_login_button"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginBottom="15dp"
         android:textAllCaps="false"
         android:textColor="#f7f7f7"
         android:textSize="16dp"
         android:text="Login with Google"
         android:layout_below="@+id/btn_fb_login"
-        android:layout_alignLeft="@+id/email_button"
-        android:layout_alignRight="@+id/email_button"
-        />
+        android:layout_marginTop="30dp"
+        android:layout_alignRight="@+id/btn_fb_login"
+        android:layout_alignEnd="@+id/btn_fb_login"
+        android:layout_alignLeft="@+id/btn_fb_login"
+        android:layout_alignStart="@+id/btn_fb_login" />
 
     <!--Sign Up Button-->
-    <Button
-        android:id="@+id/Register_btn"
-        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Sign Up"
-        android:textSize="16sp"
-        android:textColor="#ffffff"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/password_recover"
-        />
 
     <!--Forgot Password Button-->
-    <Button
-        android:id="@+id/password_recover"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Forgot password?"
-        android:textColor="#ffffff"
-        android:textSize="16sp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
-        android:layout_centerHorizontal="true"
-        />
 
 
     <com.facebook.login.widget.LoginButton

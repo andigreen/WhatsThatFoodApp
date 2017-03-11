@@ -45,11 +45,8 @@ import java.util.Arrays;
 
 public class MainActivity extends BasicActivity {
     private final String TAG = MainActivity.class.getSimpleName();
-    private static final int REQ_RECOVERY = 2899;
     private static final int RC_SIGN_IN = 9001;
 
-    private EditText emailField;
-    private EditText passwordField;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser user;
@@ -62,18 +59,10 @@ public class MainActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button email_btn = (Button) findViewById(R.id.email_button);
-        LoginButton fb_btn = (LoginButton) findViewById(R.id.fb_btn);
-        emailField = (EditText) findViewById(R.id.emailfield);
-        passwordField = (EditText) findViewById(R.id.passwordfield);
-        Button register_btn = (Button) findViewById(R.id.Register_btn);
-        Button password_recover = (Button) findViewById(R.id.password_recover);
         Button facebook_login_btn = (Button) findViewById(R.id.btn_fb_login);
         Button google_login_btn = (Button) findViewById(R.id.btn_google_login);
 
         email_btn.setOnClickListener(this);
-        fb_btn.setOnClickListener(this);
-        register_btn.setOnClickListener(this);
-        password_recover.setOnClickListener(this);
         google_login_btn.setOnClickListener(this);
 
         App app = (App) getApplicationContext();
@@ -201,86 +190,6 @@ public class MainActivity extends BasicActivity {
                         });
     }
 
-
-    private void EmailSignIn(String email, String password) {
-        Log.d(TAG, "signIn:" + email);
-        if (!validateForm()) {
-            return;
-        }
-        showProgressDialog();
-
-        // [START sign_in_with_email]
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this,
-                        new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult>
-                                    task) {
-                                Log.d(TAG,
-                                        "signInWithEmail:onComplete:" + task
-                                                .isSuccessful());
-                                user = mAuth.getCurrentUser();
-                                if (task.isSuccessful()) {
-                                    if (user.isEmailVerified()) {
-                                        startActivity(displayHomePage);
-                                    } else {
-                                        Toast.makeText(MainActivity.this,
-                                                "Please verify your email",
-                                                Toast.LENGTH_SHORT).show();
-
-                                        // [START_EXCLUDE]
-                                        hideProgressDialog();
-                                        // [END_EXCLUDE]
-                                    }
-                                }
-                                // If sign in fails, display a message to the
-                                // user. If sign in succeeds
-                                // the auth state listener will be notified
-                                // and logic to handle the
-                                // signed in user can be handled in the
-                                // listener.
-                                if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInWithEmail:failed",
-                                            task.getException());
-                                    Toast.makeText(MainActivity.this,
-                                            R.string.auth_failed,
-                                            Toast.LENGTH_SHORT).show();
-                                    // [START_EXCLUDE]
-                                    hideProgressDialog();
-                                    // [END_EXCLUDE]
-                                }
-
-
-                            }
-                        });
-        // [END sign_in_with_email]
-    }
-
-    private boolean validateForm() {
-        boolean valid = true;
-
-        String email = this.emailField.getText().toString();
-        if (TextUtils.isEmpty(email)) {
-            this.emailField.setError("Required.");
-            valid = false;
-        } else {
-            this.emailField.setError(null);
-        }
-
-        String password = this.passwordField.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            this.passwordField.setError("Required.");
-            valid = false;
-        } else if (password.length() < 6) {
-            this.passwordField.setError(
-                    "Password should be longer than 6 characters");
-        } else {
-            this.passwordField.setError(null);
-        }
-
-        return valid;
-    }
-
     // [START on_start_add_listener]
     @Override
     public void onStart() {
@@ -302,19 +211,10 @@ public class MainActivity extends BasicActivity {
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.Register_btn) {
-            Intent toSignupPage = new Intent(MainActivity.this,
-                    CreateAccountActivity.class);
-            startActivity(toSignupPage);
-        } else if (i == R.id.email_button) {
-            EmailSignIn(emailField.getText().toString(),
-                    passwordField.getText().toString());
-        } else if (i == R.id.password_recover) {
-            Intent toRecoveryPage = new Intent(MainActivity.this,
-                    PasswordRecoveryActivity.class);
-            toRecoveryPage.putExtra(PasswordRecoveryActivity.EMAIL_KEY,
-                    emailField.getText().toString());
-            startActivityForResult(toRecoveryPage, REQ_RECOVERY);
+        if (i == R.id.email_button) {
+            Intent toEmailPage = new Intent(MainActivity.this,
+                    EmailLoginActivity.class);
+            startActivity(toEmailPage);
         } else if (i == R.id.btn_google_login) {
             GoogleSignIn();
         }
@@ -388,21 +288,7 @@ public class MainActivity extends BasicActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQ_RECOVERY && resultCode == RESULT_OK) {
-            Snackbar
-                    .make(findViewById(android.R.id.content),
-                            R.string.reset_password_sent,
-                            Snackbar.LENGTH_INDEFINITE)
-                    .setAction("DISMISS", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // Implicit dimissal
-                        }
-                    }).show();
-        }
-        // Result returned from launching the Intent from GoogleSignInApi
-        // .getSignInIntent(...);
-        else if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi
                     .getSignInResultFromIntent(
                             data);
