@@ -95,9 +95,14 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".memory.FullImageActivity"
-            android:theme="@style/Theme.AppCompat.Translucent"/>
-        <receiver  android:process=":remote" android:name=".notification.AlarmReceiver"/>
-        <activity android:name=".share.ShareActivity"/>
+            android:theme="@style/AppTheme.Translucent"/>
+
+        <receiver
+            android:name=".notification.AlarmReceiver"
+            android:process=":remote"/>
+        <activity
+            android:name=".share.ShareActivity"
+            android:theme="@style/AppTheme.Transparent"/>
     </application>
 
 </manifest>

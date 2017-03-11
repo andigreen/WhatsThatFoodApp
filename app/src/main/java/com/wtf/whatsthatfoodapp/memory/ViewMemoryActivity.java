@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -23,6 +24,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
 
     private static final String TAG = ViewMemoryActivity.class.getSimpleName();
     private static final int REQ_EDIT = 3936;
+    private static final int REQ_SHARE = 3937;
 
     private MemoryDao dao;
     private Memory memory;
@@ -77,6 +79,13 @@ public class ViewMemoryActivity extends AppCompatActivity {
             memory = data.getParcelableExtra(EditMemoryActivity.MEMORY_KEY);
             populateFields();
         }
+
+        if (requestCode == REQ_SHARE && resultCode == ShareActivity
+                .RESULT_FAILED) {
+            Snackbar.make(findViewById(android.R.id.content), R.string
+                    .share_loading_failed, Snackbar.LENGTH_LONG).show();
+        }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -126,7 +135,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
                 Intent shareIntent = new Intent(this,
                         ShareActivity.class);
                 shareIntent.putExtra(ShareActivity.MEMORY_KEY, memory);
-                startActivity(shareIntent);
+                startActivityForResult(shareIntent, REQ_SHARE);
                 break;
             case R.id.view_memory_edit:
                 Intent editIntent = new Intent(this, EditMemoryActivity.class);
