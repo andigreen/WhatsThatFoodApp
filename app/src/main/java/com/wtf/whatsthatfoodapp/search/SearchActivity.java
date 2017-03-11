@@ -60,7 +60,9 @@ import java.util.Map;
 public class SearchActivity extends BasicActivity
         implements FilterDialog.FilterDialogListener {
 
-    public final static String TAG = SearchActivity.class.getSimpleName();
+    public final static String QUERY_KEY = "query";
+
+    private final static String TAG = SearchActivity.class.getSimpleName();
 
     private Map<String, Memory> memories;
     private SearchTable searchTable;
@@ -152,7 +154,6 @@ public class SearchActivity extends BasicActivity
                 });
         // Initialize search table (pre-populate index)
         searchTable = new SearchTable(this);
-        query = "";
 
         // Set up searchView
         searchView = (FloatingSearchView) findViewById(
@@ -167,7 +168,16 @@ public class SearchActivity extends BasicActivity
                         finish();
                     }
                 });
-        searchView.setSearchFocused(true);
+
+        // Set initial query if available
+        query = getIntent().getStringExtra(QUERY_KEY);
+        if (query == null || query.isEmpty()) {
+            query = "";
+            searchView.setSearchFocused(true);
+        } else {
+            searchView.setSearchText(query);
+            requery();
+        }
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
