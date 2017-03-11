@@ -53,10 +53,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".camera.TakePhotoAPI21Activity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
