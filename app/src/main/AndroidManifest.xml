@@ -96,8 +96,6 @@
         <activity
             android:name=".memory.FullImageActivity"
             android:theme="@style/Theme.AppCompat.Translucent"/>
-        <activity android:name=".auth.CreateAccountActivity"/>
-        <activity android:name=".auth.PasswordRecoveryActivity"/>
         <receiver  android:process=":remote" android:name=".notification.AlarmReceiver"/>
         <activity android:name=".share.ShareActivity"/>
     </application>
