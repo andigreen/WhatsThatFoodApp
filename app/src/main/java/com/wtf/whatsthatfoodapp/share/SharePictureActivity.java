@@ -56,7 +56,6 @@ public class SharePictureActivity extends AppCompatActivity {
         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
         sharingIntent.setType("image/jpeg");
         sharingIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
-        startActivity(Intent.createChooser(sharingIntent, "Share picture with..."));
         startActivity(Intent.createChooser(sharingIntent, "Share via"));
     }
 
