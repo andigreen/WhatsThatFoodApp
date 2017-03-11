@@ -20,7 +20,8 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
 
     private MemoryDao dao;
 
-    public MemoryAdapter(Activity activity, Class<Memory> modelClass, Query query, MemoryDao dao) {
+    public MemoryAdapter(Activity activity, Class<Memory> modelClass, Query
+            query, MemoryDao dao) {
         super(activity, modelClass, R.layout.memory_list_item, query);
         this.dao = dao;
     }
@@ -40,9 +41,7 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
         viewLoc.setText(model.getLoc());
 
         // Load photo into view
-        Glide.with(mActivity)
-                .using(new FirebaseImageLoader())
-                .load(dao.getPhotoRef(model))
+        dao.loadImage(model)
                 // Hide progress bar when image is loaded, or error occurs
                 .listener(new RequestListener<StorageReference,
                         GlideDrawable>() {
@@ -56,10 +55,8 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource,
-                            StorageReference model,
-                            Target<GlideDrawable>
-                                    target, boolean
-                            isFromMemoryCache,
+                            StorageReference model, Target<GlideDrawable>
+                            target, boolean isFromMemoryCache,
                             boolean isFirstResource) {
                         progress.setVisibility(View.GONE);
                         return false;

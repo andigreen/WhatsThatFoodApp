@@ -5,6 +5,11 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.StringSignature;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -19,19 +24,27 @@ public class MemoryDao {
     private static final String PHOTOS_PATH = "photos";
     private static final String MEMORIES_PATH = "memories";
 
-    private static final String NO_STORAGE_ACCESS_MSG = "Could not access app " +
-            "pictures directory";
-    public static final String NO_AUTH_USER_MSG = "Constructed without an authenticated user";
+    private static final String NO_STORAGE_ACCESS_MSG
+            = "Could not access app pictures directory";
+    private static final String NO_AUTH_USER_MSG
+            = "Constructed without an authenticated user";
 
-    private final File storageDir;
+    private final Context context;
+    private File storageDir;
     private final String userId;
 
     public MemoryDao(@NonNull Context context) {
+        this.context = context;
+
         userId = AuthUtils.getUserUid();
         if (userId == null) {
             Log.e(TAG, NO_AUTH_USER_MSG);
             throw new RuntimeException(NO_AUTH_USER_MSG);
         }
+    }
+
+    private void ensureStorageDir() {
+        if (storageDir != null) return;
 
         storageDir = context.getExternalFilesDir(Environment
                 .DIRECTORY_PICTURES);
@@ -99,6 +112,16 @@ public class MemoryDao {
     public DatabaseReference getMemoriesRef() {
         return FirebaseDatabase.getInstance().getReference().child
                 (MEMORIES_PATH).child(userId);
+    }
+
+    public DrawableRequestBuilder<StorageReference> loadImage(Memory memory) {
+        if (memory.getKey() == null) return null;
+
+        return Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(getPhotoRef(memory))
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .signature(new StringSignature(memory.getKey()));
     }
 
 }

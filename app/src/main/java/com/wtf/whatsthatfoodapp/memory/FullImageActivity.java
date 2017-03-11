@@ -29,10 +29,7 @@ public class FullImageActivity extends AppCompatActivity {
         Memory memory = getIntent().getParcelableExtra(MEMORY_KEY);
 
         ImageView imageView = (ImageView) findViewById(R.id.full_image_view);
-        Glide.with(FullImageActivity.this)
-                .using(new FirebaseImageLoader())
-                .load(dao.getPhotoRef(memory))
-                .into(imageView);
+        dao.loadImage(memory).into(imageView);
 
         attacher = new PhotoViewAttacher(imageView);
         attacher.setScaleType(ImageView.ScaleType.FIT_CENTER);

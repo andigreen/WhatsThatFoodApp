@@ -41,9 +41,7 @@ public class EditMemoryActivity extends BasicActivity {
         // Load photo view
         ImageView imageView = (ImageView) findViewById(R.id
                 .edit_memory_photo);
-        Glide.with(this)
-                .using(new FirebaseImageLoader())
-                .load(dao.getPhotoRef(memory))
+        dao.loadImage(memory)
                 .centerCrop()
                 .into(imageView);
 

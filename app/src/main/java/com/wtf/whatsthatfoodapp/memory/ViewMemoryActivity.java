@@ -48,11 +48,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
         memory = getIntent().getExtras().getParcelable(MEMORY_KEY);
 
         image = (ImageView) findViewById(R.id.view_memory_image);
-        Glide.with(this)
-                .using(new FirebaseImageLoader())
-                .load(dao.getPhotoRef(memory))
-                .centerCrop()
-                .into(image);
+        dao.loadImage(memory).centerCrop().into(image);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

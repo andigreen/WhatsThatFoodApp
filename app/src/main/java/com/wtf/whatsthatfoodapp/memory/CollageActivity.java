@@ -45,6 +45,7 @@ public class CollageActivity extends BasicActivity {
 
     private Uri imageUri;
     private FloatingActionsMenu createMenu;
+    private MemoryDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class CollageActivity extends BasicActivity {
         }
 
         // Set up list and adapter
-        MemoryDao dao = new MemoryDao(this);
+        dao = new MemoryDao(this);
         ListAdapter collageListAdapter = new MemoryAdapter(this, Memory.class,
                 dao.getMemoriesRef().orderByChild(Memory.TS_KEY_NEWEST),
                 dao);
