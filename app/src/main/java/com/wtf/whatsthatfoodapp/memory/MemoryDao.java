@@ -1,13 +1,24 @@
 package com.wtf.whatsthatfoodapp.memory;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.icu.util.Output;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DatabaseReference;
@@ -17,6 +28,12 @@ import com.google.firebase.storage.StorageReference;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 public class MemoryDao {
 
@@ -28,6 +45,7 @@ public class MemoryDao {
             = "Could not access app pictures directory";
     private static final String NO_AUTH_USER_MSG
             = "Constructed without an authenticated user";
+    private static final int MAX_IMAGE_SIZE = 2048;
 
     private final Context context;
     private File storageDir;
@@ -122,6 +140,95 @@ public class MemoryDao {
                 .load(getPhotoRef(memory))
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .signature(new StringSignature(memory.getKey()));
+    }
+
+    /**
+     * Returns a File containing the cached version of the image associated
+     * with the given Memory, or null if the cached version could not be
+     * accessed.
+     * <p>
+     * WARNING: This file cannot be directly read by other applications.
+     */
+    public File getImageFile(Memory memory) {
+        try {
+            return Glide.with(context)
+                    .using(new FirebaseImageLoader())
+                    .load(getPhotoRef(memory))
+                    .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                    .get();
+        } catch (InterruptedException | ExecutionException e) {
+            Log.w(TAG, "Could not get image file for " + memory.getKey());
+            return null;
+        }
+    }
+
+    public interface LocalImageUriListener {
+        void onSuccess(Uri uri);
+
+        void onFailure();
+    }
+
+    private class SaveImageTask extends AsyncTask<byte[], Void, File> {
+        private LocalImageUriListener listener;
+
+        SaveImageTask(LocalImageUriListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        protected File doInBackground(byte[]... params) {
+            @SuppressLint("SimpleDateFormat")
+            String ts = new SimpleDateFormat("yyyyMMdd_HHmmss")
+                    .format(new Date());
+            File storageDir = context.getExternalFilesDir(
+                    Environment.DIRECTORY_PICTURES);
+
+            try {
+                File target = File.createTempFile("WTF_" + ts, ".jpg",
+                        storageDir);
+                OutputStream out = new FileOutputStream(target);
+                out.write(params[0]);
+                return target;
+            } catch (IOException ignored) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(File file) {
+            if (file == null) {
+                listener.onFailure();
+            } else {
+                listener.onSuccess(FileProvider.getUriForFile(context,
+                        "com.wtf.whatsthatfoodapp.fileprovider", file));
+            }
+        }
+    }
+
+    public void getLocalImageUri(Memory memory,
+            final LocalImageUriListener listener) {
+        Glide.with(context)
+                .using(new FirebaseImageLoader())
+                .load(getPhotoRef(memory))
+                .asBitmap()
+                .toBytes(Bitmap.CompressFormat.JPEG, 80)
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .atMost()
+                .override(MAX_IMAGE_SIZE, MAX_IMAGE_SIZE)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .skipMemoryCache(true)
+                .into(new SimpleTarget<byte[]>() {
+                    @Override
+                    public void onResourceReady(byte[] resource,
+                            GlideAnimation<? super byte[]> glideAnimation) {
+                        new SaveImageTask(listener).execute(resource);
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable d) {
+                        listener.onFailure();
+                    }
+                });
     }
 
 }
