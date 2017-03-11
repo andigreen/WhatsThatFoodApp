@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -110,6 +112,10 @@ public class ViewMemoryActivity extends AppCompatActivity {
 
         CheckBox view_memory_SFNT = (CheckBox) findViewById(
                 R.id.view_memory_SFNT);
+        if (!memory.getSavedForNextTime()){
+            CardView cardView = (CardView) findViewById(R.id.view_memory_SFNT_card);
+            cardView.setVisibility(View.GONE);
+        }
         view_memory_SFNT.setChecked(memory.getSavedForNextTime());
     }
 

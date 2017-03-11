@@ -12,6 +12,7 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
+import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 
 public class EditMemoryActivity extends BasicActivity {
 
@@ -30,6 +31,8 @@ public class EditMemoryActivity extends BasicActivity {
         dao = new MemoryDao(this);
         memory = getIntent().getParcelableExtra(MEMORY_KEY);
 
+        boolean fromNotification = getIntent().getBooleanExtra(AlarmReceiver.NOTIFICATION,false);
+
         // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(
                 R.id.edit_memory_toolbar);
@@ -45,14 +48,20 @@ public class EditMemoryActivity extends BasicActivity {
                 .centerCrop()
                 .into(imageView);
 
+        // If activity called from notification, don't show SFNT checkbox again
+        if (fromNotification){
+            memory.setSavedForNextTime(false);
+        }
         // Set up form fragment
-        form = MemoryFormFragment.newInstance(memory);
+        boolean showSFNT = false;
+        form = MemoryFormFragment.newInstance(memory,showSFNT);
         getFragmentManager().beginTransaction().add(R.id.edit_memory_form,
                 form).commit();
     }
 
     private boolean saveMemory() {
         if (form.validateAndSaveInto(memory)) {
+            memory.setSavedForNextTime(false);
             dao.writeMemory(memory);
             return true;
         }

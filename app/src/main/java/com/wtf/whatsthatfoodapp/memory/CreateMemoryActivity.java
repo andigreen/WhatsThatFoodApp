@@ -1,5 +1,10 @@
 package com.wtf.whatsthatfoodapp.memory;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TableRow;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -18,8 +25,11 @@ import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
+import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 
-public class CreateMemoryActivity extends BasicActivity {
+import java.util.Calendar;
+
+public class CreateMemoryActivity extends BasicActivity implements TimePickerDialog.OnTimeSetListener{
 
     public static final String IMAGE_URI_KEY = "imageUri";
 
@@ -32,6 +42,8 @@ public class CreateMemoryActivity extends BasicActivity {
     private MemoryDao dao;
     private Memory memory;
     private MemoryFormFragment form;
+
+    public static final int REQUEST_CODE = 160;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +98,8 @@ public class CreateMemoryActivity extends BasicActivity {
         imageUpload.addOnFailureListener(imageFailure);
 
         // Set up form fragment
-        form = MemoryFormFragment.newInstance(memory);
+        boolean showSFNT = false;
+        form = MemoryFormFragment.newInstance(memory,showSFNT);
         getFragmentManager().beginTransaction().add(R.id.create_memory_form,
                 form).commit();
     }
@@ -137,14 +150,47 @@ public class CreateMemoryActivity extends BasicActivity {
             // Save new memory
             case R.id.create_memory_save:
                 if (form.validateAndSaveInto(memory)) {
+                    memory.setSavedForNextTime(false);
                     dao.writeMemory(memory);
                     finish();
                 }
                 return true;
         }
 
+        // Save For Next Time : Set Alarm
+        if (item.getItemId() == R.id.saveFNT) {
+            boolean is24HourFormat = true;
+            Calendar calendar = Calendar.getInstance();
+            int startHour = calendar.get(Calendar.HOUR_OF_DAY);
+            startHour += 2;
+
+            int startMinute = calendar.get(Calendar.MINUTE);
+            TimePickerDialog timePickerDialog = new TimePickerDialog(
+                    this /*context*/, this/*listener*/, startHour, startMinute, is24HourFormat);
+            timePickerDialog.show();
+        }
+
         // Other options not handled
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute){
+        memory.setSavedForNextTime(true);
+        dao.writeMemory(memory);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+        calendar.set(Calendar.MINUTE,minute);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intentAlarm = new Intent(this, AlarmReceiver.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(EditMemoryActivity.MEMORY_KEY,memory);
+        intentAlarm.putExtra("bundle",bundle);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,REQUEST_CODE, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        Toast.makeText(this, "Alarm Set", Toast.LENGTH_LONG).show();
+        finish();
     }
 
 }

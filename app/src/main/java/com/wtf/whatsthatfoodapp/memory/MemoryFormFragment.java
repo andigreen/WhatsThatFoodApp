@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.TableRow;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -28,6 +29,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class MemoryFormFragment extends Fragment {
     public static final String ARG_MEMORY = "memory";
+    public static final String SHOW_SFNT = "saveFNT";
 
     private static final String TAG = MemoryFormFragment.class.getSimpleName();
     private static final int PLACE_PICKER_REQUEST = 200;
@@ -40,6 +42,7 @@ public class MemoryFormFragment extends Fragment {
     private RatingBar ratingRating;
     private RatingBar priceRating;
     private CheckBox saveFNTCheck;
+    private boolean saveFNT;
 
     private TextInputLayout titleWrapper;
     private TextInputLayout locWrapper;
@@ -47,10 +50,11 @@ public class MemoryFormFragment extends Fragment {
     public MemoryFormFragment() {
     }
 
-    public static MemoryFormFragment newInstance(Memory memory) {
+    public static MemoryFormFragment newInstance(Memory memory, boolean saveFNT) {
         MemoryFormFragment fragment = new MemoryFormFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_MEMORY, memory);
+        args.putBoolean(SHOW_SFNT,saveFNT);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,6 +68,7 @@ public class MemoryFormFragment extends Fragment {
         Memory memory;
         if (getArguments() != null) {
             memory = getArguments().getParcelable(ARG_MEMORY);
+            saveFNT = getArguments().getBoolean(SHOW_SFNT);
         } else {
             Log.e(TAG, "MemoryFormFragment created without a Memory!");
             return;
@@ -74,6 +79,12 @@ public class MemoryFormFragment extends Fragment {
         descText = (EditText) a.findViewById(R.id.create_memory_description);
         ratingRating = (RatingBar) a.findViewById(R.id.create_rating_bar);
         priceRating = (RatingBar) a.findViewById(R.id.create_price_rating);
+
+        TableRow tableRow = (TableRow) a.findViewById(R.id.saveFNT_fragment);
+        if (!saveFNT){
+            tableRow.setVisibility(View.GONE);
+        }
+
         saveFNTCheck = (CheckBox) a.findViewById(R.id.saveFNTcheck);
 
         titleText.setText(memory.getTitle());
