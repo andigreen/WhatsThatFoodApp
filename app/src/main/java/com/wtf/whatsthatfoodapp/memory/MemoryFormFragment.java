@@ -29,7 +29,6 @@ import static android.app.Activity.RESULT_OK;
 
 public class MemoryFormFragment extends Fragment {
     public static final String ARG_MEMORY = "memory";
-    public static final String SHOW_SFNT = "saveFNT";
 
     private static final String TAG = MemoryFormFragment.class.getSimpleName();
     private static final int PLACE_PICKER_REQUEST = 200;
@@ -41,8 +40,6 @@ public class MemoryFormFragment extends Fragment {
     private EditText descText;
     private RatingBar ratingRating;
     private RatingBar priceRating;
-    private CheckBox saveFNTCheck;
-    private boolean saveFNT;
 
     private TextInputLayout titleWrapper;
     private TextInputLayout locWrapper;
@@ -50,11 +47,10 @@ public class MemoryFormFragment extends Fragment {
     public MemoryFormFragment() {
     }
 
-    public static MemoryFormFragment newInstance(Memory memory, boolean saveFNT) {
+    public static MemoryFormFragment newInstance(Memory memory) {
         MemoryFormFragment fragment = new MemoryFormFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_MEMORY, memory);
-        args.putBoolean(SHOW_SFNT,saveFNT);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,7 +64,6 @@ public class MemoryFormFragment extends Fragment {
         Memory memory;
         if (getArguments() != null) {
             memory = getArguments().getParcelable(ARG_MEMORY);
-            saveFNT = getArguments().getBoolean(SHOW_SFNT);
         } else {
             Log.e(TAG, "MemoryFormFragment created without a Memory!");
             return;
@@ -80,19 +75,15 @@ public class MemoryFormFragment extends Fragment {
         ratingRating = (RatingBar) a.findViewById(R.id.create_rating_bar);
         priceRating = (RatingBar) a.findViewById(R.id.create_price_rating);
 
-        TableRow tableRow = (TableRow) a.findViewById(R.id.saveFNT_fragment);
-        if (!saveFNT){
-            tableRow.setVisibility(View.GONE);
-        }
-
-        saveFNTCheck = (CheckBox) a.findViewById(R.id.saveFNTcheck);
-
         titleText.setText(memory.getTitle());
         locText.setText(memory.getLoc());
         descText.setText(memory.getDescription());
         ratingRating.setRating(memory.getRate());
         priceRating.setRating(memory.getPrice());
-        saveFNTCheck.setChecked(memory.getSavedForNextTime());
+
+        // Focus end of description
+        descText.requestFocus();
+        descText.setSelection(descText.getText().length());
 
         // Clear errors whenever text changes
         titleWrapper = (TextInputLayout) a.findViewById(
@@ -124,7 +115,6 @@ public class MemoryFormFragment extends Fragment {
         memory.setTag(descText.getText().toString());
         memory.setRate((int) ratingRating.getRating());
         memory.setPrice((int) priceRating.getRating());
-        memory.setSavedForNextTime(saveFNTCheck.isChecked());
 
         return true;
     }

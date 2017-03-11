@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,7 +23,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
-import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 
 import java.util.Calendar;
@@ -100,7 +98,7 @@ public class CreateMemoryActivity extends BasicActivity
 
         // Set up form fragment
         boolean showSFNT = false;
-        form = MemoryFormFragment.newInstance(memory,showSFNT);
+        form = MemoryFormFragment.newInstance(memory);
         getFragmentManager().beginTransaction().add(R.id.create_memory_form,
                 form).commit();
     }

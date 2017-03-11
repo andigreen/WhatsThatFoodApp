@@ -7,11 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
-import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 
 public class EditMemoryActivity extends BasicActivity {
@@ -54,7 +51,7 @@ public class EditMemoryActivity extends BasicActivity {
         }
         // Set up form fragment
         boolean showSFNT = false;
-        form = MemoryFormFragment.newInstance(memory,showSFNT);
+        form = MemoryFormFragment.newInstance(memory);
         getFragmentManager().beginTransaction().add(R.id.edit_memory_form,
                 form).commit();
     }
