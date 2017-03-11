@@ -76,7 +76,7 @@ public class CollageActivity extends BasicActivity {
         }
 
         // Set up list and adapter
-        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+        MemoryDao dao = new MemoryDao(this);
         ListAdapter collageListAdapter = new MemoryAdapter(this, Memory.class,
                 dao.getMemoriesRef().orderByChild(Memory.TS_KEY_NEWEST),
                 dao);

@@ -44,7 +44,7 @@ public class ShareActivity extends AppCompatActivity {
         memory = getIntent().getParcelableExtra("memory");
         thumbnail = (ImageView) findViewById(R.id.share_picture_thumbnail);
 
-        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+        MemoryDao dao = new MemoryDao(this);
         final StorageReference photoRef = dao.getPhotoRef(memory);
         try {
             localFile = File.createTempFile("images", "jpg");

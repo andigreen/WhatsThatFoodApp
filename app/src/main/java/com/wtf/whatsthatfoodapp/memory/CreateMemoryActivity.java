@@ -29,7 +29,7 @@ public class CreateMemoryActivity extends BasicActivity {
     private Uri imageUri;
     private UploadTask imageUpload;
 
-    private MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+    private MemoryDao dao;
     private Memory memory;
     private MemoryFormFragment form;
 
@@ -65,6 +65,7 @@ public class CreateMemoryActivity extends BasicActivity {
         });
 
         // Create memory in db and initiate image upload
+        dao = new MemoryDao(this);
         memory = new Memory();
         dao.writeMemory(memory);
         OnFailureListener imageFailure = new OnFailureListener() {

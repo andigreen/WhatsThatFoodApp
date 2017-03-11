@@ -1,11 +1,17 @@
 package com.wtf.whatsthatfoodapp.memory;
 
+import android.content.Context;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.wtf.whatsthatfoodapp.auth.AuthUtils;
+
+import java.io.File;
 
 public class MemoryDao {
 
@@ -13,16 +19,32 @@ public class MemoryDao {
     private static final String PHOTOS_PATH = "photos";
     private static final String MEMORIES_PATH = "memories";
 
-    private String userId;
+    private static final String NO_STORAGE_ACCESS_MSG = "Could not access app " +
+            "pictures directory";
+    public static final String NO_AUTH_USER_MSG = "Constructed without an authenticated user";
 
-    public MemoryDao(@NonNull String userId) {
-        this.userId = userId;
+    private final File storageDir;
+    private final String userId;
+
+    public MemoryDao(@NonNull Context context) {
+        userId = AuthUtils.getUserUid();
+        if (userId == null) {
+            Log.e(TAG, NO_AUTH_USER_MSG);
+            throw new RuntimeException(NO_AUTH_USER_MSG);
+        }
+
+        storageDir = context.getExternalFilesDir(Environment
+                .DIRECTORY_PICTURES);
+        if (storageDir == null) {
+            Log.e(TAG, NO_STORAGE_ACCESS_MSG);
+            throw new RuntimeException(NO_STORAGE_ACCESS_MSG);
+        }
     }
 
     /**
      * Updates the memory in the database if the memory has a key; otherwise,
      * creates a new memory in the database and sets the memory's key.
-     *
+     * <p>
      * Calling this method with a memory object will therefore ensure that
      * the memory is in the database, whether it was previously in the
      * database or not.
@@ -46,7 +68,7 @@ public class MemoryDao {
     /**
      * Deletes the memory from the database if the memory has a key;
      * otherwise, this is a no-op.
-     *
+     * <p>
      * If the key exists, this method will also attempt to delete the
      * corresponding photo.
      *

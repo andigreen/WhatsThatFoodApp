@@ -44,7 +44,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_view_memory);
-        dao = new MemoryDao(AuthUtils.getUserUid());
+        dao = new MemoryDao(this);
         memory = getIntent().getExtras().getParcelable(MEMORY_KEY);
 
         image = (ImageView) findViewById(R.id.view_memory_image);

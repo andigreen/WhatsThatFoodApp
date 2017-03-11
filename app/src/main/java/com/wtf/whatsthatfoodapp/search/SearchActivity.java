@@ -95,7 +95,7 @@ public class SearchActivity extends BasicActivity
 
         // Cache memories in a map
         memories = new HashMap<>();
-        dao = new MemoryDao(AuthUtils.getUserUid());
+        dao = new MemoryDao(this);
         dao.getMemoriesRef().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

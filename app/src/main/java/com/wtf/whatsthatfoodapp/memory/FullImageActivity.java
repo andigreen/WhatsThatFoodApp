@@ -25,7 +25,7 @@ public class FullImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_image);
 
-        MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+        MemoryDao dao = new MemoryDao(this);
         Memory memory = getIntent().getParcelableExtra(MEMORY_KEY);
 
         ImageView imageView = (ImageView) findViewById(R.id.full_image_view);

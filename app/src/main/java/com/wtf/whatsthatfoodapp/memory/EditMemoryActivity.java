@@ -19,7 +19,7 @@ public class EditMemoryActivity extends BasicActivity {
 
     private static final String TAG = EditMemoryActivity.class.getSimpleName();
 
-    private MemoryDao dao = new MemoryDao(AuthUtils.getUserUid());
+    private MemoryDao dao;
     private Memory memory;
     private MemoryFormFragment form;
 
@@ -27,6 +27,7 @@ public class EditMemoryActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_memory);
+        dao = new MemoryDao(this);
         memory = getIntent().getParcelableExtra(MEMORY_KEY);
 
         // Set up toolbar
