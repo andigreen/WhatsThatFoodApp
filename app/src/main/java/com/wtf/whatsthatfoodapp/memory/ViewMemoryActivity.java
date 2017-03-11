@@ -23,6 +23,8 @@ import com.wtf.whatsthatfoodapp.share.SharePictureActivity;
 
 public class ViewMemoryActivity extends AppCompatActivity {
 
+    public static final String MEMORY_KEY = "memory";
+
     private static final String TAG = ViewMemoryActivity.class.getSimpleName();
     private static final int REQ_EDIT = 3936;
 
@@ -43,8 +45,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_view_memory);
         dao = new MemoryDao(AuthUtils.getUserUid());
-        memory = getIntent().getExtras().getParcelable(
-                CollageActivity.MEMORY_KEY);
+        memory = getIntent().getExtras().getParcelable(MEMORY_KEY);
 
         image = (ImageView) findViewById(R.id.view_memory_image);
         Glide.with(this)

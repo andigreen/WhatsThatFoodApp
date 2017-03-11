@@ -42,7 +42,6 @@ public class CollageActivity extends BasicActivity {
     private static final String TAG = CollageActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_GALLERY = 4843;
     private static final int REQUEST_IMAGE_CAMERA = 9924;
-    public static final String MEMORY_KEY = "memory";
 
     private Uri imageUri;
     private FloatingActionsMenu createMenu;
@@ -94,7 +93,8 @@ public class CollageActivity extends BasicActivity {
                                 .getItemAtPosition(position);
                         Intent viewMemory = new Intent(view.getContext(),
                                 ViewMemoryActivity.class);
-                        viewMemory.putExtra(MEMORY_KEY, memory);
+                        viewMemory.putExtra(ViewMemoryActivity.MEMORY_KEY,
+                                memory);
                         startActivity(viewMemory);
                     }
                 });

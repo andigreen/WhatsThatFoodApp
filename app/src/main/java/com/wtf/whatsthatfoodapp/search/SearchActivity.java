@@ -61,7 +61,6 @@ public class SearchActivity extends BasicActivity
         implements FilterDialog.FilterDialogListener {
 
     public final static String TAG = SearchActivity.class.getSimpleName();
-    public static final String MEMORY_KEY = "memory";
 
     private Map<String, Memory> memories;
     private SearchTable searchTable;
@@ -146,7 +145,8 @@ public class SearchActivity extends BasicActivity
                                 .getItemAtPosition(position);
                         Intent viewMemory = new Intent(view.getContext(),
                                 ViewMemoryActivity.class);
-                        viewMemory.putExtra(MEMORY_KEY, memory);
+                        viewMemory.putExtra(ViewMemoryActivity.MEMORY_KEY,
+                                memory);
                         startActivity(viewMemory);
                     }
                 });
@@ -178,8 +178,6 @@ public class SearchActivity extends BasicActivity
         @Override
         public void onSuggestionClicked(SearchSuggestion
                 searchSuggestion) {
-            Intent intent = new Intent(SearchActivity.this, ViewMemoryActivity.class);
-            startActivity(intent);
         }
 
         @Override
