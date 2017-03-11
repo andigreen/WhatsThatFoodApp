@@ -103,24 +103,31 @@ public class CreateMemoryActivity extends BasicActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.create_memory_toolbar, menu);
+        getMenuInflater().inflate(R.menu.menu_create_memory, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Back to collage
-        if (item.getItemId() == android.R.id.home) {
-            cancelMemory();
-            finish();
-        }
-
-        // Save new memory
-        if (item.getItemId() == R.id.create_memory_save) {
-            if (form.validateAndSaveInto(memory)) {
-                dao.writeMemory(memory);
+        switch (item.getItemId()) {
+            // Back to collage
+            case android.R.id.home:
+                cancelMemory();
                 finish();
-            }
+                return true;
+
+            // Start location picker
+            case R.id.create_memory_getloc:
+                form.createPlacePicker();
+                return true;
+
+            // Save new memory
+            case R.id.create_memory_save:
+                if (form.validateAndSaveInto(memory)) {
+                    dao.writeMemory(memory);
+                    finish();
+                }
+                return true;
         }
 
         // Other options not handled

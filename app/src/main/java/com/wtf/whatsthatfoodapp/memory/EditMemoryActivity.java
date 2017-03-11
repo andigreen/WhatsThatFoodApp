@@ -68,20 +68,27 @@ public class EditMemoryActivity extends BasicActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Back to collage
-        if (item.getItemId() == android.R.id.home) {
-            setResult(RESULT_CANCELED);
-            finish();
-        }
-
-        // Save new memory
-        if (item.getItemId() == R.id.edit_memory_save) {
-            if (saveMemory()) {
-                Intent result = new Intent();
-                result.putExtra(MEMORY_KEY, memory);
-                setResult(RESULT_OK, result);
+        switch (item.getItemId()) {
+            // Back to collage
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);
                 finish();
-            }
+                return true;
+
+            // Start location picker
+            case R.id.edit_memory_getloc:
+                form.createPlacePicker();
+                return true;
+
+            // Save new memory
+            case R.id.edit_memory_save:
+                if (saveMemory()) {
+                    Intent result = new Intent();
+                    result.putExtra(MEMORY_KEY, memory);
+                    setResult(RESULT_OK, result);
+                    finish();
+                }
+                return true;
         }
 
         // Other options not handled
