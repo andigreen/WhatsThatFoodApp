@@ -36,5 +36,8 @@
     <string name="edit_memory_photo_desc">Your photo</string>
     <string name="image_transition">image_transition</string>
     <string name="memory_form_getloc">Pick location</string>
+    <string name="memory_form_discard">Discard changes?</string>
+    <string name="memory_form_discard_pos">Discard</string>
+    <string name="memory_form_discard_neg">Cancel</string>
 
 </resources>

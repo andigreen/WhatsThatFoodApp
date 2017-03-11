@@ -97,7 +97,7 @@ public class CreateMemoryActivity extends BasicActivity {
 
     @Override
     public void onBackPressed() {
-        cancelMemory();
+        form.confirmDiscard(confirmDiscardListener);
         super.onBackPressed();
     }
 
@@ -107,13 +107,25 @@ public class CreateMemoryActivity extends BasicActivity {
         return true;
     }
 
+    private MemoryFormFragment.ConfirmDiscardListener confirmDiscardListener
+            = new MemoryFormFragment.ConfirmDiscardListener() {
+        @Override
+        public void onPositive() {
+            cancelMemory();
+            finish();
+        }
+
+        @Override
+        public void onNegative() {
+        }
+    };
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Back to collage
             case android.R.id.home:
-                cancelMemory();
-                finish();
+                form.confirmDiscard(confirmDiscardListener);
                 return true;
 
             // Start location picker

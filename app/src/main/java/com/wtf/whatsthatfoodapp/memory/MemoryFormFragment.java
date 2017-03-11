@@ -1,7 +1,8 @@
 package com.wtf.whatsthatfoodapp.memory;
 
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -31,6 +31,8 @@ public class MemoryFormFragment extends Fragment {
 
     private static final String TAG = MemoryFormFragment.class.getSimpleName();
     private static final int PLACE_PICKER_REQUEST = 200;
+
+    private boolean changesMade = false;
 
     private EditText titleText;
     private EditText locText;
@@ -92,13 +94,13 @@ public class MemoryFormFragment extends Fragment {
                 new ErrorClearTextWatcher(titleWrapper));
         locText.addTextChangedListener(new ErrorClearTextWatcher(locWrapper));
 
-//        a.findViewById(R.id.pickerButton).setOnClickListener
-//                (new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        createPlacePicker();
-//                    }
-//                });
+        // Track whenever changes are made
+        AnyChangeListener changeListener = new AnyChangeListener();
+        titleText.addTextChangedListener(changeListener);
+        locText.addTextChangedListener(changeListener);
+        descText.addTextChangedListener(changeListener);
+        ratingRating.setOnRatingBarChangeListener(changeListener);
+        priceRating.setOnRatingBarChangeListener(changeListener);
     }
 
     public boolean validateAndSaveInto(Memory memory) {
@@ -114,6 +116,80 @@ public class MemoryFormFragment extends Fragment {
         memory.setSavedForNextTime(saveFNTCheck.isChecked());
 
         return true;
+    }
+
+    /**
+     * Callback interface for the "Discard changes?" dialog (see
+     * confirmDiscard).
+     */
+    public interface ConfirmDiscardListener {
+        void onPositive();
+
+        void onNegative();
+    }
+
+    /**
+     * If changes were made to the form fields, shows the user a dialog to
+     * confirm whether they would like to discard those changes. Calls the
+     * corresponding callbacks of the given {@link ConfirmDiscardListener}.
+     * their input. If no changes were made, calls onPositive().
+     */
+    public void confirmDiscard(final ConfirmDiscardListener listener) {
+        if (!changesMade) {
+            listener.onPositive();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.memory_form_discard);
+        builder.setPositiveButton(R.string.memory_form_discard_pos,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onPositive();
+                    }
+                });
+        builder.setNegativeButton(R.string.memory_form_discard_neg,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onNegative();
+                    }
+                });
+        builder.create().show();
+    }
+
+    /**
+     * A simple listener which sets changesMade to true anytime a form
+     * element's value is modified.
+     */
+    private class AnyChangeListener
+            implements TextWatcher, RatingBar.OnRatingBarChangeListener {
+        @Override
+        public void afterTextChanged(Editable s) {
+            changesMade = true;
+        }
+
+        @Override
+        public void onRatingChanged(RatingBar ratingBar, float rating,
+                boolean fromUser) {
+            changesMade = true;
+        }
+
+        // Unused methods
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int
+                count) {
+
+        }
+
     }
 
     private class ErrorClearTextWatcher implements TextWatcher {
