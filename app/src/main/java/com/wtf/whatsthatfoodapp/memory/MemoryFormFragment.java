@@ -42,8 +42,6 @@ public class MemoryFormFragment extends Fragment {
     private TextInputLayout titleWrapper;
     private TextInputLayout locWrapper;
 
-    private Dialog imageDialog;
-
     public MemoryFormFragment() {
     }
 
@@ -182,31 +180,6 @@ public class MemoryFormFragment extends Fragment {
         if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(getActivity(), data);
             locText.setText(place.getName());
-        }
-    }
-
-    public void expandImage(View v) {
-        imageDialog = new Dialog(getActivity());
-
-        imageDialog.setContentView(
-                getActivity().getLayoutInflater().inflate(R.layout
-                        .image_popup, null));
-
-        ImageView imageView = (ImageView) imageDialog.findViewById(
-                R.id.image_popup);
-//        try {
-//            Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(
-//                    getActivity().getContentResolver(), imageUri);
-//            imageView.setImageBitmap(bitmapImage);
-//            imageDialog.show();
-//        } catch (IOException e) {
-//            Log.d(TAG, "IOEXCEPTION : photoUri");
-//        }
-    }
-
-    public void closeImage(View v) {
-        if (imageDialog != null) {
-            imageDialog.dismiss();
         }
     }
 

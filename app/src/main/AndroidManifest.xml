@@ -89,7 +89,9 @@
         <activity
             android:name=".memory.ViewMemoryActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".memory.FullImageActivity"/>
+        <activity
+            android:name=".memory.FullImageActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".auth.CreateAccountActivity"/>
         <activity android:name=".auth.PasswordRecoveryActivity"/>
         <activity android:name=".share.ShareTextActivity"/>

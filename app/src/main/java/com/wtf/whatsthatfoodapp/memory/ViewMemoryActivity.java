@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,12 +17,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.share.SharePictureActivity;
 
-public class ViewMemoryActivity extends BasicActivity {
+public class ViewMemoryActivity extends AppCompatActivity {
 
     private static final String TAG = ViewMemoryActivity.class.getSimpleName();
     private static final int REQ_EDIT = 3936;
@@ -29,6 +29,7 @@ public class ViewMemoryActivity extends BasicActivity {
     private MemoryDao dao;
     private Memory memory;
 
+    private ImageView image;
     private CollapsingToolbarLayout title;
     private Toolbar toolbar;
     private TextView loc;
@@ -45,22 +46,21 @@ public class ViewMemoryActivity extends BasicActivity {
         memory = getIntent().getExtras().getParcelable(
                 CollageActivity.MEMORY_KEY);
 
-        ImageView view_memory_image = (ImageView) findViewById(
-                R.id.view_memory_image);
-        view_memory_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent full_image_intent = new Intent(ViewMemoryActivity.this,
-                        FullImageActivity.class);
-                full_image_intent.putExtra("memory_key", memory);
-                startActivity(full_image_intent);
-            }
-        });
+        image = (ImageView) findViewById(R.id.view_memory_image);
         Glide.with(this)
                 .using(new FirebaseImageLoader())
                 .load(dao.getPhotoRef(memory))
                 .centerCrop()
-                .into(view_memory_image);
+                .into(image);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ViewMemoryActivity.this,
+                        FullImageActivity.class);
+                intent.putExtra(FullImageActivity.MEMORY_KEY, memory);
+                startActivity(intent);
+            }
+        });
 
         // Set up collapsing toolbar
         toolbar = (Toolbar) findViewById(R.id.view_memory_toolbar);
@@ -114,6 +114,9 @@ public class ViewMemoryActivity extends BasicActivity {
         CheckBox view_memory_SFNT = (CheckBox) findViewById(
                 R.id.view_memory_SFNT);
         view_memory_SFNT.setChecked(memory.getSavedForNextTime());
+    }
+
+    private void fullImage() {
     }
 
     @Override

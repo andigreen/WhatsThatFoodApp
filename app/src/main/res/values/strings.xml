@@ -34,5 +34,6 @@
     <string name="dialog_delete_neg">Cancel</string>
     <string name="edit_memory_title">Edit Memory</string>
     <string name="edit_memory_photo_desc">Your photo</string>
+    <string name="image_transition">image_transition</string>
 
 </resources>
