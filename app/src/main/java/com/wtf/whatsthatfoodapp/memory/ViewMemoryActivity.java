@@ -125,7 +125,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
             case R.id.view_memory_share:
                 Intent shareIntent = new Intent(this,
                         ShareActivity.class);
-                shareIntent.putExtra("memory", memory);
+                shareIntent.putExtra(ShareActivity.MEMORY_KEY, memory);
                 startActivity(shareIntent);
                 break;
             case R.id.view_memory_edit:

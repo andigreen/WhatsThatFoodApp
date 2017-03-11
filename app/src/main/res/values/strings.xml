@@ -41,5 +41,7 @@
     <string name="memory_form_discard_pos">Discard</string>
     <string name="memory_form_discard_neg">Cancel</string>
     <string name="reset_password_sent">Password reset email sent.</string>
+    <string name="dialog_share_title">Preparing image</string>
+    <string name="dialog_share_message">Please wait...</string>
 
 </resources>

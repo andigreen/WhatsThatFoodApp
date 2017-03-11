@@ -169,23 +169,23 @@ public class MemoryDao {
     }
 
     private class SaveImageTask extends AsyncTask<byte[], Void, File> {
+        private String memKey;
         private LocalImageUriListener listener;
 
-        SaveImageTask(LocalImageUriListener listener) {
+        SaveImageTask(Memory memory, LocalImageUriListener listener) {
+            this.memKey = memory.getKey();
             this.listener = listener;
         }
 
         @Override
         protected File doInBackground(byte[]... params) {
-            @SuppressLint("SimpleDateFormat")
-            String ts = new SimpleDateFormat("yyyyMMdd_HHmmss")
-                    .format(new Date());
-            File storageDir = context.getExternalFilesDir(
-                    Environment.DIRECTORY_PICTURES);
+            File target = new File(
+                    context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    "local_" + memKey + ".jpg");
+            if (target.exists()) return target;
 
             try {
-                File target = File.createTempFile("WTF_" + ts, ".jpg",
-                        storageDir);
+                target.createNewFile();
                 OutputStream out = new FileOutputStream(target);
                 out.write(params[0]);
                 return target;
@@ -205,13 +205,13 @@ public class MemoryDao {
         }
     }
 
-    public void getLocalImageUri(Memory memory,
+    public void getLocalImageUri(final Memory memory,
             final LocalImageUriListener listener) {
         Glide.with(context)
                 .using(new FirebaseImageLoader())
                 .load(getPhotoRef(memory))
                 .asBitmap()
-                .toBytes(Bitmap.CompressFormat.JPEG, 80)
+                .toBytes(Bitmap.CompressFormat.JPEG, 85)
                 .format(DecodeFormat.PREFER_ARGB_8888)
                 .atMost()
                 .override(MAX_IMAGE_SIZE, MAX_IMAGE_SIZE)
@@ -221,7 +221,7 @@ public class MemoryDao {
                     @Override
                     public void onResourceReady(byte[] resource,
                             GlideAnimation<? super byte[]> glideAnimation) {
-                        new SaveImageTask(listener).execute(resource);
+                        new SaveImageTask(memory, listener).execute(resource);
                     }
 
                     @Override
