@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +29,8 @@ import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 
 import java.util.Calendar;
 
-public class CreateMemoryActivity extends BasicActivity implements TimePickerDialog.OnTimeSetListener{
+public class CreateMemoryActivity extends BasicActivity
+        implements TimePickerDialog.OnTimeSetListener{
 
     public static final String IMAGE_URI_KEY = "imageUri";
 
@@ -154,28 +156,34 @@ public class CreateMemoryActivity extends BasicActivity implements TimePickerDia
                     finish();
                 }
                 return true;
-        }
 
-        // Save For Next Time : Set Alarm
-        if (item.getItemId() == R.id.saveFNT) {
-            boolean is24HourFormat = true;
-            Calendar calendar = Calendar.getInstance();
-            int startHour = calendar.get(Calendar.HOUR_OF_DAY);
-            startHour += 2;
+            // Save For Next Time : Set Alarm
+            case R.id.saveFNT:
+                // Make sure that form is valid first, and if so get its values
+                if (!form.validateAndSaveInto(memory)) return true;
 
-            int startMinute = calendar.get(Calendar.MINUTE);
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    this /*context*/, this/*listener*/, startHour, startMinute, is24HourFormat);
-            timePickerDialog.show();
+                // Open time picker
+                Calendar calendar = Calendar.getInstance();
+                new TimePickerDialog(
+                        this, this,
+                        calendar.get(Calendar.HOUR_OF_DAY) + 2,
+                        calendar.get(Calendar.MINUTE),
+                        DateFormat.is24HourFormat(this)).show();
+                return true;
         }
 
         // Other options not handled
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Receives the time picked, and schedules a notification.
+     */
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute){
         memory.setSavedForNextTime(true);
         dao.writeMemory(memory);
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
         calendar.set(Calendar.MINUTE,minute);
