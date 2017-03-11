@@ -100,7 +100,7 @@ public class MemoryFormFragment extends Fragment {
 
     }
 
-    public boolean saveToMemory(Memory memory) {
+    public boolean validateAndSaveInto(Memory memory) {
         if (!validateForm()) return false;
 
         // Write memory fields

@@ -90,14 +90,6 @@ public class CreateMemoryActivity extends BasicActivity {
                 form).commit();
     }
 
-    private boolean saveMemory() {
-        if (form.saveToMemory(memory)) {
-            dao.writeMemory(memory);
-            return true;
-        }
-        return false;
-    }
-
     private void cancelMemory() {
         if (imageUpload.isInProgress()) imageUpload.cancel();
         dao.deleteMemory(memory);
@@ -125,8 +117,10 @@ public class CreateMemoryActivity extends BasicActivity {
 
         // Save new memory
         if (item.getItemId() == R.id.create_memory_save) {
-            saveMemory();
-            finish();
+            if (form.validateAndSaveInto(memory)) {
+                dao.writeMemory(memory);
+                finish();
+            }
         }
 
         // Other options not handled
