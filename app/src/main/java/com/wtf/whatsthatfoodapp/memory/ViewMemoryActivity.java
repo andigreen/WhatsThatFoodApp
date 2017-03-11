@@ -6,21 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.wtf.whatsthatfoodapp.R;
-import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.share.ShareActivity;
 
 public class ViewMemoryActivity extends AppCompatActivity {
@@ -68,9 +62,9 @@ public class ViewMemoryActivity extends AppCompatActivity {
         title = (CollapsingToolbarLayout) findViewById(
                 R.id.view_memory_collapsing_toolbar);
 
-        loc = (TextView) findViewById(R.id.view_memory_location);
-        desc = (TextView) findViewById(R.id.view_memory_description);
-        rating = (RatingBar) findViewById(R.id.view_memory_rating_bar);
+        loc = (TextView) findViewById(R.id.view_memory_loc);
+        desc = (TextView) findViewById(R.id.view_memory_desc);
+        rating = (RatingBar) findViewById(R.id.view_memory_rating);
         price = (RatingBar) findViewById(R.id.view_memory_price);
 
         populateFields();
@@ -92,34 +86,28 @@ public class ViewMemoryActivity extends AppCompatActivity {
 
         String memoryDesc = memory.getDescription();
         if (memoryDesc == null || memoryDesc.isEmpty()) {
-            findViewById(R.id.view_memory_description_card)
+            findViewById(R.id.view_memory_desc_section)
                     .setVisibility(View.GONE);
         } else {
             desc.setText(memoryDesc);
         }
 
-        if (memory.getRate() == 0) {
-            findViewById(R.id.view_memory_rating_card).setVisibility(View.GONE);
+        int ratingVal = memory.getRate();
+        int priceVal = memory.getPrice();
+        if (ratingVal == 0) {
+            findViewById(R.id.view_memory_rating).setVisibility(View.GONE);
         } else {
-            rating.setRating(memory.getRate());
+            rating.setRating(ratingVal);
         }
-
-        if (memory.getPrice() == 0) {
-            findViewById(R.id.view_memory_price_card).setVisibility(View.GONE);
+        if (priceVal == 0) {
+            findViewById(R.id.view_memory_price).setVisibility(View.GONE);
         } else {
-            price.setRating(memory.getPrice());
+            price.setRating(priceVal);
         }
-
-        CheckBox view_memory_SFNT = (CheckBox) findViewById(
-                R.id.view_memory_SFNT);
-        if (!memory.getSavedForNextTime()){
-            CardView cardView = (CardView) findViewById(R.id.view_memory_SFNT_card);
-            cardView.setVisibility(View.GONE);
+        if (ratingVal == 0 && priceVal == 0) {
+            findViewById(R.id.view_memory_rating_section)
+                    .setVisibility(View.GONE);
         }
-        view_memory_SFNT.setChecked(memory.getSavedForNextTime());
-    }
-
-    private void fullImage() {
     }
 
     @Override
