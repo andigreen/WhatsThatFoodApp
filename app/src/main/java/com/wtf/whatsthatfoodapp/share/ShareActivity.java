@@ -29,7 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-public class SharePictureActivity extends AppCompatActivity {
+public class ShareActivity extends AppCompatActivity {
 
     Uri pictureUri;
     ImageView thumbnail;

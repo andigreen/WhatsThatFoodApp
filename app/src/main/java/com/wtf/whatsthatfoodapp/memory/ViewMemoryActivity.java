@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
-import com.wtf.whatsthatfoodapp.share.SharePictureActivity;
+import com.wtf.whatsthatfoodapp.share.ShareActivity;
 
 public class ViewMemoryActivity extends AppCompatActivity {
 
@@ -134,7 +134,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
                 break;
             case R.id.view_memory_share:
                 Intent shareIntent = new Intent(this,
-                        SharePictureActivity.class);
+                        ShareActivity.class);
                 shareIntent.putExtra("memory", memory);
                 startActivity(shareIntent);
                 break;

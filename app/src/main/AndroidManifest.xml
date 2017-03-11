@@ -94,7 +94,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".auth.CreateAccountActivity"/>
         <activity android:name=".auth.PasswordRecoveryActivity"/>
-        <activity android:name=".share.SharePictureActivity"/>
+        <activity android:name=".share.ShareActivity"/>
     </application>
 
 </manifest>
