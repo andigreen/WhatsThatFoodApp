@@ -86,18 +86,19 @@ public class MemoryFormFragment extends Fragment {
                 R.id.create_memory_title_wrapper);
         locWrapper = (TextInputLayout) a.findViewById(
                 R.id.create_memory_loc_wrapper);
+        titleWrapper.setErrorEnabled(false);
+        locWrapper.setErrorEnabled(false);
         titleText.addTextChangedListener(
                 new ErrorClearTextWatcher(titleWrapper));
         locText.addTextChangedListener(new ErrorClearTextWatcher(locWrapper));
 
-        a.findViewById(R.id.pickerButton).setOnClickListener
-                (new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        createPlacePicker();
-                    }
-                });
-
+//        a.findViewById(R.id.pickerButton).setOnClickListener
+//                (new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        createPlacePicker();
+//                    }
+//                });
     }
 
     public boolean validateAndSaveInto(Memory memory) {
