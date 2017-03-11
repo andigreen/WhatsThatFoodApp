@@ -28,6 +28,19 @@
         </item>
     </style>
 
+    <style name="Theme.AppCompat.Translucent"
+           parent="Theme.AppCompat.NoActionBar">
+        <item name="android:background">@color/black_translucent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">
+            @android:style/Animation
+        </item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+    </style>
+
     <style name="RatingBarPrice" parent="@android:style/Widget.RatingBar">
         <item name="android:progressDrawable">@drawable/ratingbar_price</item>
         <item name="android:minHeight">40dip</item>

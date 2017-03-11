@@ -86,7 +86,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".memory.FullImageActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Translucent"/>
         <activity android:name=".auth.CreateAccountActivity"/>
         <activity android:name=".auth.PasswordRecoveryActivity"/>
         <activity android:name=".PairsMemoryGameActivity"/>
