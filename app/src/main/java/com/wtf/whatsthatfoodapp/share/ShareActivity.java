@@ -89,7 +89,8 @@ public class ShareActivity extends AppCompatActivity {
         // Store image to default external storage directory
         Uri bmpUri = null;
         try {
-            File file =  new File(new ContextWrapper(this).getExternalFilesDir(null), "share_image_" + System.currentTimeMillis() + ".png");
+            File file =  new File(new ContextWrapper(this).getExternalFilesDir(null),
+                    "share_image_" + System.currentTimeMillis() + ".jpg");
             file.getParentFile().mkdirs();
             FileOutputStream out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
