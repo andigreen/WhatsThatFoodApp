@@ -103,9 +103,11 @@ public class ViewMemoryActivity extends AppCompatActivity {
         price = (RatingBar) findViewById(R.id.view_memory_price);
 
         if (memory.getSavedForNextTime()) {
-            SharedPreferences sf = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+            SharedPreferences sf = getSharedPreferences(PREFS,
+                    Context.MODE_PRIVATE);
             TextView tv = (TextView) findViewById(R.id.time_tv);
-            tv.setText(tv.getText() + " " + sf.getString(String.valueOf(memory.getTsCreatedNeg()), ""));
+            tv.setText(tv.getText() + " " + sf.getString(
+                    String.valueOf(memory.getTsCreatedNeg()), ""));
             tv.setVisibility(View.VISIBLE);
         }
 
@@ -163,9 +165,9 @@ public class ViewMemoryActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Load Alternative Menu (with alarm buttons)
-        if (memory.getSavedForNextTime()){
+        if (memory.getSavedForNextTime()) {
             getMenuInflater().inflate(R.menu.menu_view_memory_sfnt, menu);
-        }else {
+        } else {
             getMenuInflater().inflate(R.menu.menu_view_memory, menu);
         }
         return true;
@@ -220,22 +222,28 @@ public class ViewMemoryActivity extends AppCompatActivity {
     public void removeAlarm() {
         memory.setSavedForNextTime(false);
         dao.writeMemory(memory);
-        SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(PREFS,
+                Context.MODE_PRIVATE);
         int requestCode = sp.getInt((String.valueOf(memory.getTsCreated())), 0);
         if (requestCode == 0) {
             return;
         }
 
-        SharedPreferences.Editor editor = getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit();
-        editor.putInt(CollageActivity.REMINDERS_COUNT, sp.getInt(CollageActivity.REMINDERS_COUNT, 1) - 1);
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS,
+                Context.MODE_PRIVATE).edit();
+        editor.putInt(CollageActivity.REMINDERS_COUNT,
+                sp.getInt(CollageActivity.REMINDERS_COUNT, 1) - 1);
         editor.apply();
 
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(
+                Context.ALARM_SERVICE);
         Intent intentAlarm = new Intent(this, AlarmReceiver.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(EditMemoryActivity.MEMORY_KEY, memory);
         intentAlarm.putExtra("bundle", bundle);
-        alarmManager.cancel(PendingIntent.getBroadcast(this, requestCode, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+        alarmManager.cancel(
+                PendingIntent.getBroadcast(this, requestCode, intentAlarm,
+                        PendingIntent.FLAG_UPDATE_CURRENT));
         finish();
     }
 
@@ -245,31 +253,43 @@ public class ViewMemoryActivity extends AppCompatActivity {
         new TimePickerDialog(
                 this, new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int
+                    minute) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
                 SimpleDateFormat sdf = new SimpleDateFormat("H:m");
 
-                SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-                int requestCode = sp.getInt((String.valueOf(memory.getTsCreated())), 0);
+                SharedPreferences sp = getSharedPreferences(PREFS,
+                        Context.MODE_PRIVATE);
+                int requestCode = sp.getInt(
+                        (String.valueOf(memory.getTsCreated())), 0);
                 if (requestCode == 0) {
                     return;
                 }
 
-                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent intentAlarm = new Intent(getApplicationContext(), AlarmReceiver.class);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(
+                        Context.ALARM_SERVICE);
+                Intent intentAlarm = new Intent(getApplicationContext(),
+                        AlarmReceiver.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(EditMemoryActivity.MEMORY_KEY, memory);
                 intentAlarm.putExtra("bundle", bundle);
 
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), requestCode, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        getApplicationContext(), requestCode, intentAlarm,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.set(AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(), pendingIntent);
 
-                // Save the alarm request code so it can be accessed and cancelled after
-                SharedPreferences.Editor editor = getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit();
-                editor.putInt(String.valueOf(memory.getTsCreated()), requestCode);
-                editor.putString(String.valueOf(memory.getTsCreatedNeg()), sdf.format(calendar.getTime()));
+                // Save the alarm request code so it can be accessed and
+                // cancelled after
+                SharedPreferences.Editor editor = getSharedPreferences(PREFS,
+                        Context.MODE_PRIVATE).edit();
+                editor.putInt(String.valueOf(memory.getTsCreated()),
+                        requestCode);
+                editor.putString(String.valueOf(memory.getTsCreatedNeg()),
+                        sdf.format(calendar.getTime()));
                 editor.apply();
 
                 finish();
@@ -282,15 +302,13 @@ public class ViewMemoryActivity extends AppCompatActivity {
     }
 
     public void showInMap(View v) {
-        TextView tv = (TextView) v;
-        CharSequence loc = tv.getText();
-
-        Uri uri = Uri.parse("geo:0,0?q=" + Uri.encode(String.valueOf(loc)));
+        Uri uri = Uri.parse("geo:0,0?q=" + Uri.encode(memory.getLoc()));
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
         mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);
-        }
-    private float[] convertLocToCoordinates (String loc){
+    }
+
+    private float[] convertLocToCoordinates(String loc) {
         float[] coordinates = new float[2];
         String[] sCoordinates = loc.split(" ");
         String degrees = "°";
