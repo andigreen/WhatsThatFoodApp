@@ -79,9 +79,11 @@ public class MemoryFormFragment extends Fragment {
         ratingRating.setRating(memory.getRate());
         priceRating.setRating(memory.getPrice());
 
-        // Focus end of description
-        descText.requestFocus();
-        descText.setSelection(descText.getText().length());
+        // Set appropriate focus
+        if (titleText.getText().length() != 0) {
+            descText.requestFocus();
+            descText.setSelection(descText.getText().length());
+        }
 
         // Clear errors whenever text changes
         titleWrapper = (TextInputLayout) a.findViewById(
