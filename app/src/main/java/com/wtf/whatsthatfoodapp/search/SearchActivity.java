@@ -65,7 +65,7 @@ public class SearchActivity extends BasicActivity
      */
     private GoogleApiClient client;
 
-    private ValueEventListener memoriesListener;
+    private ValueEventListener populateListListener;
     private List<String> resultKeys;
     private List<Memory> results;
     private ArrayAdapter<Memory> resultsAdapter;
@@ -138,7 +138,7 @@ public class SearchActivity extends BasicActivity
 
         // Get search table and listener that updates the results
         searchTable = ((App) getApplication()).getSearchTable();
-        memoriesListener = new ValueEventListener() {
+        populateListListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (String key : resultKeys) {
@@ -152,6 +152,19 @@ public class SearchActivity extends BasicActivity
             public void onCancelled(DatabaseError databaseError) {
             }
         };
+
+        // Requery when data changes
+        ValueEventListener requeryListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                requery();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        dao.getMemoriesRef().addValueEventListener(requeryListener);
 
         // Set initial query
         Uri data = getIntent().getData();
@@ -225,6 +238,12 @@ public class SearchActivity extends BasicActivity
 
     private void requery() {
         results.clear();
+        if (query.isEmpty()) {
+            noResults.setVisibility(View.GONE);
+            clearFilters.setVisibility(View.GONE);
+            resultsAdapter.notifyDataSetChanged();
+            return;
+        }
 
         searchTable.setRating(ratingMode, ratingVal);
         searchTable.setPrice(priceMode, priceVal);
@@ -233,14 +252,14 @@ public class SearchActivity extends BasicActivity
             noResults.setVisibility(View.VISIBLE);
             clearFilters.setVisibility(
                     filtersApplied() ? View.VISIBLE : View.GONE);
-
             resultsAdapter.notifyDataSetChanged();
             return;
         }
+
         noResults.setVisibility(View.GONE);
         clearFilters.setVisibility(View.GONE);
-
-        dao.getMemoriesRef().addListenerForSingleValueEvent(memoriesListener);
+        dao.getMemoriesRef().addListenerForSingleValueEvent(
+                populateListListener);
     }
 
     /**
