@@ -9,9 +9,10 @@
     tools:context="com.wtf.whatsthatfoodapp.memory.CollageActivity">
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <include
             layout="@layout/toolbar"
@@ -59,7 +60,7 @@
                 app:fab_icon="@drawable/ic_photo_library_white_24dp"
                 app:fab_title="Choose from gallery"/>
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
-    </RelativeLayout>
+    </LinearLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
