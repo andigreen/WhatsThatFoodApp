@@ -85,6 +85,18 @@ public class ViewMemoryActivity extends AppCompatActivity {
         title = (CollapsingToolbarLayout) findViewById(
                 R.id.view_memory_collapsing_toolbar);
 
+        // Set up share FAB
+        findViewById(R.id.view_memory_edit).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent shareIntent = new Intent(ViewMemoryActivity.this,
+                                ShareActivity.class);
+                        shareIntent.putExtra(ShareActivity.MEMORY_KEY, memory);
+                        startActivityForResult(shareIntent, REQ_SHARE);
+                    }
+                });
+
         loc = (TextView) findViewById(R.id.view_memory_loc);
         desc = (TextView) findViewById(R.id.view_memory_desc);
         rating = (RatingBar) findViewById(R.id.view_memory_rating);
@@ -168,12 +180,6 @@ public class ViewMemoryActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                break;
-            case R.id.view_memory_share:
-                Intent shareIntent = new Intent(this,
-                        ShareActivity.class);
-                shareIntent.putExtra(ShareActivity.MEMORY_KEY, memory);
-                startActivityForResult(shareIntent, REQ_SHARE);
                 break;
             case R.id.view_memory_edit:
                 Intent editIntent = new Intent(this, EditMemoryActivity.class);
