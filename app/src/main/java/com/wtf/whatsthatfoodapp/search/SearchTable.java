@@ -15,13 +15,11 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.wtf.whatsthatfoodapp.App;
-import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A table of Memories that uses SQLite full-text search (FTS) to facilitate
@@ -35,11 +33,11 @@ public class SearchTable {
 
     private static final String TAG = SearchTable.class.getSimpleName();
 
-    public static final String COL_KEY = "key";
-    public static final String COL_CONTENT = "content";
-    public static final String COL_RATING = "rating";
-    public static final String COL_PRICE = "price";
-    public static final String COL_TS = "ts";
+    private static final String COL_KEY = "key";
+    private static final String COL_CONTENT = "content";
+    private static final String COL_RATING = "rating";
+    private static final String COL_PRICE = "price";
+    private static final String COL_TS = "ts";
 
     private static final String[] QUERY_COLS = {COL_KEY};
 
@@ -137,6 +135,10 @@ public class SearchTable {
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            Memory m = dataSnapshot.getValue(Memory.class);
+            if (mHelper.updateMemory(m) < 0) {
+                Log.e(TAG, "Failed to add memory " + m.getKey());
+            }
         }
 
         @Override
@@ -183,11 +185,7 @@ public class SearchTable {
                     .addChildEventListener(new MemoriesListener(this));
         }
 
-        /**
-         * Adds the memory's relevant fields to the FTS table. Returns the
-         * row ID of the inserted row, or -1 if an error occurred.
-         */
-        long addMemory(Memory memory) {
+        private static ContentValues memoryToVals(Memory memory) {
             String memoryContent = memory.getTitle() + " "
                     + memory.getLoc() + " " + memory.getDescription();
 
@@ -197,10 +195,24 @@ public class SearchTable {
             vals.put(COL_RATING, memory.getRate());
             vals.put(COL_PRICE, memory.getPrice());
             vals.put(COL_TS, memory.getTsCreated());
-            return mDatabase.insert(FTS_VIRTUAL_TABLE, null, vals);
+            return vals;
         }
 
-        long deleteMemory(String key) {
+        /**
+         * Adds the memory's relevant fields to the FTS table. Returns the
+         * row ID of the inserted row, or -1 if an error occurred.
+         */
+        private long addMemory(Memory memory) {
+            return mDatabase.insert(FTS_VIRTUAL_TABLE, null,
+                    memoryToVals(memory));
+        }
+
+        private long updateMemory(Memory memory) {
+            return mDatabase.update(FTS_VIRTUAL_TABLE, memoryToVals(memory),
+                COL_KEY + " = ?", new String[]{memory.getKey()});
+        }
+
+        private long deleteMemory(String key) {
             return mDatabase.delete(FTS_VIRTUAL_TABLE, COL_KEY + " = ?",
                     new String[]{key});
         }
