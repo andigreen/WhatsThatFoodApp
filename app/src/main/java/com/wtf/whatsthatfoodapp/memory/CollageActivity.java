@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,6 +39,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
@@ -48,6 +52,7 @@ import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.notification.Utils2;
 import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
+import com.wtf.whatsthatfoodapp.user.UserSettings;
 import com.wtf.whatsthatfoodapp.user.UserSettingsDao;
 
 import java.io.File;
@@ -59,12 +64,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity.PREFS;
 
-public class CollageActivity extends BasicActivity {
+public class CollageActivity extends BasicActivity implements NavigationView
+        .OnNavigationItemSelectedListener {
 
     private static final String TAG = CollageActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_GALLERY = 4843;
     private static final int REQUEST_IMAGE_CAMERA = 9924;
-    public static final String REMINDERS_COUNT ="REMINDERS_COUNT";
+    public static final String REMINDERS_COUNT = "REMINDERS_COUNT";
     private static final int GALLERY = 1;
 
     private Uri imageUri;
@@ -94,7 +100,6 @@ public class CollageActivity extends BasicActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_collage);
         drawerToggle = setupDrawerToggle();
 
         if (BasicActivity.getProvider().equals("Google")) {
@@ -117,7 +122,8 @@ public class CollageActivity extends BasicActivity {
             app.getClient().connect();
         }
 
-        photo_button = (CircleImageView) (nav_header.findViewById(R.id.profile_photo));
+        photo_button = (CircleImageView) (nav_header.findViewById(
+                R.id.profile_photo));
         photo_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,8 +136,26 @@ public class CollageActivity extends BasicActivity {
             }
         });
 
-        Menu nav_menu = (Menu) nav_view.getMenu();
-        //nameField =  (EditText) nav_menu.(R.id.user_name);
+//        Menu nav_menu = nav_view.getMenu();
+//        DrawerLayout drawer = (DrawerLayout) findViewById(
+//                R.id.activity_collage);
+        final TextView nav_name = (TextView) nav_view.getHeaderView(0)
+                .findViewById(R.id.profile_name);
+        nav_view.setNavigationItemSelectedListener(this);
+        ValueEventListener userInfoListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserSettings userInfo = dataSnapshot.getValue(
+                        UserSettings.class);
+                nav_name.setText(userInfo.getUsername());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        new UserSettingsDao(AuthUtils.getUserUid()).getUserInfoRef()
+                .addListenerForSingleValueEvent(userInfoListener);
 
         userDao = new UserSettingsDao(AuthUtils.getUserUid());
         userDao.getPhotoRef().getDownloadUrl().addOnSuccessListener(
@@ -154,7 +178,6 @@ public class CollageActivity extends BasicActivity {
                         .into(photo_button);
             }
         });
-
 
 
         // Set up list and adapter
@@ -201,6 +224,7 @@ public class CollageActivity extends BasicActivity {
             }
         });
     }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -298,45 +322,39 @@ public class CollageActivity extends BasicActivity {
         inflater.inflate(R.menu.main_menu, menu);
 
         // Update LayerDrawable's BadgeDrawable
-        MenuItem item = menu.findItem(R.id.notifications_icon);
-        LayerDrawable icon = (LayerDrawable) item.getIcon();
-        SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        Utils2.setBadgeCount(this, icon, sp.getInt(REMINDERS_COUNT,0));
+//        MenuItem item = menu.findItem(R.id.nav_notifications);
+//        LayerDrawable icon = (LayerDrawable) item.getIcon();
+//        SharedPreferences sp = getSharedPreferences(PREFS,
+//                Context.MODE_PRIVATE);
+//        Utils2.setBadgeCount(this, icon, sp.getInt(REMINDERS_COUNT, 0));
         return true;
     }
-    public void updateRemindersIcon(){
-        // Update LayerDrawable's BadgeDrawable
-        if (menu != null){
-            MenuItem item = menu.findItem(R.id.notifications_icon);
-            LayerDrawable icon = (LayerDrawable) item.getIcon();
-            SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-            Utils2.setBadgeCount(this, icon, sp.getInt(REMINDERS_COUNT,0));
 
-        }
+    public void updateRemindersIcon() {
+        // Update LayerDrawable's BadgeDrawable
+//        if (menu != null) {
+//            MenuItem item = menu.findItem(R.id.nav_notifications);
+//            LayerDrawable icon = (LayerDrawable) item.getIcon();
+//            SharedPreferences sp = getSharedPreferences(PREFS,
+//                    Context.MODE_PRIVATE);
+//            Utils2.setBadgeCount(this, icon, sp.getInt(REMINDERS_COUNT, 0));
+//
+//        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         int item_id = item.getItemId();
-        if (item_id == R.id.settings ){
-            viewSettings();
-            return true;
-        }
-        else if (item_id == R.id.logout){
-            Intent intent = new Intent(this, LogoutActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        else if (item_id == R.id.collage_search){
+        if (item_id == R.id.collage_search) {
             Intent searchIntent = new Intent(this, SearchActivity.class);
             startActivity(searchIntent);
             return true;
-        }
-        else if(drawerToggle.onOptionsItemSelected(item)){
+        } else if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
-        } else if (item_id == R.id.notifications_icon){
-            Intent notificationsIntent = new Intent(this,ViewNotificationsActivity.class);
+        } else if (item_id == R.id.nav_notifications) {
+            Intent notificationsIntent = new Intent(this,
+                    ViewNotificationsActivity.class);
             startActivity(notificationsIntent);
             return true;
         }
@@ -369,7 +387,8 @@ public class CollageActivity extends BasicActivity {
                 // [END_EXCLUDE]
             }
         };
-        userDao.getUserInfoRef().addListenerForSingleValueEvent(userInfoListener);*/
+        userDao.getUserInfoRef().addListenerForSingleValueEvent
+        (userInfoListener);*/
         // [END post_value_event_listener]
     }
     // [END on_start_add_listener]
@@ -401,12 +420,32 @@ public class CollageActivity extends BasicActivity {
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
-        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
+        // NOTE: Make sure you pass in a valid toolbar reference.
+        // ActionBarDrawToggle() does not require it
         // and will not render the hamburger icon without it.
-        return new ActionBarDrawerToggle(this,(DrawerLayout)findViewById(R.id.activity_collage),
+        return new ActionBarDrawerToggle(this,
+                (DrawerLayout) findViewById(R.id.activity_collage),
                 (Toolbar) findViewById(R.id.toolbar), R.string.drawer_open,
-                 R.string.drawer_close);
+                R.string.drawer_close);
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_name:
+                break;
+            case R.id.nav_notifications:
+                Intent notificationsIntent = new Intent(this,
+                        ViewNotificationsActivity.class);
+                startActivity(notificationsIntent);
+                return true;
+            case R.id.nav_logout:
+                Intent intent = new Intent(this, LogoutActivity.class);
+                startActivity(intent);
+                return true;
+        }
+
+        return false;
+    }
 }
 
