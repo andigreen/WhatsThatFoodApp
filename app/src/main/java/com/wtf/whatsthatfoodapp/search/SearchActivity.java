@@ -3,15 +3,11 @@ package com.wtf.whatsthatfoodapp.search;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -30,7 +25,6 @@ import com.arlib.floatingsearchview.FloatingSearchView.OnMenuItemClickListener;
 import com.arlib.floatingsearchview.FloatingSearchView.OnQueryChangeListener;
 import com.arlib.floatingsearchview.FloatingSearchView.OnSearchListener;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
-import com.arlib.floatingsearchview.util.Util;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -40,33 +34,27 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.TextUtil;
-import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
 import com.wtf.whatsthatfoodapp.memory.ViewMemoryActivity;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SearchActivity extends BasicActivity
         implements FilterDialog.FilterDialogListener {
 
-    public final static String QUERY_KEY = "query";
-
     private final static String TAG = SearchActivity.class.getSimpleName();
 
-    private Map<String, Memory> memories;
     private SearchTable searchTable;
     private String query;
     private MemoryDao dao;
@@ -76,6 +64,9 @@ public class SearchActivity extends BasicActivity
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+
+    private ValueEventListener populateListListener;
+    private List<String> resultKeys;
     private List<Memory> results;
     private ArrayAdapter<Memory> resultsAdapter;
 
@@ -95,33 +86,9 @@ public class SearchActivity extends BasicActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        // Cache memories in a map
-        memories = new HashMap<>();
         dao = new MemoryDao(this);
-        dao.getMemoriesRef().addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Memory m = dataSnapshot.getValue(Memory.class);
-                memories.put(m.getKey(), m);
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
+        resultKeys = new ArrayList<>();
         results = new ArrayList<>();
         resultsAdapter = new ResultAdapter(this, results);
 
@@ -154,8 +121,6 @@ public class SearchActivity extends BasicActivity
                         startActivity(viewMemory);
                     }
                 });
-        // Initialize search table (pre-populate index)
-        searchTable = new SearchTable(this);
 
         // Set up searchView
         searchView = (FloatingSearchView) findViewById(
@@ -171,11 +136,41 @@ public class SearchActivity extends BasicActivity
                     }
                 });
 
+        // Get search table and listener that updates the results
+        searchTable = ((App) getApplication()).getSearchTable();
+        populateListListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (String key : resultKeys) {
+                    results.add(dataSnapshot.child(key).getValue(
+                            Memory.class));
+                }
+                resultsAdapter.sort(sortMode.getComparator());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+
+        // Requery when data changes
+        ValueEventListener requeryListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                requery();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        dao.getMemoriesRef().addValueEventListener(requeryListener);
+
+        // Set initial query
         Uri data = getIntent().getData();
         if (data != null) {
             query = TextUtil.removeScheme(data);
             searchView.setSearchText(query);
-            requery();
         } else {
             query = "";
             searchView.setSearchFocused(true);
@@ -242,30 +237,28 @@ public class SearchActivity extends BasicActivity
 
     private void requery() {
         results.clear();
-
-        searchTable.setRating(ratingMode, ratingVal);
-        searchTable.setPrice(priceMode, priceVal);
-        Cursor cursor = searchTable.query(query);
-        if (cursor == null) {
-            noResults.setVisibility(View.VISIBLE);
-            clearFilters.setVisibility(
-                    filtersApplied() ? View.VISIBLE : View.GONE);
-
+        if (query.isEmpty()) {
+            noResults.setVisibility(View.GONE);
+            clearFilters.setVisibility(View.GONE);
             resultsAdapter.notifyDataSetChanged();
             return;
         }
+
+        searchTable.setRating(ratingMode, ratingVal);
+        searchTable.setPrice(priceMode, priceVal);
+        resultKeys = searchTable.query(query);
+        if (resultKeys.isEmpty()) {
+            noResults.setVisibility(View.VISIBLE);
+            clearFilters.setVisibility(
+                    filtersApplied() ? View.VISIBLE : View.GONE);
+            resultsAdapter.notifyDataSetChanged();
+            return;
+        }
+
         noResults.setVisibility(View.GONE);
         clearFilters.setVisibility(View.GONE);
-
-        int col = cursor.getColumnIndex(SearchTable.COL_KEY);
-        cursor.moveToFirst();
-        do {
-            Memory m = memories.get(cursor.getString(col));
-            if (m != null) results.add(m);
-        } while (cursor.moveToNext());
-        cursor.close();
-
-        resultsAdapter.sort(sortMode.getComparator());
+        dao.getMemoriesRef().addListenerForSingleValueEvent(
+                populateListListener);
     }
 
     /**

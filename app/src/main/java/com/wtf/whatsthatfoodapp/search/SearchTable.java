@@ -7,15 +7,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.wtf.whatsthatfoodapp.auth.AuthUtils;
+import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A table of Memories that uses SQLite full-text search (FTS) to facilitate
@@ -29,12 +33,11 @@ public class SearchTable {
 
     private static final String TAG = SearchTable.class.getSimpleName();
 
-    public static final String COL_KEY = "key";
-    public static final String COL_TITLE = "title";
-    public static final String COL_LOC = "loc";
-    public static final String COL_DESC = "desc";
-    public static final String COL_RATING = "rating";
-    public static final String COL_PRICE = "price";
+    private static final String COL_KEY = "key";
+    private static final String COL_CONTENT = "content";
+    private static final String COL_RATING = "rating";
+    private static final String COL_PRICE = "price";
+    private static final String COL_TS = "ts";
 
     private static final String[] QUERY_COLS = {COL_KEY};
 
@@ -49,6 +52,10 @@ public class SearchTable {
     private SearchActivity.FilterMode ratingMode = SearchActivity.FilterMode.ANY;
     private SearchActivity.FilterMode priceMode = SearchActivity.FilterMode.ANY;
 
+    /**
+     * Do not call this directly. Instead, get the Application-singleton
+     * instance from {@link App#getSearchTable()}.
+     */
     public SearchTable(Context context) {
         mHelper = new DatabaseHelper(context);
     }
@@ -78,34 +85,37 @@ public class SearchTable {
     }
 
     /**
-     * Returns a {@link Cursor} of the keys of {@link Memory}s which match
-     * the given query string, or null if the query is empty. The query is
-     * considered empty if the query string was empty, or if the cursor had
-     * no results.
-     * <p>
-     * TODO describe queryStr format
+     * Returns a {@link List} of the keys of {@link Memory}s which match
+     * the given query string, or null if the query string was empty.
      */
-    public Cursor query(String queryStr) {
-        String selection = FTS_VIRTUAL_TABLE + " MATCH ?"
-                + getRatingClause() + getPriceClause();
+    @NonNull
+    public List<String> query(String queryStr) {
+        List<String> keys = new ArrayList<>();
 
         String[] tokens = SearchUtils.getTokens(queryStr);
-        if (tokens.length == 0) return null;
+        if (tokens.length == 0) return keys;
         for (int i = 0; i < tokens.length; i++) tokens[i] += "*";
         String selArgs = TextUtils.join(" ", tokens);
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(FTS_VIRTUAL_TABLE);
+        String selection = COL_CONTENT + " MATCH ?"
+                + getRatingClause() + getPriceClause();
         Cursor cursor = builder.query(mHelper.getReadableDatabase(),
                 QUERY_COLS, selection, new String[]{selArgs},
                 null, null, null);
 
-        if (cursor == null) return null;
+        if (cursor == null) return keys;
         if (!cursor.moveToFirst()) {
             cursor.close();
-            return null;
+            return keys;
         }
-        return cursor;
+
+        int keyCol = cursor.getColumnIndex(COL_KEY);
+        do {
+            keys.add(cursor.getString(keyCol));
+        } while (cursor.moveToNext());
+        return keys;
     }
 
     private static class MemoriesListener implements ChildEventListener {
@@ -123,15 +133,19 @@ public class SearchTable {
             }
         }
 
-        // We don't bother with the rest of the events, since none of the
-        // data should change while the user is searching
-
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            Memory m = dataSnapshot.getValue(Memory.class);
+            if (mHelper.updateMemory(m) < 0) {
+                Log.e(TAG, "Failed to add memory " + m.getKey());
+            }
         }
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
+            if (mHelper.deleteMemory(dataSnapshot.getKey()) < 0) {
+                Log.e(TAG, "Failed to delete memory " + dataSnapshot.getKey());
+            }
         }
 
         @Override
@@ -152,9 +166,9 @@ public class SearchTable {
         private static final String FTS_TABLE_DROP =
                 "DROP TABLE IF EXISTS " + FTS_VIRTUAL_TABLE;
         private static final String FTS_TABLE_CREATE = String.format(
-                "CREATE VIRTUAL TABLE %s USING fts4 (%s, %s, %s, %s, %s, %s)",
+                "CREATE VIRTUAL TABLE %s USING fts4 (%s, %s, %s, %s, %s)",
                 FTS_VIRTUAL_TABLE,
-                COL_KEY, COL_TITLE, COL_LOC, COL_DESC, COL_RATING, COL_PRICE
+                COL_KEY, COL_CONTENT, COL_RATING, COL_PRICE, COL_TS
         );
 
         DatabaseHelper(Context context) {
@@ -171,19 +185,36 @@ public class SearchTable {
                     .addChildEventListener(new MemoriesListener(this));
         }
 
+        private static ContentValues memoryToVals(Memory memory) {
+            String memoryContent = memory.getTitle() + " "
+                    + memory.getLoc() + " " + memory.getDescription();
+
+            ContentValues vals = new ContentValues();
+            vals.put(COL_KEY, memory.getKey());
+            vals.put(COL_CONTENT, memoryContent);
+            vals.put(COL_RATING, memory.getRate());
+            vals.put(COL_PRICE, memory.getPrice());
+            vals.put(COL_TS, memory.getTsCreated());
+            return vals;
+        }
+
         /**
          * Adds the memory's relevant fields to the FTS table. Returns the
          * row ID of the inserted row, or -1 if an error occurred.
          */
-        long addMemory(Memory memory) {
-            ContentValues vals = new ContentValues();
-            vals.put(COL_KEY, memory.getKey());
-            vals.put(COL_TITLE, memory.getTitle());
-            vals.put(COL_LOC, memory.getLoc());
-            vals.put(COL_DESC, memory.getDescription());
-            vals.put(COL_RATING, memory.getRate());
-            vals.put(COL_PRICE, memory.getPrice());
-            return mDatabase.insert(FTS_VIRTUAL_TABLE, null, vals);
+        private long addMemory(Memory memory) {
+            return mDatabase.insert(FTS_VIRTUAL_TABLE, null,
+                    memoryToVals(memory));
+        }
+
+        private long updateMemory(Memory memory) {
+            return mDatabase.update(FTS_VIRTUAL_TABLE, memoryToVals(memory),
+                COL_KEY + " = ?", new String[]{memory.getKey()});
+        }
+
+        private long deleteMemory(String key) {
+            return mDatabase.delete(FTS_VIRTUAL_TABLE, COL_KEY + " = ?",
+                    new String[]{key});
         }
 
         @Override
