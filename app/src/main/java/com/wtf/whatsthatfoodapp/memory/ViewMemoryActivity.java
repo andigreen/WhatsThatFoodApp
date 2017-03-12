@@ -1,23 +1,41 @@
 package com.wtf.whatsthatfoodapp.memory;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 import com.wtf.whatsthatfoodapp.TextUtil;
 import com.wtf.whatsthatfoodapp.share.ShareActivity;
+
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+import static com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity.PREFS;
 
 public class ViewMemoryActivity extends AppCompatActivity {
 
@@ -43,6 +61,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_view_memory);
+
         dao = new MemoryDao(this);
         memory = getIntent().getExtras().getParcelable(MEMORY_KEY);
 
@@ -69,6 +88,18 @@ public class ViewMemoryActivity extends AppCompatActivity {
         desc = (TextView) findViewById(R.id.view_memory_desc);
         rating = (RatingBar) findViewById(R.id.view_memory_rating);
         price = (RatingBar) findViewById(R.id.view_memory_price);
+
+        if (memory.getSavedForNextTime()){
+            ImageButton removeAlarmBtn = (ImageButton) findViewById(R.id.remove_alarm_button);
+            ImageButton editAlarmBtn = (ImageButton) findViewById(R.id.edit_alarm_button);
+            removeAlarmBtn.setVisibility(View.VISIBLE);
+            editAlarmBtn.setVisibility(View.VISIBLE);
+
+            SharedPreferences sf = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+            TextView tv = (TextView) findViewById(R.id.time_tv);
+            tv.setText(tv.getText()+" "+sf.getString(String.valueOf(memory.getTsCreatedNeg()),""));
+            tv.setVisibility(View.VISIBLE);
+        }
 
         populateFields();
     }
@@ -171,5 +202,67 @@ public class ViewMemoryActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public void removeAlarm(View v){
+        memory.setSavedForNextTime(false);
+        dao.writeMemory(memory);
+        SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        int requestCode = sp.getInt((String.valueOf(memory.getTsCreated())),0);
+        if (requestCode == 0){
+            return;
+        }
+
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS,Context.MODE_PRIVATE).edit();
+        editor.putInt(CollageActivity.REMINDERS_COUNT,sp.getInt(CollageActivity.REMINDERS_COUNT,1)-1);
+        editor.apply();
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intentAlarm = new Intent(this, AlarmReceiver.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(EditMemoryActivity.MEMORY_KEY,memory);
+        intentAlarm.putExtra("bundle",bundle);
+        alarmManager.cancel(PendingIntent.getBroadcast(this,requestCode, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+        finish();
+    }
+    public void editAlarm(View v){
+
+        Calendar calendar = Calendar.getInstance();
+        new TimePickerDialog(
+                this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                calendar.set(Calendar.MINUTE,minute);
+                SimpleDateFormat sdf = new SimpleDateFormat("H:m");
+
+                SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+                int requestCode = sp.getInt((String.valueOf(memory.getTsCreated())),0);
+                if (requestCode == 0){
+                    return;
+                }
+
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                Intent intentAlarm = new Intent(getApplicationContext(), AlarmReceiver.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(EditMemoryActivity.MEMORY_KEY,memory);
+                intentAlarm.putExtra("bundle",bundle);
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),requestCode, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+                // Save the alarm request code so it can be accessed and cancelled after
+                SharedPreferences.Editor editor = getSharedPreferences(PREFS,Context.MODE_PRIVATE).edit();
+                editor.putInt(String.valueOf(memory.getTsCreated()),requestCode);
+                editor.putString(String.valueOf(memory.getTsCreatedNeg()),sdf.format(calendar.getTime()));
+                editor.apply();
+
+                finish();
+            }
+        },
+                calendar.get(Calendar.HOUR_OF_DAY) + 2,
+                calendar.get(Calendar.MINUTE),
+                DateFormat.is24HourFormat(this)).show();
+
     }
 }

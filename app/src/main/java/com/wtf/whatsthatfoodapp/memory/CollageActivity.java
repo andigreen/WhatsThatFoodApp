@@ -1,7 +1,10 @@
 package com.wtf.whatsthatfoodapp.memory;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.LayerDrawable;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Environment;
@@ -27,11 +30,16 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
+import com.wtf.whatsthatfoodapp.notification.Utils2;
+import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
 
 import java.io.File;
@@ -39,16 +47,21 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity.PREFS;
+
 public class CollageActivity extends BasicActivity {
 
     private static final String TAG = CollageActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_GALLERY = 4843;
     private static final int REQUEST_IMAGE_CAMERA = 9924;
+    public static final String REMINDERS_COUNT ="REMINDERS_COUNT";
 
     private Uri imageUri;
     private FloatingActionsMenu createMenu;
     private MemoryDao dao;
     private ActionBarDrawerToggle drawerToggle;
+
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +72,8 @@ public class CollageActivity extends BasicActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         setSupportActionBar(toolbar);
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_collage);
         drawerToggle = setupDrawerToggle();
@@ -201,8 +216,25 @@ public class CollageActivity extends BasicActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
+        this.menu = menu;
         inflater.inflate(R.menu.main_menu, menu);
+
+        // Update LayerDrawable's BadgeDrawable
+        MenuItem item = menu.findItem(R.id.notifications_icon);
+        LayerDrawable icon = (LayerDrawable) item.getIcon();
+        SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        Utils2.setBadgeCount(this, icon, sp.getInt(REMINDERS_COUNT,0));
         return true;
+    }
+    public void updateRemindersIcon(){
+        // Update LayerDrawable's BadgeDrawable
+        if (menu != null){
+            MenuItem item = menu.findItem(R.id.notifications_icon);
+            LayerDrawable icon = (LayerDrawable) item.getIcon();
+            SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+            Utils2.setBadgeCount(this, icon, sp.getInt(REMINDERS_COUNT,0));
+
+        }
     }
 
     @Override
@@ -225,6 +257,10 @@ public class CollageActivity extends BasicActivity {
         }
         else if(drawerToggle.onOptionsItemSelected(item)){
             return true;
+        } else if (item_id == R.id.notifications_icon){
+            Intent notificationsIntent = new Intent(this,ViewNotificationsActivity.class);
+            startActivity(notificationsIntent);
+            return true;
         }
         //default
         return super.onOptionsItemSelected(item);
@@ -241,6 +277,7 @@ public class CollageActivity extends BasicActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        updateRemindersIcon();
         createMenu.collapseImmediately();
     }
 

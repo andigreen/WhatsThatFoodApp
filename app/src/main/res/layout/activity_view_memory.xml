@@ -117,6 +117,26 @@
                     android:layout_height="wrap_content"
                     android:isIndicator="true"/>
             </LinearLayout>
+            <TextView
+                android:id="@+id/time_tv"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alarm Set To:"/>
+            <ImageButton
+                android:id="@+id/remove_alarm_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_alarm_off_black_24dp"
+                android:onClick="removeAlarm"/>
+            <ImageButton
+                android:id="@+id/edit_alarm_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_access_alarms_black_24dp"
+                android:visibility="gone"
+                android:onClick="editAlarm"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

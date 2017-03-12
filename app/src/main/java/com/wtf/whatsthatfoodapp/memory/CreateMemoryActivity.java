@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,12 +27,14 @@ import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CreateMemoryActivity extends BasicActivity
         implements TimePickerDialog.OnTimeSetListener{
 
     public static final String IMAGE_URI_KEY = "imageUri";
+    public static final String PREFS = "SHARED_PREFS";
 
     private static final String TAG = CreateMemoryActivity.class
             .getSimpleName();
@@ -41,8 +45,6 @@ public class CreateMemoryActivity extends BasicActivity
     private MemoryDao dao;
     private Memory memory;
     private MemoryFormFragment form;
-
-    public static final int REQUEST_CODE = 160;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,16 +188,29 @@ public class CreateMemoryActivity extends BasicActivity
         calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
         calendar.set(Calendar.MINUTE,minute);
 
+        int requestCode = (int)System.currentTimeMillis();
+
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intentAlarm = new Intent(this, AlarmReceiver.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable(EditMemoryActivity.MEMORY_KEY,memory);
         intentAlarm.putExtra("bundle",bundle);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,REQUEST_CODE, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,requestCode, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_LONG).show();
+
+        // Save the alarm request code so it can be accessed and cancelled after
+        SharedPreferences sp = getSharedPreferences(PREFS,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS,Context.MODE_PRIVATE).edit();
+        editor.putInt(String.valueOf(memory.getTsCreated()),requestCode);
+        SimpleDateFormat sf = new SimpleDateFormat("H:m");
+        editor.putString(String.valueOf(memory.getTsCreatedNeg()),sf.format(calendar.getTime()));
+        editor.putInt(CollageActivity.REMINDERS_COUNT,sp.getInt(CollageActivity.REMINDERS_COUNT,0)+1);
+        editor.apply();
+
         finish();
+
     }
 
 }

@@ -16,6 +16,7 @@ public class Memory implements Parcelable {
     private static final String TAG = Memory.class.getSimpleName();
 
     public static final String TS_KEY_NEWEST = "tsCreatedNeg";
+    public static final String SAVED_FNT = "savedForNextTime";
 
     private String key;
     @NonNull private String title;

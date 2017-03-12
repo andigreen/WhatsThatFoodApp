@@ -1,7 +1,9 @@
 package com.wtf.whatsthatfoodapp.memory;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,15 +17,18 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.Query;
 import com.google.firebase.storage.StorageReference;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
 
 public class MemoryAdapter extends FirebaseListAdapter<Memory> {
 
     private MemoryDao dao;
+    private Activity activity;
 
     public MemoryAdapter(Activity activity, Class<Memory> modelClass, Query
             query, MemoryDao dao) {
         super(activity, modelClass, R.layout.memory_list_item, query);
         this.dao = dao;
+        this.activity = activity;
     }
 
     @Override
@@ -65,5 +70,4 @@ public class MemoryAdapter extends FirebaseListAdapter<Memory> {
                 .centerCrop()
                 .into(viewImage);
     }
-
 }

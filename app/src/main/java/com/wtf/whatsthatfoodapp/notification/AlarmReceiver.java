@@ -8,16 +8,15 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.google.firebase.FirebaseApp;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.memory.EditMemoryActivity;
 import com.wtf.whatsthatfoodapp.memory.Memory;
+import com.wtf.whatsthatfoodapp.memory.MemoryDao;
 
 
 public class AlarmReceiver extends BroadcastReceiver {
     private Memory memory;
-    public static final int NOTIFICATION_ID = 176;
-    public static final int REQUEST_CODE = 262;
-    public static final String NOTIFICATION = "ALARM";
 
     @Override
     public void onReceive(Context context, Intent intent){
@@ -29,23 +28,24 @@ public class AlarmReceiver extends BroadcastReceiver {
                         .setContentText("Fill out some details...")
                         .setAutoCancel(true);
 
-        // Action when the notification is clicked
+        // Update the memory
+        FirebaseApp.initializeApp(context);
         memory = intent.getBundleExtra("bundle").getParcelable(EditMemoryActivity.MEMORY_KEY);
+        memory.setSavedForNextTime(false);
+        MemoryDao dao = new MemoryDao(context);
+        dao.writeMemory(memory);
 
+        // Action when the notification is clicked
         Intent resultIntent = new Intent(context,EditMemoryActivity.class);
         resultIntent.putExtra(EditMemoryActivity.MEMORY_KEY,memory);
-        resultIntent.putExtra(NOTIFICATION,true);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(EditMemoryActivity.class);
-
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(REQUEST_CODE,PendingIntent.FLAG_UPDATE_CURRENT);
+        int uniqueID = (int) System.currentTimeMillis();
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, uniqueID, resultIntent, 0);
         mBuilder.setContentIntent(resultPendingIntent);
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        mNotificationManager.notify(NOTIFICATION_ID,mBuilder.build());
+        int notificationID = (int) System.currentTimeMillis();
+        mNotificationManager.notify(notificationID,mBuilder.build());
 
     }
 }
