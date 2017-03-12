@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,7 +24,6 @@ public class CreateAccountActivity extends BasicActivity {
 
     public final String TAG = CreateAccountActivity.class.getSimpleName();
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private EditText emailField;
     private EditText passwordField;
     private EditText usernameField;
@@ -41,7 +41,6 @@ public class CreateAccountActivity extends BasicActivity {
         // [END initialize_auth]
 
         findViewById(R.id.signup_btn).setOnClickListener(this);
-        findViewById(R.id.login_btn).setOnClickListener(this);
     }
 
     private void createAccount(final String email, final String password) {
@@ -90,11 +89,19 @@ public class CreateAccountActivity extends BasicActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(CreateAccountActivity.this, "Signup successful. " +
-                                        "Verification email sent", Toast.LENGTH_SHORT).show();
+                                setResult(RESULT_OK);
+                                finish();
                             }
                         }
-                    });
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Don't show the user anything. This may indicate
+                    // that the email doesn't exist, which is exploitable
+                    // knowledge.
+                    Log.d(TAG, "Failed to send verification email");
+                }
+            });;
         }
     }
 
@@ -134,10 +141,12 @@ public class CreateAccountActivity extends BasicActivity {
         int i = v.getId();
         if (i == R.id.signup_btn) {
             createAccount(emailField.getText().toString(), passwordField.getText().toString());
-        }else if (i == R.id.login_btn) {
-            Intent toLoginPage = new Intent(CreateAccountActivity.this,MainActivity.class);
-            startActivity(toLoginPage);
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_CANCELED);
+        super.onBackPressed();
+    }
 }

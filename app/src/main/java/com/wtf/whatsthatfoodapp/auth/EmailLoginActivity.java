@@ -23,6 +23,7 @@ import com.wtf.whatsthatfoodapp.memory.CollageActivity;
 public class EmailLoginActivity extends BasicActivity {
     private final String TAG = EmailLoginActivity.class.getSimpleName();
     private static final int REQ_RECOVERY = 2899;
+    private static final int REQ_REGISTER = 9293;
 
     private EditText emailField;
     private EditText passwordField;
@@ -179,7 +180,7 @@ public class EmailLoginActivity extends BasicActivity {
         if (i == R.id.Register_btn) {
             Intent toSignupPage = new Intent(EmailLoginActivity.this,
                     CreateAccountActivity.class);
-            startActivity(toSignupPage);
+            startActivityForResult(toSignupPage, REQ_REGISTER);
         } else if (i == R.id.email_button) {
             EmailSignIn(emailField.getText().toString(),
                     passwordField.getText().toString());
@@ -201,6 +202,17 @@ public class EmailLoginActivity extends BasicActivity {
             Snackbar
                     .make(findViewById(android.R.id.content),
                             R.string.reset_password_sent,
+                            Snackbar.LENGTH_INDEFINITE)
+                    .setAction("DISMISS", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Implicit dimissal
+                        }
+                    }).show();
+        }else if(requestCode == REQ_REGISTER && resultCode == RESULT_OK) {
+            Snackbar
+                    .make(findViewById(android.R.id.content),
+                            R.string.email_verification_sent,
                             Snackbar.LENGTH_INDEFINITE)
                     .setAction("DISMISS", new View.OnClickListener() {
                         @Override
