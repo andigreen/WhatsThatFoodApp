@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.Manifest;
+import com.wtf.whatsthatfoodapp.PairsMemoryGameActivity;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
@@ -88,6 +90,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
     private EditText nameField;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private long easterEggTimer;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -356,6 +359,24 @@ public class CollageActivity extends BasicActivity implements NavigationView
         this.menu = menu;
         inflater.inflate(R.menu.main_menu, menu);
 
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                final View v = findViewById(R.id.collage_search);
+
+                if (v != null) {
+                    v.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            Intent gameIntent = new Intent(getApplicationContext(),PairsMemoryGameActivity.class);
+                            startActivity(gameIntent);
+                            return true;
+                        }
+                    });
+                }
+            }
+        });
+
         // Update LayerDrawable's BadgeDrawable
 //        MenuItem item = menu.findItem(R.id.nav_notifications);
 //        LayerDrawable icon = (LayerDrawable) item.getIcon();
@@ -478,9 +499,12 @@ public class CollageActivity extends BasicActivity implements NavigationView
                 Intent intent = new Intent(this, LogoutActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.nav_settings:
+                return true;
         }
 
         return false;
     }
+
 }
 

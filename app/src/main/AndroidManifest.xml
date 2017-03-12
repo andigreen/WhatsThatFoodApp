@@ -116,6 +116,7 @@
         <activity
             android:name=".share.ShareActivity"
             android:theme="@style/AppTheme.Transparent"/>
+        <activity android:name=".PairsMemoryGameActivity"/>
     </application>
 
 </manifest>
