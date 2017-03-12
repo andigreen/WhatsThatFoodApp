@@ -26,14 +26,7 @@
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:orientation="vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/settings_photo"
-            android:layout_width="@dimen/settings_photo_size"
-            android:layout_height="@dimen/settings_photo_size"
-            android:layout_gravity="center"
-            app:civ_border_color="#fff"
-            app:civ_border_width="2dp"
-            />
+
 
         <EditText
             android:id="@+id/settings_name"
@@ -45,11 +38,7 @@
             android:textAlignment="center"
             android:textSize="32sp"/>
 
-        <fragment
-            android:id="@+id/settings_fragment"
-            android:name="com.wtf.whatsthatfoodapp.auth.SettingsFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 </LinearLayout>

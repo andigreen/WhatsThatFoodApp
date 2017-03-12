@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,31 +22,41 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
+import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.notification.Utils2;
 import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
+import com.wtf.whatsthatfoodapp.user.UserSettingsDao;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity.PREFS;
 
@@ -55,13 +66,15 @@ public class CollageActivity extends BasicActivity {
     private static final int REQUEST_IMAGE_GALLERY = 4843;
     private static final int REQUEST_IMAGE_CAMERA = 9924;
     public static final String REMINDERS_COUNT ="REMINDERS_COUNT";
+    private static final int GALLERY = 1;
 
     private Uri imageUri;
     private FloatingActionsMenu createMenu;
     private MemoryDao dao;
     private ActionBarDrawerToggle drawerToggle;
-
+    private CircleImageView photo_button;
     private Menu menu;
+    private UserSettingsDao userDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +84,9 @@ public class CollageActivity extends BasicActivity {
         // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        NavigationView nav_view = (NavigationView) findViewById(R.id.nav_view);
+        View nav_header = nav_view.getHeaderView(0);
+
         setSupportActionBar(toolbar);
 
 
@@ -97,6 +113,32 @@ public class CollageActivity extends BasicActivity {
             app.setClient(mGoogleApiClient);
             app.getClient().connect();
         }
+
+        photo_button = (CircleImageView) (nav_header.findViewById(R.id.profile_photo));
+        photo_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,
+                        "Select Picture"),
+                        GALLERY);
+            }
+        });
+
+        userDao = new UserSettingsDao(AuthUtils.getUserUid());
+        userDao.getPhotoRef().getDownloadUrl().addOnSuccessListener(
+                new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(CollageActivity.this)
+                                .load(uri)
+                                .centerCrop()
+                                .dontAnimate() // required by CircleImageView
+                                .into(photo_button);
+                    }
+                });
 
         // Set up list and adapter
         dao = new MemoryDao(this);
@@ -208,6 +250,25 @@ public class CollageActivity extends BasicActivity {
             createMemory.putExtra(CreateMemoryActivity.IMAGE_URI_KEY,
                     data.getData());
             startActivity(createMemory);
+        }
+
+        // require photo from GALLERY
+        if (requestCode == GALLERY && resultCode != 0) {
+            Uri photoUri = data.getData();
+            Glide.with(this).load(photoUri).dontAnimate().into(photo_button);
+
+            UploadTask uploadTask = userDao.getPhotoRef().putFile(photoUri);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Failed to upload profile photo for user "
+                            + AuthUtils.getUserUid());
+                    Toast error = Toast.makeText(getApplicationContext(),
+                            "Photo upload failed. We'll try again later.",
+                            Toast.LENGTH_SHORT);
+                    error.show();
+                }
+            });
         }
 
         super.onActivityResult(requestCode, resultCode, data);

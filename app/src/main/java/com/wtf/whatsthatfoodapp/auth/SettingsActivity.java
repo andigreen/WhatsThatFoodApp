@@ -34,7 +34,7 @@ public class SettingsActivity extends BasicActivity {
 
     private UserSettingsDao dao;
 
-    private CircleImageView photo_button;
+
     private EditText nameField;
 
     private static final int GALLERY = 1;
@@ -51,32 +51,10 @@ public class SettingsActivity extends BasicActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        photo_button = (CircleImageView) findViewById(R.id.settings_photo);
-        photo_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,
-                        "Select Picture"),
-                        GALLERY);
-            }
-        });
+
         nameField = (EditText) findViewById(R.id.settings_name);
 
-        dao = new UserSettingsDao(AuthUtils.getUserUid());
-        dao.getPhotoRef().getDownloadUrl().addOnSuccessListener(
-                new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Glide.with(SettingsActivity.this)
-                                .load(uri)
-                                .centerCrop()
-                                .dontAnimate() // required by CircleImageView
-                                .into(photo_button);
-                    }
-                });
+
     }
 
     /**
@@ -137,23 +115,7 @@ public class SettingsActivity extends BasicActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent
             data) {
-        if (requestCode == GALLERY && resultCode != 0) {
-            Uri photoUri = data.getData();
-            Glide.with(this).load(photoUri).dontAnimate().into(photo_button);
 
-            UploadTask uploadTask = dao.getPhotoRef().putFile(photoUri);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Failed to upload profile photo for user "
-                            + AuthUtils.getUserUid());
-                    Toast error = Toast.makeText(getApplicationContext(),
-                            "Photo upload failed. We'll try again later.",
-                            Toast.LENGTH_SHORT);
-                    error.show();
-                }
-            });
-        }
     }
 
 }
