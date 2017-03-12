@@ -28,6 +28,11 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
@@ -158,9 +163,7 @@ public class MainActivity extends BasicActivity {
                                     task) {
 
                                 if (task.isSuccessful()) {
-                                    createUserInDB(AuthUtils.getUserEmail()
-                                            , AuthUtils.getUserDisplayName()
-                                            , AuthUtils.getUserUid());
+                                    createUserIfNotExist(AuthUtils.getUserUid());
                                     Log.d(TAG,
                                             "signInWithCredential:onComplete:" + task.isSuccessful());
                                     startActivity(displayHomePage);
@@ -214,7 +217,6 @@ public class MainActivity extends BasicActivity {
         }
     }
 
-
     @Override
     public void onBackPressed() {
         Intent homeIntent = new Intent(Intent.ACTION_MAIN);
@@ -251,9 +253,7 @@ public class MainActivity extends BasicActivity {
                                 if (task.isSuccessful()) {
                                     Log.d(TAG,
                                             "signInWithCredential:onComplete:" + task.isSuccessful());
-                                    createUserInDB(AuthUtils.getUserEmail()
-                                            , AuthUtils.getUserDisplayName()
-                                            , AuthUtils.getUserUid());
+                                    createUserIfNotExist(AuthUtils.getUserUid());
                                     startActivity(displayHomePage);
                                 }
                                 // If sign in fails, display a message to the
@@ -299,7 +299,6 @@ public class MainActivity extends BasicActivity {
     }
     // [END onactivityresult]
 
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
@@ -307,12 +306,36 @@ public class MainActivity extends BasicActivity {
                 Toast.LENGTH_SHORT).show();
     }
 
-
     public void createUserInDB(String email, String username, String Uid) {
         UserSettings user = new UserSettings(email
                 , username, Uid);
         UserSettingsDao dao = new UserSettingsDao(Uid);
         dao.writeUser(user);
     }
+
+    private void createUserIfNotExist(final String Uid){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ValueEventListener userInfoListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.child(Uid).exists()){
+                    createUserInDB(AuthUtils.getUserEmail(),
+                            AuthUtils.getUserDisplayName(),Uid);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadData:onCancelled", databaseError.toException());
+                // [START_EXCLUDE]
+                Toast.makeText(MainActivity.this, "Failed to load data.",
+                        Toast.LENGTH_SHORT).show();
+                // [END_EXCLUDE]
+            }
+        };
+        ref.addListenerForSingleValueEvent(userInfoListener);
+    }
+
 
 }
