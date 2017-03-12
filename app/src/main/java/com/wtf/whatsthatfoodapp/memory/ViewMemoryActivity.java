@@ -258,7 +258,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
-                SimpleDateFormat sdf = new SimpleDateFormat("H:m");
+                SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
 
                 SharedPreferences sp = getSharedPreferences(PREFS,
                         Context.MODE_PRIVATE);

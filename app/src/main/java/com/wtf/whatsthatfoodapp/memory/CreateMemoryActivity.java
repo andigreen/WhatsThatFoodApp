@@ -204,7 +204,7 @@ public class CreateMemoryActivity extends BasicActivity
         SharedPreferences sp = getSharedPreferences(PREFS,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = getSharedPreferences(PREFS,Context.MODE_PRIVATE).edit();
         editor.putInt(String.valueOf(memory.getTsCreated()),requestCode);
-        SimpleDateFormat sf = new SimpleDateFormat("H:m");
+        SimpleDateFormat sf = new SimpleDateFormat("H:mm");
         editor.putString(String.valueOf(memory.getTsCreatedNeg()),sf.format(calendar.getTime()));
         editor.putInt(CollageActivity.REMINDERS_COUNT,sp.getInt(CollageActivity.REMINDERS_COUNT,0)+1);
         editor.apply();
