@@ -4,8 +4,7 @@
 
     <group android:checkableBehavior="single">
 
-        <EditText
-            android:id="@+id/settings_name"
+        <EditText android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -13,10 +12,35 @@
             android:inputType="textPersonName"
             android:textAlignment="center"
             android:textSize="32sp"/>
+
+        <item android:title="User Name">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item android:id="@+id/user_name"
+                        android:title=""
+                        android:icon="@drawable/ic_person_white_24dp"
+                        app:showAsAction="always"/>
+
+                </group>
+            </menu>
+        </item>
+
+        <item android:title="Notification">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item android:id="@+id/notifications_icon"
+                        android:title="What's left last time"
+                        android:icon="@drawable/ic_notifications_white_24dp"
+                        app:showAsAction="always"/>
+
+                </group>
+            </menu>
+        </item>
+
+
         <item android:title="Setting">
             <menu>
                 <group android:checkableBehavior="single">
-
                     <item android:id="@+id/nav_switch"
                     app:actionLayout="@layout/nav_bar_switch"
                     android:title="" />

@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -49,6 +50,7 @@ import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.notification.Utils2;
 import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
+import com.wtf.whatsthatfoodapp.user.UserSettings;
 import com.wtf.whatsthatfoodapp.user.UserSettingsDao;
 
 import java.io.File;
@@ -75,6 +77,7 @@ public class CollageActivity extends BasicActivity {
     private CircleImageView photo_button;
     private Menu menu;
     private UserSettingsDao userDao;
+    private EditText nameField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +130,9 @@ public class CollageActivity extends BasicActivity {
             }
         });
 
+        Menu nav_menu = (Menu) nav_view.getMenu();
+        //nameField =  (EditText) nav_menu.(R.id.user_name);
+
         userDao = new UserSettingsDao(AuthUtils.getUserUid());
         userDao.getPhotoRef().getDownloadUrl().addOnSuccessListener(
                 new OnSuccessListener<Uri>() {
@@ -139,6 +145,8 @@ public class CollageActivity extends BasicActivity {
                                 .into(photo_button);
                     }
                 });
+
+
 
         // Set up list and adapter
         dao = new MemoryDao(this);
@@ -332,6 +340,28 @@ public class CollageActivity extends BasicActivity {
     @Override
     public void onStart() {
         super.onStart();
+        // Add value event listener to the post
+        // [START post_value_event_listener]
+        /*ValueEventListener userInfoListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserSettings userInfo = dataSnapshot.getValue(
+                        UserSettings.class);
+                nameField.setText(userInfo.getUsername());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadData:onCancelled", databaseError.toException());
+                // [START_EXCLUDE]
+                Toast.makeText(CollageActivity.this, "Failed to load data.",
+                        Toast.LENGTH_SHORT).show();
+                // [END_EXCLUDE]
+            }
+        };
+        userDao.getUserInfoRef().addListenerForSingleValueEvent(userInfoListener);*/
+        // [END post_value_event_listener]
     }
     // [END on_start_add_listener]
 
