@@ -55,7 +55,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".auth.EmailLoginActivity"
+        <activity
+            android:name=".auth.EmailLoginActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <!--
@@ -102,15 +103,19 @@
             android:name=".auth.PasswordRecoveryActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".memory.FullImageActivity" /> <!--android:theme="@style/Theme.AppCompat.Translucent"-->
+            android:name=".memory.FullImageActivity"
+            android:theme="@style/AppTheme.Translucent"/>
         <activity android:name=".notification.ViewNotificationsActivity"/>
-        <receiver  android:process=":remote" android:name=".notification.AlarmReceiver"/>
+
         <receiver
             android:name=".notification.AlarmReceiver"
             android:process=":remote"/>
-        <!--<activity
+        <receiver
+            android:name=".notification.AlarmReceiver"
+            android:process=":remote"/>
+        <activity
             android:name=".share.ShareActivity"
-            android:theme="@style/AppTheme.Transparent"/>-->
+            android:theme="@style/AppTheme.Transparent"/>
     </application>
 
 </manifest>
