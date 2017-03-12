@@ -2,12 +2,15 @@ package com.wtf.whatsthatfoodapp.memory;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -45,6 +48,7 @@ public class CollageActivity extends BasicActivity {
     private Uri imageUri;
     private FloatingActionsMenu createMenu;
     private MemoryDao dao;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +56,12 @@ public class CollageActivity extends BasicActivity {
         setContentView(R.layout.activity_collage);
 
         // Set up toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.collage_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_collage);
+        drawerToggle = setupDrawerToggle();
 
         if (BasicActivity.getProvider().equals("Google")) {
             App app = (App) getApplicationContext();
@@ -119,6 +127,20 @@ public class CollageActivity extends BasicActivity {
             }
         });
     }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
 
     /**
      * Opens the native camera UI to get an image.
@@ -186,21 +208,27 @@ public class CollageActivity extends BasicActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.settings:
-                viewSettings();
-                return true;
-            case R.id.logout:
-                Intent intent = new Intent(this, LogoutActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.collage_search:
-                Intent searchIntent = new Intent(this, SearchActivity.class);
-                startActivity(searchIntent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int item_id = item.getItemId();
+        if (item_id == R.id.settings ){
+            viewSettings();
+            return true;
         }
+        else if (item_id == R.id.logout){
+            Intent intent = new Intent(this, LogoutActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        else if (item_id == R.id.collage_search){
+            Intent searchIntent = new Intent(this, SearchActivity.class);
+            startActivity(searchIntent);
+            return true;
+        }
+        else if(drawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+        //default
+        return super.onOptionsItemSelected(item);
+
     }
 
     // [START on_start_add_listener]
@@ -235,6 +263,13 @@ public class CollageActivity extends BasicActivity {
                 Toast.LENGTH_SHORT).show();
     }
 
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
+        // and will not render the hamburger icon without it.
+        return new ActionBarDrawerToggle(this,(DrawerLayout)findViewById(R.id.activity_collage),
+                (Toolbar) findViewById(R.id.toolbar), R.string.drawer_open,
+                 R.string.drawer_close);
+    }
 
 }
 
