@@ -297,9 +297,7 @@ public class MainActivity extends BasicActivity {
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                // Google Sign In failed, update UI appropriately
-                Toast.makeText(MainActivity.this, "Google Sign In failed.",
-                        Toast.LENGTH_SHORT).show();
+               Log.d(TAG,"Google Sign In cancelled");
             }
         } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
