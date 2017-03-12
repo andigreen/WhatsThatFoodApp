@@ -30,36 +30,6 @@
         />
 
 
-    <!--Login Button-->
-    <Button
-        android:id="@+id/signup_btn"
-        android:background="@drawable/login_button"
-        android:layout_width="240dp"
-        android:layout_height="50dp"
-        android:text="Create an Account"
-        android:textColor="#ffffff"
-        android:textSize="18dp"
-        android:textAllCaps="false"
-        android:layout_below="@+id/logo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="43dp"
-        />
-
-    <!--"or" text-->
-    <TextView
-        android:id="@+id/or_text"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:gravity="center"
-        android:layout_below="@+id/signup_btn"
-        android:layout_centerHorizontal="true"
-        android:textColor="#eeeeee"
-        android:textSize="16dp"
-        android:text="or"
-        android:textStyle="bold"
-        />
-
-
 
 
     <!--Email Icon-->
@@ -84,7 +54,8 @@
         android:textColor="#ffffff"
         android:textSize="18dp"
         android:textAllCaps="false"
-        android:layout_below="@+id/or_text"
+        android:layout_below="@+id/logo"
+        android:layout_marginTop="60dp"
         android:layout_centerHorizontal="true"
         />
 
@@ -117,6 +88,35 @@
         android:layout_alignRight="@+id/email_button"
         />
 
+    <!--"or" text-->
+    <TextView
+        android:id="@+id/or_text"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/signup_btn"
+        android:layout_marginBottom="14dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="#eeeeee"
+        android:textSize="10dp"
+        android:text="Need an account?"
+        android:textStyle="bold"
+        />
+
+    <!--Create Account Button-->
+    <Button
+        android:id="@+id/signup_btn"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Sign up"
+        android:textColor="#ffffff"
+        android:textSize="16sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_centerHorizontal="true"
+        />
+
 
     <!--Google Icon-->
     <ImageView
@@ -145,6 +145,8 @@
         android:layout_alignRight="@+id/btn_fb_login"
         android:layout_alignLeft="@+id/btn_fb_login"
         />
+
+
 
 
     <com.facebook.login.widget.LoginButton
