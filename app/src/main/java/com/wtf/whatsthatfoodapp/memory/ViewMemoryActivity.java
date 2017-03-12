@@ -134,34 +134,30 @@ public class ViewMemoryActivity extends AppCompatActivity {
         loc.setText(memory.getLoc());
 
         String memoryDesc = memory.getDescription();
-        if (memoryDesc == null || memoryDesc.isEmpty()) {
-            findViewById(R.id.view_memory_desc_section)
-                    .setVisibility(View.GONE);
-        } else {
-            findViewById(R.id.view_memory_desc_section)
-                    .setVisibility(View.VISIBLE);
-            desc.setText(memoryDesc);
-            TextUtil.linkifyTags(desc);
-        }
+        setDescVisible(!(memoryDesc == null || memoryDesc.isEmpty()));
+        desc.setText(memoryDesc);
+        TextUtil.linkifyTags(desc);
 
         int ratingVal = memory.getRate();
         int priceVal = memory.getPrice();
-        if (ratingVal == 0) {
-            findViewById(R.id.view_memory_rating).setVisibility(View.GONE);
-        } else {
-            findViewById(R.id.view_memory_rating).setVisibility(View.VISIBLE);
-            rating.setRating(ratingVal);
-        }
-        if (priceVal == 0) {
-            findViewById(R.id.view_memory_price).setVisibility(View.GONE);
-        } else {
-            findViewById(R.id.view_memory_price).setVisibility(View.VISIBLE);
-            price.setRating(priceVal);
-        }
-        if (ratingVal == 0 && priceVal == 0) {
-            findViewById(R.id.view_memory_rating_section)
-                    .setVisibility(View.GONE);
-        }
+        setRatingsVisible(ratingVal != 0, priceVal != 0);
+        rating.setRating(ratingVal);
+        price.setRating(priceVal);
+    }
+
+    private void setDescVisible(boolean visible) {
+        int vis = visible ? View.VISIBLE : View.GONE;
+        findViewById(R.id.view_memory_desc_div).setVisibility(vis);
+        findViewById(R.id.view_memory_desc).setVisibility(vis);
+    }
+
+    private void setRatingsVisible(boolean rating, boolean price) {
+        findViewById(R.id.view_memory_rating).setVisibility(
+                rating ? View.VISIBLE : View.GONE);
+        findViewById(R.id.view_memory_price).setVisibility(
+                price ? View.VISIBLE : View.GONE);
+        findViewById(R.id.view_memory_rating_div).setVisibility(
+                (rating && price) ? View.VISIBLE : View.GONE);
     }
 
     @Override
