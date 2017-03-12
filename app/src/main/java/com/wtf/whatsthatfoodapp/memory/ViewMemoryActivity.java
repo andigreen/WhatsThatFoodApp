@@ -103,11 +103,6 @@ public class ViewMemoryActivity extends AppCompatActivity {
         price = (RatingBar) findViewById(R.id.view_memory_price);
 
         if (memory.getSavedForNextTime()) {
-            ImageButton removeAlarmBtn = (ImageButton) findViewById(R.id.remove_alarm_button);
-            ImageButton editAlarmBtn = (ImageButton) findViewById(R.id.edit_alarm_button);
-            removeAlarmBtn.setVisibility(View.VISIBLE);
-            editAlarmBtn.setVisibility(View.VISIBLE);
-
             SharedPreferences sf = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
             TextView tv = (TextView) findViewById(R.id.time_tv);
             tv.setText(tv.getText() + " " + sf.getString(String.valueOf(memory.getTsCreatedNeg()), ""));
@@ -171,7 +166,12 @@ public class ViewMemoryActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_view_memory, menu);
+        // Load Alternative Menu (with alarm buttons)
+        if (memory.getSavedForNextTime()){
+            getMenuInflater().inflate(R.menu.menu_view_memory_sfnt, menu);
+        }else {
+            getMenuInflater().inflate(R.menu.menu_view_memory, menu);
+        }
         return true;
     }
 
@@ -180,6 +180,12 @@ public class ViewMemoryActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                break;
+            case R.id.remove_alarm:
+                removeAlarm();
+                break;
+            case R.id.edit_alarm:
+                editAlarm();
                 break;
             case R.id.view_memory_edit:
                 Intent editIntent = new Intent(this, EditMemoryActivity.class);
@@ -215,7 +221,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void removeAlarm(View v) {
+    public void removeAlarm() {
         memory.setSavedForNextTime(false);
         dao.writeMemory(memory);
         SharedPreferences sp = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
@@ -237,7 +243,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
         finish();
     }
 
-    public void editAlarm(View v) {
+    public void editAlarm() {
 
         Calendar calendar = Calendar.getInstance();
         new TimePickerDialog(

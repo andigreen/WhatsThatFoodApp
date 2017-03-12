@@ -127,22 +127,6 @@
                 android:layout_height="wrap_content"
                 android:text="Alarm Set To:"
                 android:visibility="gone"/>
-
-            <ImageButton
-                android:id="@+id/remove_alarm_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="removeAlarm"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_alarm_off_black_24dp"/>
-
-            <ImageButton
-                android:id="@+id/edit_alarm_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="editAlarm"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_access_alarms_black_24dp"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/remove_alarm"
+        android:title="Remove Alarm"
+        android:icon="@drawable/ic_alarm_off_white_24dp"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/edit_alarm"
+        android:title="Edit Alarm"
+        android:icon="@drawable/ic_access_alarms_white_24dp"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/view_memory_edit"
+        android:icon="@drawable/ic_edit_white_24dp"
+        android:title="@string/view_memory_edit"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/view_memory_delete"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:title="@string/view_memory_delete"
+        app:showAsAction="ifRoom"/>
+</menu>
