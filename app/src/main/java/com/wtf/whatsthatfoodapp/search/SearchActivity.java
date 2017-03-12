@@ -44,8 +44,10 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.storage.StorageReference;
+import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.TextUtil;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.memory.Memory;
 import com.wtf.whatsthatfoodapp.memory.MemoryDao;
@@ -169,14 +171,14 @@ public class SearchActivity extends BasicActivity
                     }
                 });
 
-        // Set initial query if available
-        query = getIntent().getStringExtra(QUERY_KEY);
-        if (query == null || query.isEmpty()) {
-            query = "";
-            searchView.setSearchFocused(true);
-        } else {
+        Uri data = getIntent().getData();
+        if (data != null) {
+            query = TextUtil.removeScheme(data);
             searchView.setSearchText(query);
             requery();
+        } else {
+            query = "";
+            searchView.setSearchFocused(true);
         }
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.

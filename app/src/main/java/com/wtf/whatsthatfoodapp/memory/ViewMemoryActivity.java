@@ -16,6 +16,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.TextUtil;
 import com.wtf.whatsthatfoodapp.share.ShareActivity;
 
 public class ViewMemoryActivity extends AppCompatActivity {
@@ -99,6 +100,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
                     .setVisibility(View.GONE);
         } else {
             desc.setText(memoryDesc);
+            TextUtil.linkifyTags(desc);
         }
 
         int ratingVal = memory.getRate();
