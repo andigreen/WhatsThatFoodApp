@@ -12,7 +12,7 @@
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:src="@drawable/login_background"
+        android:src="@drawable/email_login_background"
         android:scaleType="centerCrop"
         />
 
