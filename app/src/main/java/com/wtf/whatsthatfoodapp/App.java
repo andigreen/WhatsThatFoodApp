@@ -3,16 +3,16 @@ package com.wtf.whatsthatfoodapp;
 import android.app.Application;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.wtf.whatsthatfoodapp.search.SearchTable;
 
-
-/**
- * Created by peiranli on 2/11/17.
- */
 
 public class App extends Application {
-    private GoogleApiClient mGoogleApiClient;
 
+    private GoogleApiClient mGoogleApiClient;
     private GoogleSignInOptions gso;
+
+    private SearchTable searchTable;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -34,5 +34,12 @@ public class App extends Application {
         return this.mGoogleApiClient;
     }
 
+    /**
+     * Returns an Application-singleton instance of {@link SearchTable}.
+     */
+    public SearchTable getSearchTable() {
+        if (searchTable == null) searchTable = new SearchTable(this);
+        return searchTable;
+    }
 
 }
