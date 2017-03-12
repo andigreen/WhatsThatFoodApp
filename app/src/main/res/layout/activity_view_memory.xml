@@ -70,7 +70,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
                     android:maxLines="2"
-                    android:textAppearance="@style/TextAppearance.Detail"/>
+                    android:textAppearance="@style/TextAppearance.Detail"
+                    android:onClick="showInMap"/>
             </LinearLayout>
 
             <LinearLayout
