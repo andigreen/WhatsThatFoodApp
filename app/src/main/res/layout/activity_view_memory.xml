@@ -88,6 +88,7 @@
                     android:id="@+id/view_memory_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColorLink="@color/colorPrimary"
                     android:textAppearance="@style/TextAppearance.Detail"/>
             </LinearLayout>
 
