@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -37,9 +36,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
@@ -50,7 +48,6 @@ import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.notification.Utils2;
 import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
-import com.wtf.whatsthatfoodapp.user.UserSettings;
 import com.wtf.whatsthatfoodapp.user.UserSettingsDao;
 
 import java.io.File;
@@ -78,6 +75,8 @@ public class CollageActivity extends BasicActivity {
     private Menu menu;
     private UserSettingsDao userDao;
     private EditText nameField;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +91,8 @@ public class CollageActivity extends BasicActivity {
 
         setSupportActionBar(toolbar);
 
-
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_collage);
         drawerToggle = setupDrawerToggle();
@@ -144,7 +144,16 @@ public class CollageActivity extends BasicActivity {
                                 .dontAnimate() // required by CircleImageView
                                 .into(photo_button);
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Glide.with(CollageActivity.this)
+                        .load(user.getPhotoUrl())
+                        .centerCrop()
+                        .dontAnimate() // required by CircleImageView
+                        .into(photo_button);
+            }
+        });
 
 
 
