@@ -35,8 +35,8 @@ public class Memory implements Parcelable {
     private int price;
 
     public Memory() {
-        title = loc = "";
-        tsCreated = tsModified = 0L;
+        title = loc = description = "";
+        tsCreated = tsCreatedNeg = tsModified = 0L;
         freq = 0;
         tags = new ArrayList<>();
     }
