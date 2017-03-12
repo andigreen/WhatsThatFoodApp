@@ -130,6 +130,8 @@ public class ViewMemoryActivity extends AppCompatActivity {
             findViewById(R.id.view_memory_desc_section)
                     .setVisibility(View.GONE);
         } else {
+            findViewById(R.id.view_memory_desc_section)
+                    .setVisibility(View.VISIBLE);
             desc.setText(memoryDesc);
             TextUtil.linkifyTags(desc);
         }
@@ -139,11 +141,13 @@ public class ViewMemoryActivity extends AppCompatActivity {
         if (ratingVal == 0) {
             findViewById(R.id.view_memory_rating).setVisibility(View.GONE);
         } else {
+            findViewById(R.id.view_memory_rating).setVisibility(View.VISIBLE);
             rating.setRating(ratingVal);
         }
         if (priceVal == 0) {
             findViewById(R.id.view_memory_price).setVisibility(View.GONE);
         } else {
+            findViewById(R.id.view_memory_price).setVisibility(View.VISIBLE);
             price.setRating(priceVal);
         }
         if (ratingVal == 0 && priceVal == 0) {
