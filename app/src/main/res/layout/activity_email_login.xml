@@ -16,33 +16,37 @@
         android:scaleType="centerCrop"
         />
 
-    <!--Logo-->
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
+    <!--Title text-->
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:gravity="center"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="80dp"
-        android:src="@drawable/stroked_logo"
+        android:layout_marginTop="60dp"
+        android:textColor="#ffffff"
+        android:text="Login with Email"
+        android:textSize="30dp"
+        android:textStyle="bold"
         />
 
     <!--Email Field-->
     <EditText
         android:id="@+id/emailfield"
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:hint="Email"
         android:backgroundTint="#ffffff"
         android:textColorHint="#eeeeee"
         android:textColor="#ffffff"
-        android:layout_marginTop="23dp"
+        android:layout_marginTop="30dp"
         android:fontFamily="sans-serif"
+        android:layout_centerHorizontal="true"
         android:textColorHighlight="@color/colorPrimary"
-        android:layout_alignLeft="@+id/logo"
-        android:layout_alignRight="@+id/logo"
-        android:layout_below="@+id/logo"
+        android:ems="12"
+        android:layout_below="@+id/title_text"
         />
 
     <!--Password Field-->
@@ -58,8 +62,8 @@
         android:layout_marginTop="10dp"
         android:fontFamily="sans-serif"
         android:textColorHighlight="@color/colorPrimary"
-        android:layout_alignLeft="@+id/logo"
-        android:layout_alignRight="@+id/logo"
+        android:layout_alignLeft="@+id/emailfield"
+        android:layout_alignRight="@+id/emailfield"
         android:layout_below="@+id/emailfield"
         />
 

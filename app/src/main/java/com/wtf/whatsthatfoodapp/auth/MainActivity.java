@@ -45,6 +45,7 @@ import java.util.Arrays;
 public class MainActivity extends BasicActivity {
     private final String TAG = MainActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 9001;
+    private static final int REQ_REGISTER = 9293;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -60,9 +61,11 @@ public class MainActivity extends BasicActivity {
         Button email_btn = (Button) findViewById(R.id.email_button);
         Button facebook_login_btn = (Button) findViewById(R.id.btn_fb_login);
         Button google_login_btn = (Button) findViewById(R.id.btn_google_login);
+        Button register_btn = (Button) findViewById(R.id.signup_btn);
 
         email_btn.setOnClickListener(this);
         google_login_btn.setOnClickListener(this);
+        register_btn.setOnClickListener(this);
 
         App app = (App) getApplicationContext();
         // Configure Google Sign In
@@ -214,6 +217,10 @@ public class MainActivity extends BasicActivity {
             startActivity(toEmailPage);
         } else if (i == R.id.btn_google_login) {
             GoogleSignIn();
+        } else if (i == R.id.signup_btn) {
+            Intent toSignupPage = new Intent(MainActivity.this,
+                    CreateAccountActivity.class);
+            startActivityForResult(toSignupPage, REQ_REGISTER);
         }
     }
 
