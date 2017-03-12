@@ -21,7 +21,7 @@ import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.user.UserSettings;
-import com.wtf.whatsthatfoodapp.user.UserSettingsDAO;
+import com.wtf.whatsthatfoodapp.user.UserSettingsDao;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class SettingsActivity extends BasicActivity {
 
     private final String TAG = SettingsActivity.class.getSimpleName();
 
-    private UserSettingsDAO dao;
+    private UserSettingsDao dao;
 
     private CircleImageView photo_button;
     private EditText nameField;
@@ -65,7 +65,7 @@ public class SettingsActivity extends BasicActivity {
         });
         nameField = (EditText) findViewById(R.id.settings_name);
 
-        dao = new UserSettingsDAO(AuthUtils.getUserUid());
+        dao = new UserSettingsDao(AuthUtils.getUserUid());
         dao.getPhotoRef().getDownloadUrl().addOnSuccessListener(
                 new OnSuccessListener<Uri>() {
                     @Override

@@ -12,7 +12,7 @@ import com.wtf.whatsthatfoodapp.user.UserSettings;
  * Created by peiranli on 2/20/17.
  */
 
-public class UserSettingsDAO {
+public class UserSettingsDao {
 
     private static final String TAG = UserSettings.class.getSimpleName();
     private static final String INFO_PATH = "users";
@@ -20,7 +20,7 @@ public class UserSettingsDAO {
 
     private String userId;
 
-    public UserSettingsDAO(@NonNull String userId) {
+    public UserSettingsDao(@NonNull String userId) {
         this.userId = userId;
     }
 

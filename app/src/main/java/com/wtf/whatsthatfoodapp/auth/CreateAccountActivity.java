@@ -1,6 +1,5 @@
 package com.wtf.whatsthatfoodapp.auth;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.wtf.whatsthatfoodapp.BasicActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.user.UserSettings;
-import com.wtf.whatsthatfoodapp.user.UserSettingsDAO;
+import com.wtf.whatsthatfoodapp.user.UserSettingsDao;
 
 public class CreateAccountActivity extends BasicActivity {
 
@@ -132,7 +131,7 @@ public class CreateAccountActivity extends BasicActivity {
     public void createUserInDB(String email, String username, String Uid){
         UserSettings user = new UserSettings(email
                 ,username,Uid);
-        UserSettingsDAO dao = new UserSettingsDAO(Uid);
+        UserSettingsDao dao = new UserSettingsDao(Uid);
         dao.writeUser(user);
     }
 
