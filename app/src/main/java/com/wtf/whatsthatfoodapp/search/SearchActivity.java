@@ -171,7 +171,6 @@ public class SearchActivity extends BasicActivity
         if (data != null) {
             query = TextUtil.removeScheme(data);
             searchView.setSearchText(query);
-            requery();
         } else {
             query = "";
             searchView.setSearchFocused(true);
