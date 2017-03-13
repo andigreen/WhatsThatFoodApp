@@ -499,8 +499,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
     // Update name when the system back button is pressed
     @Override
     public void onBackPressed() {
-        updateName();
-        super.onBackPressed();
     }
 }
 
