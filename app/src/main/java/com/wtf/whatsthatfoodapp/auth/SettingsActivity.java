@@ -3,7 +3,9 @@ package com.wtf.whatsthatfoodapp.auth;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
+import android.support.v7.preference.Preference;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -28,94 +30,19 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SettingsActivity extends BasicActivity {
-
-    private final String TAG = SettingsActivity.class.getSimpleName();
-
-    private UserSettingsDao dao;
-
-
-    private EditText nameField;
-
-    private static final int GALLERY = 1;
+public class SettingsActivity extends PreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        // Set up toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-
-        nameField = (EditText) findViewById(R.id.settings_name);
-
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
 
     }
 
-    /**
-     * Writes the value of nameField to the DB using the dao.
-     */
-    private void updateName() {
-        Map<String, Object> newName = new HashMap<>();
-        newName.put("username", nameField.getText().toString());
-        dao.getUserInfoRef().updateChildren(newName);
-    }
-
-    // Update name when the toolbar back button is pressed
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            updateName();
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    // Update name when the system back button is pressed
-    @Override
-    public void onBackPressed() {
-        updateName();
-        super.onBackPressed();
-    }
-
-    // [START on_start_add_listener]
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Add value event listener to the post
-        // [START post_value_event_listener]
-        ValueEventListener userInfoListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                UserSettings userInfo = dataSnapshot.getValue(
-                        UserSettings.class);
-                nameField.setText(userInfo.getUsername());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadData:onCancelled", databaseError.toException());
-                // [START_EXCLUDE]
-                Toast.makeText(SettingsActivity.this, "Failed to load data.",
-                        Toast.LENGTH_SHORT).show();
-                // [END_EXCLUDE]
-            }
-        };
-        dao.getUserInfoRef().addListenerForSingleValueEvent(userInfoListener);
-        // [END post_value_event_listener]
-    }
-    // [END on_start_add_listener]
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent
-            data) {
-
+    protected boolean isValidFragment(String fragmentName)
+    {
+        return SettingsFragment.class.getName().equals(fragmentName);
     }
 
 }

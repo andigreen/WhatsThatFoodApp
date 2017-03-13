@@ -63,6 +63,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -478,9 +480,27 @@ public class CollageActivity extends BasicActivity implements NavigationView
                 Intent intent = new Intent(this, LogoutActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.nav_settings:
+                viewSettings();
         }
 
         return false;
+    }
+
+    /**
+     * Writes the value of nameField to the DB using the dao.
+     */
+    private void updateName() {
+        Map<String, Object> newName = new HashMap<>();
+        newName.put("username", nameField.getText().toString());
+        userDao.getUserInfoRef().updateChildren(newName);
+    }
+
+    // Update name when the system back button is pressed
+    @Override
+    public void onBackPressed() {
+        updateName();
+        super.onBackPressed();
     }
 }
 
