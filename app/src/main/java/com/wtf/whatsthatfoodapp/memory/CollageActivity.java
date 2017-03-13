@@ -15,7 +15,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -49,12 +48,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
-import com.wtf.whatsthatfoodapp.Manifest;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
-import com.wtf.whatsthatfoodapp.notification.Utils2;
 import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
 import com.wtf.whatsthatfoodapp.user.UserSettings;
@@ -69,7 +66,6 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity.PREFS;
 
 public class CollageActivity extends BasicActivity implements NavigationView
         .OnNavigationItemSelectedListener {
@@ -81,7 +77,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
     private static final int GALLERY = 1;
     public static final int REQUEST_PERMISSION = 123;
 
-    boolean doubleBackToExitPressedOnce = false;
     private Uri imageUri;
     private FloatingActionsMenu createMenu;
     private MemoryDao dao;
@@ -92,6 +87,8 @@ public class CollageActivity extends BasicActivity implements NavigationView
     private EditText nameField;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+    private long mBackPressed;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -498,24 +495,17 @@ public class CollageActivity extends BasicActivity implements NavigationView
         userDao.getUserInfoRef().updateChildren(newName);
     }
 
-    // Update name when the system back button is pressed
     @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
+    public void onBackPressed()
+    {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
+        {
+            Intent intent = new Intent(this, LogoutActivity.class);
+            startActivity(intent);
         }
+        else { Toast.makeText(getBaseContext(), "Tap back button twice in order to exit", Toast.LENGTH_SHORT).show(); }
 
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce=false;
-            }
-        }, 2000);
+        mBackPressed = System.currentTimeMillis();
     }
 }
 
