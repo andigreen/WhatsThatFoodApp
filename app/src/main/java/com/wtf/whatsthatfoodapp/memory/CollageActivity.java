@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
@@ -80,6 +81,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
     private static final int GALLERY = 1;
     public static final int REQUEST_PERMISSION = 123;
 
+    boolean doubleBackToExitPressedOnce = false;
     private Uri imageUri;
     private FloatingActionsMenu createMenu;
     private MemoryDao dao;
@@ -499,6 +501,21 @@ public class CollageActivity extends BasicActivity implements NavigationView
     // Update name when the system back button is pressed
     @Override
     public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }
 
