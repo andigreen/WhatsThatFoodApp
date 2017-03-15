@@ -273,4 +273,7 @@ public class MemoryFormFragment extends Fragment {
                 false);
     }
 
+    public void setLocation(CharSequence location){
+        locText.setText(location);
+    }
 }
