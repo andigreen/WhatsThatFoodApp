@@ -102,15 +102,6 @@ public class ViewMemoryActivity extends AppCompatActivity {
         rating = (RatingBar) findViewById(R.id.view_memory_rating);
         price = (RatingBar) findViewById(R.id.view_memory_price);
 
-        if (memory.getSavedForNextTime()) {
-            SharedPreferences sf = getSharedPreferences(PREFS,
-                    Context.MODE_PRIVATE);
-            TextView tv = (TextView) findViewById(R.id.time_tv);
-            tv.setText(tv.getText() + " " + sf.getString(
-                    String.valueOf(memory.getTsCreatedNeg()), ""));
-            tv.setVisibility(View.VISIBLE);
-        }
-
         populateFields();
     }
 
@@ -145,6 +136,17 @@ public class ViewMemoryActivity extends AppCompatActivity {
         setRatingsVisible(ratingVal != 0, priceVal != 0);
         rating.setRating(ratingVal);
         price.setRating(priceVal);
+
+        setAlarmVisible(memory.getSavedForNextTime());
+
+    }
+    private void setAlarmVisible(boolean visible){
+        if (visible){
+            SharedPreferences sf = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+            TextView tv = (TextView) findViewById(R.id.time_tv);
+            tv.setText(tv.getText() + " " + sf.getString(String.valueOf(memory.getTsCreatedNeg()), ""));
+            tv.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setDescVisible(boolean visible) {
@@ -181,6 +183,7 @@ public class ViewMemoryActivity extends AppCompatActivity {
                 break;
             case R.id.remove_alarm:
                 removeAlarm();
+                finish();
                 break;
             case R.id.edit_alarm:
                 editAlarm();
@@ -200,6 +203,9 @@ public class ViewMemoryActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int
                                     which) {
+                                if (memory.getSavedForNextTime()){
+                                    removeAlarm();
+                                }
                                 dao.deleteMemory(memory);
                                 finish();
                             }
@@ -244,7 +250,6 @@ public class ViewMemoryActivity extends AppCompatActivity {
         alarmManager.cancel(
                 PendingIntent.getBroadcast(this, requestCode, intentAlarm,
                         PendingIntent.FLAG_UPDATE_CURRENT));
-        finish();
     }
 
     public void editAlarm() {

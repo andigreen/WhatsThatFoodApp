@@ -48,6 +48,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
+import com.wtf.whatsthatfoodapp.Manifest;
+import com.wtf.whatsthatfoodapp.PairsMemoryGameActivity;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
@@ -66,6 +68,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity.PREFS;
 
 public class CollageActivity extends BasicActivity implements NavigationView
         .OnNavigationItemSelectedListener {

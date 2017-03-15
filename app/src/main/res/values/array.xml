@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="images">
+        <item>@drawable/apple</item>
+        <item>@drawable/carrot</item>
+        <item>@drawable/doughnut</item>
+        <item>@drawable/friedegg</item>
+        <item>@drawable/watermelon</item>
+        <item>@drawable/cupcake</item>
+        <item>@drawable/orange</item>
+    </string-array>
+</resources>

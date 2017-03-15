@@ -32,7 +32,6 @@
                 android:layout_alignParentRight="true"/>
         </LinearLayout>
 
-
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/collage_create_menu"
             android:layout_width="wrap_content"
