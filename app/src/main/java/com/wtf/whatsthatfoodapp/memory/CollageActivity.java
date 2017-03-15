@@ -359,24 +359,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
         this.menu = menu;
         inflater.inflate(R.menu.main_menu, menu);
 
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                final View v = findViewById(R.id.collage_search);
-
-                if (v != null) {
-                    v.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View view) {
-                            Intent gameIntent = new Intent(getApplicationContext(),PairsMemoryGameActivity.class);
-                            startActivity(gameIntent);
-                            return true;
-                        }
-                    });
-                }
-            }
-        });
-
         // Update LayerDrawable's BadgeDrawable
 //        MenuItem item = menu.findItem(R.id.nav_notifications);
 //        LayerDrawable icon = (LayerDrawable) item.getIcon();
