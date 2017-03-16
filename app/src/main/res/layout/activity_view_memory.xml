@@ -31,6 +31,12 @@
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="125dp"
+                android:background="@drawable/memory_list_item_gradient"
+                android:layout_gravity="center_horizontal|bottom"/>
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/view_memory_toolbar"
                 android:layout_width="match_parent"

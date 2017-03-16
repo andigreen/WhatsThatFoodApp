@@ -29,9 +29,8 @@
     </style>
 
     <style name="TextAppearance.MemoryTitle"
-        parent="TextAppearance.AppCompat.Title">
+        parent="TextAppearance.AppCompat.Headline">
         <item name="android:textSize">28dp</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextAppearance.Detail"
