@@ -24,7 +24,7 @@
         android:layout_width="300dp"
         android:layout_height="90dp"
         android:src="@drawable/stroked_logo"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:layout_below="@+id/fb_btn"
         android:layout_centerHorizontal="true"
         />
