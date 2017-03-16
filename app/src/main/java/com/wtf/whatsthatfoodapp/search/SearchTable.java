@@ -49,7 +49,8 @@ public class SearchTable {
 
     private int ratingVal = 1;
     private int priceVal = 1;
-    private SearchActivity.FilterMode ratingMode = SearchActivity.FilterMode.ANY;
+    private SearchActivity.FilterMode ratingMode = SearchActivity.FilterMode
+            .ANY;
     private SearchActivity.FilterMode priceMode = SearchActivity.FilterMode.ANY;
 
     /**
@@ -186,8 +187,8 @@ public class SearchTable {
         }
 
         private static ContentValues memoryToVals(Memory memory) {
-            String memoryContent = memory.getTitle() + " "
-                    + memory.getLoc() + " " + memory.getDescription();
+            String memoryContent = SearchUtils.raisePound(memory.getTitle()
+                    + " " + memory.getLoc() + " " + memory.getDescription());
 
             ContentValues vals = new ContentValues();
             vals.put(COL_KEY, memory.getKey());
@@ -209,7 +210,7 @@ public class SearchTable {
 
         private long updateMemory(Memory memory) {
             return mDatabase.update(FTS_VIRTUAL_TABLE, memoryToVals(memory),
-                COL_KEY + " = ?", new String[]{memory.getKey()});
+                    COL_KEY + " = ?", new String[]{memory.getKey()});
         }
 
         private long deleteMemory(String key) {
