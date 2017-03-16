@@ -86,6 +86,7 @@ public class CreateMemoryActivity extends BasicActivity
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         // Create memory in db and initiate image upload

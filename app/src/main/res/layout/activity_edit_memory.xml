@@ -16,7 +16,6 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="@string/edit_memory_title"
         tools:targetApi="lollipop"/>
 
     <ScrollView

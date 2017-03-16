@@ -3,6 +3,11 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/saveFNT"
+        android:icon="@drawable/ic_alarm_add_white_24dp"
+        android:title="@string/create_memory_alarm"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/create_memory_getloc"
         android:icon="@drawable/ic_my_location_white_24dp"
         android:title="@string/memory_form_getloc"
@@ -11,10 +16,5 @@
         android:id="@+id/create_memory_save"
         android:icon="@drawable/ic_check_white_24dp"
         android:title="@string/create_memory_save"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/saveFNT"
-        android:icon="@drawable/ic_alarm_add_white_24dp"
-        android:title="@string/create_memory_alarm"
         app:showAsAction="always"/>
 </menu>
