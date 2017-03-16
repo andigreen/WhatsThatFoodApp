@@ -24,23 +24,30 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@drawable/memory_list_item_gradient"
         android:gravity="start|bottom"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:paddingBottom="12dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="36dp">
 
         <TextView
             android:id="@+id/memory_list_item_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"/>
 
         <TextView
             android:id="@+id/memory_list_item_loc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead.Inverse"/>
 
 
