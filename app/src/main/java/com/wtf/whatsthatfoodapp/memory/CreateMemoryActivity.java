@@ -164,7 +164,6 @@ public class CreateMemoryActivity extends BasicActivity
     @Override
     public void onBackPressed() {
         form.confirmDiscard(confirmDiscardListener);
-        super.onBackPressed();
     }
 
     @Override
