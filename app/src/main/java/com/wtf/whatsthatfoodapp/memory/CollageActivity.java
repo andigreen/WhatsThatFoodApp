@@ -2,6 +2,7 @@ package com.wtf.whatsthatfoodapp.memory;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -18,12 +19,15 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -44,6 +48,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
@@ -181,7 +186,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
         final TextView nav_name = (TextView) nav_view.getHeaderView(0)
                 .findViewById(R.id.profile_name);
         nav_view.setNavigationItemSelectedListener(this);
-        ValueEventListener userInfoListener = new ValueEventListener() {
+        ValueEventListener nameListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 UserSettings userInfo = dataSnapshot.getValue(
@@ -193,10 +198,10 @@ public class CollageActivity extends BasicActivity implements NavigationView
             public void onCancelled(DatabaseError databaseError) {
             }
         };
-        new UserSettingsDao(AuthUtils.getUserUid()).getUserInfoRef()
-                .addListenerForSingleValueEvent(userInfoListener);
 
         userDao = new UserSettingsDao(AuthUtils.getUserUid());
+        userDao.getUserInfoRef().addValueEventListener(nameListener);
+
         userDao.getPhotoRef().getDownloadUrl().addOnSuccessListener(
                 new OnSuccessListener<Uri>() {
                     @Override
@@ -490,6 +495,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_name:
+                changeNameDialog();
                 break;
             case R.id.nav_notifications:
                 Intent notificationsIntent = new Intent(this,
@@ -508,12 +514,43 @@ public class CollageActivity extends BasicActivity implements NavigationView
     }
 
     /**
-     * Writes the value of nameField to the DB using the dao.
+     * Displays a dialog allowing the user to change their profile name.
      */
-    private void updateName() {
-        Map<String, Object> newName = new HashMap<>();
-        newName.put("username", nameField.getText().toString());
-        userDao.getUserInfoRef().updateChildren(newName);
+    private void changeNameDialog() {
+        View v = getLayoutInflater().inflate(R.layout.dialog_change_name, null);
+        final EditText nameEdit = (EditText) v.findViewById(
+                R.id.change_name_text);
+
+        DatabaseReference userRef = userDao.getUserInfoRef();
+        userRef.child("username").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        nameEdit.setText(dataSnapshot.getValue().toString());
+                        nameEdit.setSelection(nameEdit.length());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+        new AlertDialog.Builder(this)
+                .setTitle("Change name to")
+                .setView(v)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        userDao.getUserInfoRef().child("username").setValue(
+                                nameEdit.getText().toString());
+                    }
+                }).setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     @Override
