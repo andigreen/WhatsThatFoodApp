@@ -29,8 +29,15 @@
     </style>
 
     <style name="TextAppearance.MemoryTitle"
-        parent="TextAppearance.AppCompat.Headline">
+           parent="TextAppearance.AppCompat.Headline">
         <item name="android:textSize">28dp</item>
+    </style>
+
+    <style name="TextAppearance.TextInputLayoutTitle"
+           parent="Widget.Design.TextInputLayout">
+        <item name="android:colorControlNormal" tools:targetApi="lollipop">
+            @color/white
+        </item>
     </style>
 
     <style name="TextAppearance.Detail"
