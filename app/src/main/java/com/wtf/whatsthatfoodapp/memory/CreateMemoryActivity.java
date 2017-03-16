@@ -8,14 +8,12 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -24,9 +22,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -42,7 +38,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -54,20 +49,9 @@ import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
-
-import static com.google.android.gms.location.places.Place.TYPE_BAKERY;
-import static com.google.android.gms.location.places.Place.TYPE_BAR;
-import static com.google.android.gms.location.places.Place.TYPE_CAFE;
-import static com.google.android.gms.location.places.Place.TYPE_CONVENIENCE_STORE;
-import static com.google.android.gms.location.places.Place.TYPE_FOOD;
-import static com.google.android.gms.location.places.Place.TYPE_GROCERY_OR_SUPERMARKET;
-import static com.google.android.gms.location.places.Place.TYPE_LIQUOR_STORE;
-import static com.google.android.gms.location.places.Place.TYPE_MEAL_TAKEAWAY;
-import static com.google.android.gms.location.places.Place.TYPE_RESTAURANT;
 
 public class CreateMemoryActivity extends BasicActivity
-        implements TimePickerDialog.OnTimeSetListener{
+        implements TimePickerDialog.OnTimeSetListener {
 
     public static final String IMAGE_URI_KEY = "imageUri";
     public static final String PREFS = "SHARED_PREFS";
@@ -93,6 +77,9 @@ public class CreateMemoryActivity extends BasicActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_memory);
 
+        // Save the result's URI
+        imageUri = getIntent().getParcelableExtra(IMAGE_URI_KEY);
+
         // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(
                 R.id.create_memory_toolbar);
@@ -100,24 +87,6 @@ public class CreateMemoryActivity extends BasicActivity
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        // Load photo view with the result's URI
-        imageUri = getIntent().getParcelableExtra(IMAGE_URI_KEY);
-        ImageView imageView = (ImageView) findViewById(R.id
-                .create_memory_photo);
-        Glide.with(this)
-                .load(imageUri)
-                .centerCrop()
-                .into(imageView);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CreateMemoryActivity.this,
-                        FullImageActivity.class);
-                intent.putExtra(FullImageActivity.MEMORY_KEY, memory);
-                startActivity(intent);
-            }
-        });
 
         // Create memory in db and initiate image upload
         dao = new MemoryDao(this);
@@ -141,12 +110,21 @@ public class CreateMemoryActivity extends BasicActivity
         imageUpload.addOnFailureListener(imageFailure);
 
         // Set up form fragment
-        boolean showSFNT = false;
-        form = MemoryFormFragment.newInstance(memory);
+        form = MemoryFormFragment.newInstance(memory,
+                new MemoryFormFragment.ImageListener() {
+                    @Override
+                    public void onImageReady(ImageView view) {
+                        Glide.with(CreateMemoryActivity.this)
+                                .load(imageUri)
+                                .centerCrop()
+                                .into(view);
+                    }
+                });
         getFragmentManager().beginTransaction().add(R.id.create_memory_form,
                 form).commit();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(CreateMemoryActivity.this)
+        mGoogleApiClient = new GoogleApiClient.Builder(
+                CreateMemoryActivity.this)
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
@@ -230,33 +208,40 @@ public class CreateMemoryActivity extends BasicActivity
      * Receives the time picked, and schedules a notification.
      */
     @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute){
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         memory.setSavedForNextTime(true);
         dao.writeMemory(memory);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
-        calendar.set(Calendar.MINUTE,minute);
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
 
-        int requestCode = (int)System.currentTimeMillis();
+        int requestCode = (int) System.currentTimeMillis();
 
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(
+                Context.ALARM_SERVICE);
         Intent intentAlarm = new Intent(this, AlarmReceiver.class);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(EditMemoryActivity.MEMORY_KEY,memory);
-        intentAlarm.putExtra("bundle",bundle);
+        bundle.putParcelable(EditMemoryActivity.MEMORY_KEY, memory);
+        intentAlarm.putExtra("bundle", bundle);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,requestCode, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                requestCode, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_LONG).show();
 
         // Save the alarm request code so it can be accessed and cancelled after
-        SharedPreferences sp = getSharedPreferences(PREFS,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = getSharedPreferences(PREFS,Context.MODE_PRIVATE).edit();
-        editor.putInt(String.valueOf(memory.getTsCreated()),requestCode);
+        SharedPreferences sp = getSharedPreferences(PREFS,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS,
+                Context.MODE_PRIVATE).edit();
+        editor.putInt(String.valueOf(memory.getTsCreated()), requestCode);
         SimpleDateFormat sf = new SimpleDateFormat("H:mm");
-        editor.putString(String.valueOf(memory.getTsCreatedNeg()),sf.format(calendar.getTime()));
-        editor.putInt(CollageActivity.REMINDERS_COUNT,sp.getInt(CollageActivity.REMINDERS_COUNT,0)+1);
+        editor.putString(String.valueOf(memory.getTsCreatedNeg()),
+                sf.format(calendar.getTime()));
+        editor.putInt(CollageActivity.REMINDERS_COUNT,
+                sp.getInt(CollageActivity.REMINDERS_COUNT, 0) + 1);
         editor.apply();
 
         finish();
@@ -270,14 +255,15 @@ public class CreateMemoryActivity extends BasicActivity
             case MY_PERMISSIONS_REQUEST_LOCATION:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
                     callPlaceDetectionApi();
                 }
                 break;
         }
     }
 
-    public void askForLocationService(){
+    public void askForLocationService() {
         if (mGoogleApiClient.isConnected()) {
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest
@@ -285,7 +271,8 @@ public class CreateMemoryActivity extends BasicActivity
                             (LocationRequest.PRIORITY_HIGH_ACCURACY)
                     .setInterval(5 * 1000);
 
-            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+            LocationSettingsRequest.Builder builder = new
+                    LocationSettingsRequest.Builder()
 
                     .addLocationRequest(locationRequest);
 
@@ -300,16 +287,20 @@ public class CreateMemoryActivity extends BasicActivity
                                 result) {
                             final Status status = result.getStatus();
                             //final
-                            //LocationSettingsStates = result.getLocationSettingsStates();
+                            //LocationSettingsStates = result
+                            // .getLocationSettingsStates();
 
                             switch (status.getStatusCode()) {
                                 case LocationSettingsStatusCodes.SUCCESS:
-                                    // All location settings are satisfied. The client can initialize location
+                                    // All location settings are satisfied.
+                                    // The client can initialize location
                                     // requests here.
                                     checkAndFindCurrentPlace();
                                     break;
-                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                    // Location settings are not satisfied. But could be fixed by showing the user
+                                case LocationSettingsStatusCodes
+                                        .RESOLUTION_REQUIRED:
+                                    // Location settings are not satisfied.
+                                    // But could be fixed by showing the user
 
                                     // a dialog.
                                     try {
@@ -320,13 +311,15 @@ public class CreateMemoryActivity extends BasicActivity
                                         status.startResolutionForResult(
                                                 CreateMemoryActivity.this,
                                                 REQUEST_CHECK_SETTINGS);
-                                    } catch (IntentSender.SendIntentException e) {
+                                    } catch (IntentSender.SendIntentException
+                                            e) {
                                         //TODO Ignore the error.
                                     }
                                     break;
                                 case LocationSettingsStatusCodes
                                         .SETTINGS_CHANGE_UNAVAILABLE:
-                                    // Location settings are not satisfied. However, we have no way to fix the
+                                    // Location settings are not satisfied.
+                                    // However, we have no way to fix the
                                     // settings so we won't show the dialog.
                                     break;
                             }
@@ -394,7 +387,8 @@ public class CreateMemoryActivity extends BasicActivity
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent
+            data) {
         //states has no use for now
         final LocationSettingsStates states = LocationSettingsStates
                 .fromIntent(data);
@@ -406,7 +400,8 @@ public class CreateMemoryActivity extends BasicActivity
                         checkAndFindCurrentPlace();
                         break;
                     case Activity.RESULT_CANCELED:
-                        // The user was asked to change settings, but chose not to
+                        // The user was asked to change settings, but chose
+                        // not to
                         break;
                     default:
                         break;

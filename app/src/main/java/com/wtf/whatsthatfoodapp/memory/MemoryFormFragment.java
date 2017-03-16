@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -31,8 +33,11 @@ public class MemoryFormFragment extends Fragment {
     private static final String TAG = MemoryFormFragment.class.getSimpleName();
     private static final int PLACE_PICKER_REQUEST = 200;
 
+    private ImageListener imageListener;
+
     private boolean changesMade = false;
 
+    private ImageView image;
     private EditText titleText;
     private EditText locText;
     private EditText descText;
@@ -50,6 +55,13 @@ public class MemoryFormFragment extends Fragment {
         Bundle args = new Bundle();
         args.putParcelable(ARG_MEMORY, memory);
         fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static MemoryFormFragment newInstance(Memory memory, ImageListener
+            imageListener) {
+        MemoryFormFragment fragment = newInstance(memory);
+        fragment.imageListener = imageListener;
         return fragment;
     }
 
@@ -160,6 +172,10 @@ public class MemoryFormFragment extends Fragment {
         builder.create().show();
     }
 
+    public interface ImageListener {
+        void onImageReady(ImageView view);
+    }
+
     /**
      * A simple listener which sets changesMade to true anytime a form
      * element's value is modified.
@@ -261,19 +277,20 @@ public class MemoryFormFragment extends Fragment {
         }
     }
 
-    /*
-     * Boilerplate Fragment lifecycle hooks
-     */
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_memory_form, container,
+        View view = inflater.inflate(R.layout.fragment_memory_form, container,
                 false);
+        image = (ImageView) view.findViewById(R.id.memory_form_image);
+        if (imageListener != null) {
+            imageListener.onImageReady(image);
+        }
+        return view;
     }
 
-    public void setLocation(CharSequence location){
+    public void setLocation(CharSequence location) {
         locText.setText(location);
     }
 }

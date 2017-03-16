@@ -3,6 +3,7 @@ package com.wtf.whatsthatfoodapp.memory;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -36,18 +37,22 @@ public class EditMemoryActivity extends BasicActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // Load photo view
-        ImageView imageView = (ImageView) findViewById(R.id
-                .edit_memory_photo);
-        dao.loadImage(memory)
-                .centerCrop()
-                .into(imageView);
-
         // Set up form fragment
-        boolean showSFNT = false;
-        form = MemoryFormFragment.newInstance(memory);
-        getFragmentManager().beginTransaction().add(R.id.edit_memory_form,
+        form = MemoryFormFragment.newInstance(memory,
+                new MemoryFormFragment.ImageListener() {
+                    @Override
+                    public void onImageReady(ImageView view) {
+                        // Load photo view
+                        dao.loadImage(memory)
+                                .centerCrop()
+                                .into(view);
+                    }
+                });
+        getFragmentManager().beginTransaction().replace(R.id.edit_memory_form,
                 form).commit();
+
+        Log.d(TAG, "transaction committed");
+
     }
 
     private boolean saveMemory() {
