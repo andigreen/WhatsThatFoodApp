@@ -12,15 +12,17 @@
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <android.support.design.widget.CollapsingToolbarLayout
+        <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
             android:id="@+id/view_memory_collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:expandedTitleMarginEnd="0dp"
+            app:expandedTitleMarginStart="36dp"
+            app:expandedTitleTextAppearance="@style/TextAppearance.MemoryTitle"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:maxLines="2">
 
             <ImageView
                 android:id="@+id/view_memory_image"
@@ -36,8 +38,7 @@
                 android:elevation="4dp"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-        </android.support.design.widget.CollapsingToolbarLayout>
+        </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -75,6 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
+                    android:ellipsize="end"
                     android:maxLines="2"
                     android:textAppearance="@style/TextAppearance.Detail"/>
             </LinearLayout>
@@ -119,9 +121,9 @@
 
             <TextView
                 android:id="@+id/time_tv"
-                android:padding="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:text="Alarm Set To:"
                 android:visibility="gone"/>
         </LinearLayout>

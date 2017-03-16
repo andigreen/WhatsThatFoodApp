@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +29,8 @@ import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 import com.wtf.whatsthatfoodapp.TextUtil;
 import com.wtf.whatsthatfoodapp.share.ShareActivity;
+
+import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 import org.w3c.dom.Text;
 
