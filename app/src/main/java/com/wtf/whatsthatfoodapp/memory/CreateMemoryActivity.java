@@ -48,6 +48,7 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.BasicActivity;
+import com.wtf.whatsthatfoodapp.LocationUtil;
 import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.notification.AlarmReceiver;
 
@@ -86,10 +87,6 @@ public class CreateMemoryActivity extends BasicActivity
     private MemoryFormFragment form;
 
     private GoogleApiClient mGoogleApiClient;
-    private CharSequence names[] = new CharSequence[5];
-    private int count = 0;
-    private int namesIndex = 0;
-    private List<Integer> type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -350,132 +347,49 @@ public class CreateMemoryActivity extends BasicActivity
                 Toast.LENGTH_LONG).show();
     }
 
-
     private void callPlaceDetectionApi() throws SecurityException {
         PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
                 .getCurrentPlace(mGoogleApiClient, null);
         result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
             @Override
             public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
-                if (likelyPlaces.getCount() <= 0) {
-                    Toast.makeText(CreateMemoryActivity.this, "Oops, no place " +
-                                    "found! Try turn on location service.",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    count = 0;
-                    namesIndex = 0;
-                    for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                        type = placeLikelihood.getPlace().getPlaceTypes();
-                        if(type.contains(TYPE_RESTAURANT) || type.contains
-                                (TYPE_BAKERY) || type.contains(TYPE_BAR) ||
-                                type.contains(TYPE_CAFE) || type.contains
-                                (TYPE_CONVENIENCE_STORE) || type.contains
-                                (TYPE_FOOD) || type.contains
-                                (TYPE_GROCERY_OR_SUPERMARKET) || type
-                                .contains(TYPE_LIQUOR_STORE) || type.contains
-                                (TYPE_MEAL_TAKEAWAY))
-                            count++;
-                    }
-                    if (count < 5) {
-                        names = new CharSequence[count];
-                        for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                            type = placeLikelihood.getPlace().getPlaceTypes();
-                            if(type.contains(TYPE_RESTAURANT) || type.contains
-                                    (TYPE_BAKERY) || type.contains(TYPE_BAR) ||
-                                    type.contains(TYPE_CAFE) || type.contains
-                                    (TYPE_CONVENIENCE_STORE) || type.contains
-                                    (TYPE_FOOD) || type.contains
-                                    (TYPE_GROCERY_OR_SUPERMARKET) || type
-                                    .contains(TYPE_LIQUOR_STORE) || type.contains
-                                    (TYPE_MEAL_TAKEAWAY))
-                                names[namesIndex++] = placeLikelihood
-                                        .getPlace().getName();
-                        }
-                    } else {
-                        for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                            type = placeLikelihood.getPlace().getPlaceTypes();
-                            if (type.contains(TYPE_RESTAURANT) || type.contains
-                                    (TYPE_BAKERY) || type.contains(TYPE_BAR) ||
-                                    type.contains(TYPE_CAFE) || type.contains
-                                    (TYPE_CONVENIENCE_STORE) || type.contains
-                                    (TYPE_FOOD) || type.contains
-                                    (TYPE_GROCERY_OR_SUPERMARKET) || type
-                                    .contains(TYPE_LIQUOR_STORE) || type.contains
-                                    (TYPE_MEAL_TAKEAWAY)) {
-                                if (namesIndex < 5)
-                                    names[namesIndex++] = placeLikelihood
-                                            .getPlace().getName();
-                            }
-                        }
-                    }
-                    //No restaurants found
-                    if (namesIndex == 0) {
-                        new AlertDialog.Builder(CreateMemoryActivity.this)
-                                .setTitle("Can't find a thing, are you in a " +
-                                        "desert?")
-                                .setPositiveButton("TRY MAP?",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                form.createPlacePicker();
-                                            }
-                                        }).show();
-                    } else {
-                        new AlertDialog.Builder(CreateMemoryActivity.this)
-                                .setTitle("Looking for these?")
-                                .setPositiveButton("GO TO MAP",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                form.createPlacePicker();
-                                            }
-                                        })
-                                .setItems(names,
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface
-                                                    dialog, int which) {
-                                                form.setLocation(names[which]);
-                                            }
-                                        })
-                                .show();
-                    }
+                final String[] names = LocationUtil.getRestaurants
+                        (likelyPlaces, 5).toArray(new String[0]);
+                // No restaurants found: just show a map
+                if (names.length == 0) {
+                    form.createPlacePicker();
+                    return;
                 }
+                // Otherwise show what we found, and also let them open a map
+                new AlertDialog.Builder(CreateMemoryActivity.this)
+                        .setTitle("Looking for these?")
+                        .setPositiveButton("GO TO MAP",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface
+                                            dialog, int which) {
+                                        form.createPlacePicker();
+                                    }
+                                })
+                        .setItems(names, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface
+                                    dialog, int which) {
+                                form.setLocation(names[which]);
+                            }
+                        }).show();
                 likelyPlaces.release();
             }
         });
     }
 
     protected void checkAndFindCurrentPlace() {
-        if (ContextCompat.checkSelfPermission(CreateMemoryActivity.this,
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat
-                    .shouldShowRequestPermissionRationale(CreateMemoryActivity.this,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                new AlertDialog.Builder(CreateMemoryActivity.this)
-                        .setTitle("Location Access")
-                        .setMessage(
-                                "Need location permission to get precise " +
-                                        "result")
-                        .setPositiveButton("Got it!", new DialogInterface
-                                .OnClickListener() {
-                            public void onClick(DialogInterface dialog, int
-                                    which) {
-                                ActivityCompat.requestPermissions
-                                        (CreateMemoryActivity.this,
-                                        new String[]{android.Manifest.permission
-                                                .ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
-                        }).show();
-            } else {
-                ActivityCompat.requestPermissions(
-                        CreateMemoryActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
+            ActivityCompat.requestPermissions(this, new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
+            }, MY_PERMISSIONS_REQUEST_LOCATION);
         } else {
             callPlaceDetectionApi();
         }
