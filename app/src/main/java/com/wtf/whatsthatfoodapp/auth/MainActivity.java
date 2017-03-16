@@ -43,6 +43,9 @@ import com.wtf.whatsthatfoodapp.user.UserSettingsDao;
 import java.util.Arrays;
 
 public class MainActivity extends BasicActivity {
+
+    public static final String EXIT_KEY = "exit";
+
     private final String TAG = MainActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 9001;
     private static final int REQ_REGISTER = 9293;
@@ -58,6 +61,11 @@ public class MainActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (getIntent().getBooleanExtra(EXIT_KEY, false)) {
+            finish();
+        }
+
         Button email_btn = (Button) findViewById(R.id.email_button);
         Button facebook_login_btn = (Button) findViewById(R.id.btn_fb_login);
         Button google_login_btn = (Button) findViewById(R.id.btn_google_login);

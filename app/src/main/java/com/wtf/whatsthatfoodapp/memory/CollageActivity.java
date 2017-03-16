@@ -58,6 +58,7 @@ import com.wtf.whatsthatfoodapp.PairsMemoryGameActivity;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
 import com.wtf.whatsthatfoodapp.R;
+import com.wtf.whatsthatfoodapp.auth.MainActivity;
 import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
 import com.wtf.whatsthatfoodapp.search.SearchActivity;
@@ -553,17 +554,32 @@ public class CollageActivity extends BasicActivity implements NavigationView
                 }).show();
     }
 
-    @Override
-    public void onBackPressed()
-    {
-        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
-        {
-            Intent intent = new Intent(this, LogoutActivity.class);
-            startActivity(intent);
-        }
-        else { Toast.makeText(getBaseContext(), "Tap back button twice in order to exit", Toast.LENGTH_SHORT).show(); }
+    private void exitApp() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(MainActivity.EXIT_KEY, true);
+        startActivity(intent);
+    }
 
-        mBackPressed = System.currentTimeMillis();
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton("Exit",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface d, int w) {
+                                exitApp();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface d, int w) {
+                                d.dismiss();
+                            }
+                        })
+                .show();
     }
 }
 
