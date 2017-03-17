@@ -49,5 +49,6 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="view_memory_edit">Edit</string>
     <string name="view_memory_delete">Delete</string>
+    <string name="collage_no_memories">Looks like you haven\'t created any memories yet! Click the + button to get started.</string>
 
 </resources>

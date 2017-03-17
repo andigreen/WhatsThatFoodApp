@@ -92,12 +92,14 @@ public class CollageActivity extends BasicActivity implements NavigationView
     private ActionBarDrawerToggle drawerToggle;
     private CircleImageView photo_button;
     private Menu menu;
+    private TextView noMemories;
     private UserSettingsDao userDao;
     private EditText nameField;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
-    private long mBackPressed;
+
+    private ListAdapter collageListAdapter;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -192,7 +194,9 @@ public class CollageActivity extends BasicActivity implements NavigationView
             public void onDataChange(DataSnapshot dataSnapshot) {
                 UserSettings userInfo = dataSnapshot.getValue(
                         UserSettings.class);
-                nav_name.setText(userInfo.getUsername());
+                if (userInfo != null) {
+                    nav_name.setText(userInfo.getUsername());
+                }
             }
 
             @Override
@@ -227,7 +231,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
 
         // Set up list and adapter
         dao = new MemoryDao(this);
-        ListAdapter collageListAdapter = new MemoryAdapter(this, Memory.class,
+        collageListAdapter = new MemoryAdapter(this, Memory.class,
                 dao.getMemoriesRef().orderByChild(Memory.TS_KEY_NEWEST),
                 dao);
 
@@ -266,6 +270,20 @@ public class CollageActivity extends BasicActivity implements NavigationView
             @Override
             public void onClick(View v) {
                 imageFromGallery();
+            }
+        });
+
+        // Set up "no memories" element
+        noMemories = (TextView) findViewById(R.id.collage_no_memories);
+        dao.getMemoriesRef().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                noMemories.setVisibility(dataSnapshot.hasChildren()
+                        ? View .GONE : View.VISIBLE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
