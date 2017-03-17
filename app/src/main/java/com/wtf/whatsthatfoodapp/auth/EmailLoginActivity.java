@@ -67,10 +67,6 @@ public class EmailLoginActivity extends BasicActivity {
                 if (user != null && user.isEmailVerified()) {
                     // User is signed in
                     startActivity(displayHomePage);
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
             }
         };
@@ -78,7 +74,6 @@ public class EmailLoginActivity extends BasicActivity {
     }
 
     private void EmailSignIn(String email, String password) {
-        Log.d(TAG, "signIn:" + email);
         if (!validateForm()) {
             return;
         }
@@ -91,9 +86,6 @@ public class EmailLoginActivity extends BasicActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult>
                                                            task) {
-                                Log.d(TAG,
-                                        "signInWithEmail:onComplete:" + task
-                                                .isSuccessful());
                                 user = mAuth.getCurrentUser();
                                 if (task.isSuccessful()) {
                                     if (user.isEmailVerified()) {
@@ -115,8 +107,6 @@ public class EmailLoginActivity extends BasicActivity {
                                 // signed in user can be handled in the
                                 // listener.
                                 if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInWithEmail:failed",
-                                            task.getException());
                                     Toast.makeText(EmailLoginActivity.this,
                                             R.string.auth_failed,
                                             Toast.LENGTH_SHORT).show();

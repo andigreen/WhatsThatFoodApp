@@ -155,8 +155,6 @@ public class SearchTable {
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            Log.w(TAG, "MemoriesListener:onCancelled",
-                    databaseError.toException());
         }
 
     }
@@ -226,10 +224,6 @@ public class SearchTable {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int
                 newVersion) {
-            Log.w(TAG, String.format(
-                    "Upgrading db from version %d to %d, destroying old data",
-                    oldVersion, newVersion
-            ));
             db.execSQL(FTS_TABLE_DROP);
             onCreate(db);
         }

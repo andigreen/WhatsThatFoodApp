@@ -365,8 +365,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Failed to upload profile photo for user "
-                            + AuthUtils.getUserUid());
                     Toast error = Toast.makeText(getApplicationContext(),
                             "Photo upload failed. We'll try again later.",
                             Toast.LENGTH_SHORT);
@@ -448,7 +446,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.",
                 Toast.LENGTH_SHORT).show();
     }

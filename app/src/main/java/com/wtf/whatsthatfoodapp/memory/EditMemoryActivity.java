@@ -51,9 +51,6 @@ public class EditMemoryActivity extends BasicActivity {
                 });
         getFragmentManager().beginTransaction().replace(R.id.edit_memory_form,
                 form).commit();
-
-        Log.d(TAG, "transaction committed");
-
     }
 
     private boolean saveMemory() {

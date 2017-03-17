@@ -61,7 +61,6 @@ public class PasswordRecoveryActivity extends BasicActivity {
                         // Don't show the user anything. This may indicate
                         // that the email doesn't exist, which is exploitable
                         // knowledge.
-                        Log.d(TAG, "Failed to send password reset email.");
                     }
                 });
     }

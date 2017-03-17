@@ -75,7 +75,6 @@ public class MemoryFormFragment extends Fragment {
         if (getArguments() != null) {
             memory = getArguments().getParcelable(ARG_MEMORY);
         } else {
-            Log.e(TAG, "MemoryFormFragment created without a Memory!");
             return;
         }
 

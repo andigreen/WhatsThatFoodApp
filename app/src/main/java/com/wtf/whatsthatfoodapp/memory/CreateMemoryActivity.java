@@ -99,8 +99,6 @@ public class CreateMemoryActivity extends BasicActivity
                 // We cancelled the upload, no error here
                 if (imageUpload.isCanceled()) return;
 
-                Log.e(TAG,
-                        "Failed to upload photo for memory " + memory.getKey());
                 Toast error = Toast.makeText(getApplicationContext(),
                         "Photo upload failed. We'll try again later.",
                         Toast.LENGTH_SHORT);
@@ -331,12 +329,8 @@ public class CreateMemoryActivity extends BasicActivity
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(TAGL, "Google Places API connection failed with error code: "
-                + connectionResult.getErrorCode());
-
         Toast.makeText(this,
-                "Google Places API connection failed with error code:" +
-                        connectionResult.getErrorCode(),
+                "Sorry, we couldn't connect to Google Maps right now.",
                 Toast.LENGTH_LONG).show();
     }
 
