@@ -27,9 +27,8 @@ public class PairsMemoryGameActivity extends Activity {
 
     private void play(){
         RelativeLayout rl = (RelativeLayout) findViewById(R.id.game_top_rl);
-        rl.removeView(gameView);
 
-        gameView = new PairsMemoryGameView(this,handler/*,audio*/);
+        gameView = new PairsMemoryGameView(this,handler);
         gameView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT));
@@ -40,18 +39,11 @@ public class PairsMemoryGameActivity extends Activity {
         DialogInterface.OnClickListener positiveBtn = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                play();
-            }
-        };
-        DialogInterface.OnClickListener negativeBtn = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
             }
         };
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this).setTitle("Well Done !!!")
-                .setPositiveButton("Play",positiveBtn)
-                .setNegativeButton("Menu",negativeBtn);
+                .setPositiveButton("Menu",positiveBtn).setCancelable(false).setMessage("Credits:\nFood icons made by Madebyoliver and Pixel Buddha from www.flaticon.com");
         alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
@@ -71,7 +63,6 @@ public class PairsMemoryGameActivity extends Activity {
             PairsMemoryGameActivity gameActivity = weakReference.get();
             String function = msg.getData().getString("function");
             if (function.equals("stop")){
-
                 gameActivity.displayWinDialog();
                 }
         }

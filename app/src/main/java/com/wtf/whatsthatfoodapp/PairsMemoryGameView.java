@@ -40,12 +40,11 @@ public class PairsMemoryGameView extends SurfaceView implements SurfaceHolder.Ca
     private long showingTimer;
     private static final int TIMEOUT = 500;
 
-    public PairsMemoryGameView(Context context, Handler handler/*, Audio audio*/){
+    public PairsMemoryGameView(Context context, Handler handler){
         super(context);
         food_images = getResources().obtainTypedArray(R.array.images);
         this.context = context;
         this.handler = handler;
-        //this.audio = audio;
         sfholder = getHolder();
         sfholder.addCallback(this);
         setOnTouchListener(this);
@@ -179,7 +178,7 @@ public class PairsMemoryGameView extends SurfaceView implements SurfaceHolder.Ca
                             counter ++;
                             if (counter == cards.size()/2){
                                 // If all cards have been discovered
-                                stop(true);
+                                stop();
                             }
                         }
                         showingTimer = System.currentTimeMillis();
@@ -190,15 +189,11 @@ public class PairsMemoryGameView extends SurfaceView implements SurfaceHolder.Ca
         return true;
     }
 
-    public void stop(boolean showDialog){
+    public void stop(){
         gameThread.setRunning(false);
 
         Bundle data = new Bundle();
-        if (showDialog){
-            data.putString("function", "stop");
-        } else {
-            data.putString("function","none");
-        }
+        data.putString("function", "stop");
         Message msg = new Message();
         msg.setData(data);
         handler.sendMessage(msg);
