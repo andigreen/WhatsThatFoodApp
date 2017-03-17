@@ -61,7 +61,6 @@ public class ShareActivity extends AppCompatActivity {
 
         @Override
         public void onFailure() {
-            Log.w(TAG, "Could not obtain local image uri.");
             progress.dismiss();
             setResult(RESULT_FAILED);
             finish();

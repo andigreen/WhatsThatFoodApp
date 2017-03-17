@@ -43,7 +43,6 @@ public class CreateAccountActivity extends BasicActivity {
     }
 
     private void createAccount(final String email, final String password) {
-        Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
         }
@@ -54,7 +53,6 @@ public class CreateAccountActivity extends BasicActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
                             verificationEmail();
                             String username = usernameField.getText().toString();
@@ -98,7 +96,6 @@ public class CreateAccountActivity extends BasicActivity {
                     // Don't show the user anything. This may indicate
                     // that the email doesn't exist, which is exploitable
                     // knowledge.
-                    Log.d(TAG, "Failed to send verification email");
                 }
             });;
         }

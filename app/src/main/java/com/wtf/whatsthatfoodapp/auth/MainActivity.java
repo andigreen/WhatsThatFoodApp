@@ -92,8 +92,6 @@ public class MainActivity extends BasicActivity {
 
         app.setClient(mGoogleApiClient);
         app.getClient().connect();
-        Log.d(TAG,
-                "GoogleApiClient Connected: " + app.getClient().isConnected());
 
         displayHomePage = new Intent(this, CollageActivity.class);
 
@@ -115,10 +113,6 @@ public class MainActivity extends BasicActivity {
                 if (user != null && user.isEmailVerified()) {
                     // User is signed in
                     startActivity(displayHomePage);
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
             }
         };
@@ -132,20 +126,15 @@ public class MainActivity extends BasicActivity {
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Log.d(TAG, "facebook:onSuccess:" + loginResult);
                         handleFacebookAccessToken(loginResult.getAccessToken());
                     }
 
                     @Override
                     public void onCancel() {
-                        Log.d(TAG, "facebook:onCancel");
-                        // ...
                     }
 
                     @Override
                     public void onError(FacebookException error) {
-                        Log.d(TAG, "facebook:onError", error);
-                        // ...
                     }
                 });
 
@@ -162,8 +151,6 @@ public class MainActivity extends BasicActivity {
     }
 
     private void handleFacebookAccessToken(final AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-
         AuthCredential credential = FacebookAuthProvider.getCredential(
                 token.getToken());
         mAuth.signInWithCredential(credential)
@@ -175,8 +162,6 @@ public class MainActivity extends BasicActivity {
 
                                 if (task.isSuccessful()) {
                                     createUserIfNotExist(AuthUtils.getUserUid());
-                                    Log.d(TAG,
-                                            "signInWithCredential:onComplete:" + task.isSuccessful());
                                     startActivity(displayHomePage);
                                 }
                                 // If sign in fails, display a message to the
@@ -186,8 +171,6 @@ public class MainActivity extends BasicActivity {
                                 // signed in user can be handled in the
                                 // listener.
                                 if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInWithCredential",
-                                            task.getException());
                                     Toast.makeText(MainActivity.this,
                                             "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
@@ -251,8 +234,6 @@ public class MainActivity extends BasicActivity {
 
     // [START auth_with_google]
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-
         // [START_EXCLUDE silent]
         showProgressDialog();
         // [END_EXCLUDE]
@@ -266,8 +247,6 @@ public class MainActivity extends BasicActivity {
                             public void onComplete(@NonNull Task<AuthResult>
                                     task) {
                                 if (task.isSuccessful()) {
-                                    Log.d(TAG,
-                                            "signInWithCredential:onComplete:" + task.isSuccessful());
                                     createUserIfNotExist(AuthUtils.getUserUid());
                                     startActivity(displayHomePage);
                                 }
@@ -278,8 +257,6 @@ public class MainActivity extends BasicActivity {
                                 // signed in user can be handled in the
                                 // listener.
                                 else {
-                                    Log.w(TAG, "signInWithCredential",
-                                            task.getException());
                                     Toast.makeText(MainActivity.this,
                                             "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
@@ -305,8 +282,6 @@ public class MainActivity extends BasicActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
-            } else {
-               Log.d(TAG,"Google Sign In cancelled");
             }
         } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
@@ -316,7 +291,6 @@ public class MainActivity extends BasicActivity {
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.",
                 Toast.LENGTH_SHORT).show();
     }
@@ -342,7 +316,6 @@ public class MainActivity extends BasicActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
-                Log.w(TAG, "loadData:onCancelled", databaseError.toException());
                 // [START_EXCLUDE]
                 Toast.makeText(MainActivity.this, "Failed to load data.",
                         Toast.LENGTH_SHORT).show();
