@@ -277,6 +277,8 @@ public class CollageActivity extends BasicActivity implements NavigationView
                                 .WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA},
                         REQUEST_PERMISSIONS);
             }
+        } else{
+            permissionsCheck = true;
         }
     }
 
