@@ -1,20 +1,17 @@
 package com.wtf.whatsthatfoodapp.memory;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.LayerDrawable;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
@@ -26,8 +23,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -53,11 +48,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 import com.wtf.whatsthatfoodapp.App;
 import com.wtf.whatsthatfoodapp.BasicActivity;
-import com.wtf.whatsthatfoodapp.Manifest;
 import com.wtf.whatsthatfoodapp.PairsMemoryGameActivity;
+import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
 import com.wtf.whatsthatfoodapp.auth.LogoutActivity;
-import com.wtf.whatsthatfoodapp.R;
 import com.wtf.whatsthatfoodapp.auth.MainActivity;
 import com.wtf.whatsthatfoodapp.auth.SettingsActivity;
 import com.wtf.whatsthatfoodapp.notification.ViewNotificationsActivity;
@@ -69,22 +63,19 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.wtf.whatsthatfoodapp.memory.CreateMemoryActivity.PREFS;
 
 public class CollageActivity extends BasicActivity implements NavigationView
         .OnNavigationItemSelectedListener {
 
+    public static final String REMINDERS_COUNT = "REMINDERS_COUNT";
+    public static final int REQUEST_PERMISSION = 123;
+
     private static final String TAG = CollageActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_GALLERY = 4843;
     private static final int REQUEST_IMAGE_CAMERA = 9924;
-    public static final String REMINDERS_COUNT = "REMINDERS_COUNT";
     private static final int GALLERY = 1;
-    public static final int REQUEST_PERMISSION = 123;
 
     private Uri imageUri;
     private FloatingActionsMenu createMenu;
@@ -94,36 +85,25 @@ public class CollageActivity extends BasicActivity implements NavigationView
     private Menu menu;
     private TextView noMemories;
     private UserSettingsDao userDao;
-    private EditText nameField;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
 
     private ListAdapter collageListAdapter;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 1
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[1] == PackageManager
+                        .PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -132,11 +112,15 @@ public class CollageActivity extends BasicActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collage);
 
-        if (Build.VERSION.SDK_INT >= 23){
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA},REQUEST_PERMISSION);
+        if (Build.VERSION.SDK_INT >= 23) {
+            requestPermissions(
+                    new String[]{android.Manifest.permission
+                            .WRITE_EXTERNAL_STORAGE, android.Manifest
+                            .permission.CAMERA},
+                    REQUEST_PERMISSION);
         }
 
-                // Set up toolbar
+        // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         NavigationView nav_view = (NavigationView) findViewById(R.id.nav_view);
@@ -183,9 +167,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
             }
         });
 
-//        Menu nav_menu = nav_view.getMenu();
-//        DrawerLayout drawer = (DrawerLayout) findViewById(
-//                R.id.activity_collage);
         final TextView nav_name = (TextView) nav_view.getHeaderView(0)
                 .findViewById(R.id.profile_name);
         nav_view.setNavigationItemSelectedListener(this);
@@ -279,7 +260,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 noMemories.setVisibility(dataSnapshot.hasChildren()
-                        ? View .GONE : View.VISIBLE);
+                        ? View.GONE : View.VISIBLE);
             }
 
             @Override
@@ -389,11 +370,13 @@ public class CollageActivity extends BasicActivity implements NavigationView
             public void run() {
                 final View v = findViewById(R.id.collage_search);
 
-                if (v != null){
+                if (v != null) {
                     v.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View view) {
-                            Intent gameIntent = new Intent(getApplicationContext(), PairsMemoryGameActivity.class);
+                            Intent gameIntent = new Intent(
+                                    getApplicationContext(),
+                                    PairsMemoryGameActivity.class);
                             startActivity(gameIntent);
                             return true;
                         }
@@ -402,25 +385,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
             }
         });
 
-        // Update LayerDrawable's BadgeDrawable
-//        MenuItem item = menu.findItem(R.id.nav_notifications);
-//        LayerDrawable icon = (LayerDrawable) item.getIcon();
-//        SharedPreferences sp = getSharedPreferences(PREFS,
-//                Context.MODE_PRIVATE);
-//        Utils2.setBadgeCount(this, icon, sp.getInt(REMINDERS_COUNT, 0));
         return true;
-    }
-
-    public void updateRemindersIcon() {
-        // Update LayerDrawable's BadgeDrawable
-//        if (menu != null) {
-//            MenuItem item = menu.findItem(R.id.nav_notifications);
-//            LayerDrawable icon = (LayerDrawable) item.getIcon();
-//            SharedPreferences sp = getSharedPreferences(PREFS,
-//                    Context.MODE_PRIVATE);
-//            Utils2.setBadgeCount(this, icon, sp.getInt(REMINDERS_COUNT, 0));
-//
-//        }
     }
 
     @Override
@@ -444,40 +409,9 @@ public class CollageActivity extends BasicActivity implements NavigationView
 
     }
 
-    // [START on_start_add_listener]
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Add value event listener to the post
-        // [START post_value_event_listener]
-        /*ValueEventListener userInfoListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                UserSettings userInfo = dataSnapshot.getValue(
-                        UserSettings.class);
-                nameField.setText(userInfo.getUsername());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadData:onCancelled", databaseError.toException());
-                // [START_EXCLUDE]
-                Toast.makeText(CollageActivity.this, "Failed to load data.",
-                        Toast.LENGTH_SHORT).show();
-                // [END_EXCLUDE]
-            }
-        };
-        userDao.getUserInfoRef().addListenerForSingleValueEvent
-        (userInfoListener);*/
-        // [END post_value_event_listener]
-    }
-    // [END on_start_add_listener]
-
     @Override
     protected void onResume() {
         super.onResume();
-        updateRemindersIcon();
         createMenu.collapseImmediately();
     }
 
