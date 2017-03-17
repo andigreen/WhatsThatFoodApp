@@ -1,5 +1,6 @@
 package com.wtf.whatsthatfoodapp.memory;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -70,7 +72,8 @@ public class CollageActivity extends BasicActivity implements NavigationView
         .OnNavigationItemSelectedListener {
 
     public static final String REMINDERS_COUNT = "REMINDERS_COUNT";
-    public static final int REQUEST_PERMISSION = 123;
+    public static final int REQUEST_PERMISSIONS = 123;
+
 
     private static final String TAG = CollageActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_GALLERY = 4843;
@@ -87,6 +90,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
     private UserSettingsDao userDao;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private boolean permissionsCheck;
 
     private ListAdapter collageListAdapter;
 
@@ -94,13 +98,14 @@ public class CollageActivity extends BasicActivity implements NavigationView
     public void onRequestPermissionsResult(int requestCode,
             String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_PERMISSION: {
+            case REQUEST_PERMISSIONS: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 1
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager
-                        .PERMISSION_GRANTED) {
-
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    permissionsCheck = true;
+                } else {
+                    Toast.makeText(this,"What's That Food needs permissions to be accepted", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
@@ -112,13 +117,7 @@ public class CollageActivity extends BasicActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collage);
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(
-                    new String[]{android.Manifest.permission
-                            .WRITE_EXTERNAL_STORAGE, android.Manifest
-                            .permission.CAMERA},
-                    REQUEST_PERMISSION);
-        }
+        handlePermissions();
 
         // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -268,6 +267,18 @@ public class CollageActivity extends BasicActivity implements NavigationView
             }
         });
     }
+    private void handlePermissions(){
+        if (Build.VERSION.SDK_INT >= 23) {
+            int permissionWriteExternalCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int permissionCameraCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+            if (permissionWriteExternalCheck == PackageManager.PERMISSION_DENIED || permissionCameraCheck == PackageManager.PERMISSION_DENIED){
+                requestPermissions(
+                        new String[]{android.Manifest.permission
+                                .WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA},
+                        REQUEST_PERMISSIONS);
+            }
+        }
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -288,35 +299,43 @@ public class CollageActivity extends BasicActivity implements NavigationView
      * Opens the native camera UI to get an image.
      */
     private void imageFromCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) == null) return;
+        if (!permissionsCheck){
+            handlePermissions();
+        } else {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (intent.resolveActivity(getPackageManager()) == null) return;
 
-        @SuppressLint("SimpleDateFormat")
-        String ts = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File imageFile;
-        try {
-            imageFile = File.createTempFile("WTF_" + ts, ".jpg", storageDir);
-        } catch (IOException e) {
-            Log.e(TAG, "Could not create image file.");
-            return;
+            @SuppressLint("SimpleDateFormat")
+            String ts = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File imageFile;
+            try {
+                imageFile = File.createTempFile("WTF_" + ts, ".jpg", storageDir);
+            } catch (IOException e) {
+                Log.e(TAG, "Could not create image file.");
+                return;
+            }
+
+            imageUri = FileProvider.getUriForFile(this,
+                    "com.wtf.whatsthatfoodapp.fileprovider", imageFile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
         }
-
-        imageUri = FileProvider.getUriForFile(this,
-                "com.wtf.whatsthatfoodapp.fileprovider", imageFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
     }
 
     /**
      * Opens the native image gallery to get an image.
      */
     private void imageFromGallery() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, null),
-                REQUEST_IMAGE_GALLERY);
+        if (!permissionsCheck){
+            handlePermissions();
+        } else{
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, null),
+                    REQUEST_IMAGE_GALLERY);
+        }
     }
 
     @Override
