@@ -195,7 +195,7 @@ public class CreateMemoryActivity extends BasicActivity
                 Calendar calendar = Calendar.getInstance();
                 new TimePickerDialog(
                         this, this,
-                        calendar.get(Calendar.HOUR_OF_DAY) + 2,
+                        (calendar.get(Calendar.HOUR_OF_DAY) + 2) % 24,
                         calendar.get(Calendar.MINUTE),
                         DateFormat.is24HourFormat(this)).show();
                 return true;
