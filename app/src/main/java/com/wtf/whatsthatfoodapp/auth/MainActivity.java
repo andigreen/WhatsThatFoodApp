@@ -303,11 +303,10 @@ public class MainActivity extends BasicActivity {
     }
 
     private void createUserIfNotExist(final String Uid){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         ValueEventListener userInfoListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.child(Uid).exists()){
+                if(!dataSnapshot.exists()) {
                     createUserInDB(AuthUtils.getUserEmail(),
                             AuthUtils.getUserDisplayName(),Uid);
                 }
@@ -322,7 +321,8 @@ public class MainActivity extends BasicActivity {
                 // [END_EXCLUDE]
             }
         };
-        ref.addListenerForSingleValueEvent(userInfoListener);
+        UserSettingsDao dao = new UserSettingsDao(Uid);
+        dao.getUserInfoRef().addListenerForSingleValueEvent(userInfoListener);
     }
 
 
