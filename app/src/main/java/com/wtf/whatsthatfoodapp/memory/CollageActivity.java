@@ -90,7 +90,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
     private UserSettingsDao userDao;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private boolean permissionsCheck;
 
     private ListAdapter collageListAdapter;
 
@@ -103,7 +102,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
                 if (grantResults.length > 1
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    permissionsCheck = true;
                 } else {
                     Toast.makeText(this,"What's That Food needs permissions to be accepted", Toast.LENGTH_SHORT).show();
                 }
@@ -277,8 +275,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
                                 .WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA},
                         REQUEST_PERMISSIONS);
             }
-        } else{
-            permissionsCheck = true;
         }
     }
 
@@ -301,43 +297,51 @@ public class CollageActivity extends BasicActivity implements NavigationView
      * Opens the native camera UI to get an image.
      */
     private void imageFromCamera() {
-        if (!permissionsCheck){
-            handlePermissions();
-        } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (intent.resolveActivity(getPackageManager()) == null) return;
-
-            @SuppressLint("SimpleDateFormat")
-            String ts = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            File imageFile;
-            try {
-                imageFile = File.createTempFile("WTF_" + ts, ".jpg", storageDir);
-            } catch (IOException e) {
-                Log.e(TAG, "Could not create image file.");
+        if (Build.VERSION.SDK_INT >= 23) {
+            int permissionWriteExternalCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int permissionCameraCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+            if (permissionWriteExternalCheck == PackageManager.PERMISSION_DENIED || permissionCameraCheck == PackageManager.PERMISSION_DENIED){
+                handlePermissions();
                 return;
             }
-
-            imageUri = FileProvider.getUriForFile(this,
-                    "com.wtf.whatsthatfoodapp.fileprovider", imageFile);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
         }
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) == null) return;
+
+        @SuppressLint("SimpleDateFormat")
+        String ts = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile;
+        try {
+            imageFile = File.createTempFile("WTF_" + ts, ".jpg", storageDir);
+        } catch (IOException e) {
+            Log.e(TAG, "Could not create image file.");
+            return;
+        }
+
+        imageUri = FileProvider.getUriForFile(this,
+                "com.wtf.whatsthatfoodapp.fileprovider", imageFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, REQUEST_IMAGE_CAMERA);
     }
 
     /**
      * Opens the native image gallery to get an image.
      */
     private void imageFromGallery() {
-        if (!permissionsCheck){
-            handlePermissions();
-        } else{
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, null),
-                    REQUEST_IMAGE_GALLERY);
+        if (Build.VERSION.SDK_INT >= 23) {
+            int permissionWriteExternalCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int permissionCameraCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+            if (permissionWriteExternalCheck == PackageManager.PERMISSION_DENIED || permissionCameraCheck == PackageManager.PERMISSION_DENIED){
+                handlePermissions();
+                return;
+            }
         }
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, null),
+                REQUEST_IMAGE_GALLERY);
     }
 
     @Override
