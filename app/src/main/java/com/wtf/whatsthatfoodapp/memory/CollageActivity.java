@@ -115,8 +115,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collage);
 
-        handlePermissions();
-
         // Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
@@ -265,18 +263,6 @@ public class CollageActivity extends BasicActivity implements NavigationView
             }
         });
     }
-    private void handlePermissions(){
-        if (Build.VERSION.SDK_INT >= 23) {
-            int permissionWriteExternalCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int permissionCameraCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-            if (permissionWriteExternalCheck == PackageManager.PERMISSION_DENIED || permissionCameraCheck == PackageManager.PERMISSION_DENIED){
-                requestPermissions(
-                        new String[]{android.Manifest.permission
-                                .WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA},
-                        REQUEST_PERMISSIONS);
-            }
-        }
-    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -301,7 +287,9 @@ public class CollageActivity extends BasicActivity implements NavigationView
             int permissionWriteExternalCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int permissionCameraCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
             if (permissionWriteExternalCheck == PackageManager.PERMISSION_DENIED || permissionCameraCheck == PackageManager.PERMISSION_DENIED){
-                handlePermissions();
+                requestPermissions(
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA},
+                        REQUEST_PERMISSIONS);
                 return;
             }
         }
@@ -333,7 +321,9 @@ public class CollageActivity extends BasicActivity implements NavigationView
             int permissionWriteExternalCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int permissionCameraCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
             if (permissionWriteExternalCheck == PackageManager.PERMISSION_DENIED || permissionCameraCheck == PackageManager.PERMISSION_DENIED){
-                handlePermissions();
+                requestPermissions(
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA},
+                        REQUEST_PERMISSIONS);
                 return;
             }
         }
