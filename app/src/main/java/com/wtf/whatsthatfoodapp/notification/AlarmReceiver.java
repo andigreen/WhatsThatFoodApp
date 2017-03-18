@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
 import com.wtf.whatsthatfoodapp.R;
@@ -31,13 +32,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Update the memory
         FirebaseApp.initializeApp(context);
         memory = intent.getBundleExtra("bundle").getParcelable(EditMemoryActivity.MEMORY_KEY);
-        memory.setSavedForNextTime(false);
-        MemoryDao dao = new MemoryDao(context);
-        dao.writeMemory(memory);
 
         // Action when the notification is clicked
         Intent resultIntent = new Intent(context,EditMemoryActivity.class);
         resultIntent.putExtra(EditMemoryActivity.MEMORY_KEY,memory);
+        resultIntent.putExtra(EditMemoryActivity.NOTIFICATION,true);
         int uniqueID = (int) System.currentTimeMillis();
         PendingIntent resultPendingIntent = PendingIntent.getActivity(context, uniqueID, resultIntent, 0);
         mBuilder.setContentIntent(resultPendingIntent);
