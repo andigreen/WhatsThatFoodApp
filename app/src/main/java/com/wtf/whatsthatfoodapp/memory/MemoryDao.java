@@ -21,8 +21,11 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.wtf.whatsthatfoodapp.auth.AuthUtils;
@@ -110,6 +113,27 @@ public class MemoryDao {
 
         getMemoriesRef().child(memory.getKey()).removeValue();
         getPhotoRef(memory).delete();
+    }
+
+    public interface MemoryExistsListener {
+        void onResult(boolean exists);
+    }
+
+    public void memoryExists(Memory memory, final MemoryExistsListener listener) {
+        if (memory.getKey() == null) listener.onResult(false);
+
+        getMemoriesRef().child(memory.getKey())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        listener.onResult(dataSnapshot.exists());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        listener.onResult(false);
+                    }
+                });
     }
 
     /**
